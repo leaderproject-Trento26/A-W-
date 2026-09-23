@@ -558,7 +558,7 @@ function guideInfo(){
 function guideHTML(){
   if(ui.guideOff)return '';
   const g=guideInfo();
-  const here=[g[0],'login-'+g[0],'otp-'+g[0]].includes(ui.screen)&&!(g[0]==='cliente'&&ui.screen==='login-cliente'&&false);
+  const here=[g[0],'login-'+g[0],'otp-'+g[0]].includes(ui.screen);
   const btn=here?'':(g[0]==='home'?'<button type="button" data-a="logout">Ir al inicio</button>':'<button type="button" data-a="guideGo" data-r="'+g[0]+'">Entrar como '+g[1]+'</button>');
   return '<div class="guide"><span class="tag">Demo · siguiente paso</span><span class="txt"><b>'+esc(g[1])+':</b> '+esc(g[2])+'</span>'+btn+'<button type="button" class="x" data-a="guideHide" aria-label="Ocultar guía">✕</button></div>';
 }
