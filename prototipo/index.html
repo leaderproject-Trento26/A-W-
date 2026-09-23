@@ -1,0 +1,761 @@
+<title>Trento Entregas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{
+  --red:#D71F2B; --red-deep:#A3131D; --red-tint:#FBE9EA; --red-line:#F2C6C9;
+  --ink:#231A1B; --muted:#6F6263; --line:#E7DEDE; --ground:#F4EFEF; --surface:#FFFFFF; --sunk:#FAF7F7;
+  --ok:#1D8A56; --ok-tint:#E4F4EC; --warn:#B86F00; --warn-tint:#FCF1DC; --info:#2B5DA8; --info-tint:#E6EEF9;
+  --frame:#2A2021; --shadow:0 18px 40px -18px rgba(90,20,25,.35);
+  --font:Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F; --red-line:#5C2A2F;
+    --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
+    --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
+    --frame:#000; --shadow:0 18px 40px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F; --red-line:#5C2A2F;
+  --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
+  --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
+  --frame:#000; --shadow:0 18px 40px -18px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45}
+button,input,select,textarea{font-family:var(--font);font-size:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2,h3,h4{margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--red);color:#fff}
+.top-in{max-width:1280px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo-chip{background:#fff;border-radius:6px;padding:6px 10px;display:flex;align-items:center}
+.logo-chip img{height:26px;display:block}
+.top h1{font-size:16px;font-weight:700}
+.top .sub{font-size:12px;opacity:.85}
+.top .spacer{flex:1}
+.legend{display:flex;gap:8px;flex-wrap:wrap}
+.legend span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.16)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}}
+
+/* flow nav */
+.flow{align-self:start;position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px)}
+.flow h2{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.flow ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;counter-reset:s}
+.flow li button{width:100%;text-align:left;background:none;border:0;padding:8px 10px;border-radius:8px;display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:center;color:var(--ink)}
+.flow li button:hover{background:var(--surface)}
+.flow li button[aria-current="step"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--red)}
+.num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.r-coord .num{background:var(--red);color:#fff}
+.r-chofer .num{background:var(--ink);color:var(--surface)}
+.r-cliente .num{background:var(--surface);color:var(--red);box-shadow:inset 0 0 0 2px var(--red)}
+.flow .t{font-size:13px;font-weight:700;line-height:1.2}
+.flow .w{font-size:11px;color:var(--muted)}
+@media (max-width:900px){
+  .flow{position:static}
+  .flow ol{flex-direction:row;overflow-x:auto;padding-bottom:6px}
+  .flow li{flex:0 0 auto}
+  .flow li button{grid-template-columns:26px auto;white-space:nowrap}
+  .flow .w{display:none}
+}
+
+/* stage */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:24px;align-items:start}
+@media (max-width:1180px){.stage{grid-template-columns:minmax(0,1fr)}}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.note .role{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+.role.coord{background:var(--red);color:#fff}
+.role.chofer{background:var(--ink);color:var(--surface)}
+.role.cliente{color:var(--red);box-shadow:inset 0 0 0 1.5px var(--red)}
+.note h3{font-size:18px}
+.note p{color:var(--muted);font-size:13px}
+.note ul{margin:0;padding-left:18px;font-size:13px;display:flex;flex-direction:column;gap:4px}
+.pager{display:flex;gap:8px;margin-top:4px}
+.pager button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--sunk);font-weight:700}
+.pager button.next{background:var(--red);border-color:var(--red);color:#fff}
+.pager button:disabled{opacity:.4;cursor:default}
+
+/* ---------- device frames ---------- */
+.device{display:flex;justify-content:center}
+.desk{width:100%;max-width:960px;border-radius:12px;background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--line);overflow:hidden}
+.desk-bar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--sunk);border-bottom:1px solid var(--line)}
+.desk-bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.desk-bar .url{margin-left:10px;flex:1;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:6px;font-size:11px;color:var(--muted);padding:3px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.desk-body{overflow-x:auto}
+.desk-inner{min-width:720px}
+.phone{width:340px;max-width:100%;border-radius:36px;background:var(--frame);padding:10px;box-shadow:var(--shadow)}
+.phone-scr{border-radius:28px;background:var(--sunk);overflow:hidden;height:640px;display:flex;flex-direction:column}
+.phone-status{display:flex;justify-content:space-between;font-size:11px;font-weight:700;padding:10px 20px 4px;color:var(--ink)}
+.phone-body{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+
+/* ---------- app UI (inside frames) ---------- */
+.app-head{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.app-head .mark{width:30px;height:30px;border-radius:6px;overflow:hidden;background:#fff;flex:0 0 auto;border:1px solid var(--line)}
+.app-head .mark img{height:30px;max-width:none;display:block}
+.app-head .ttl{font-weight:700}
+.app-head .who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--red-tint);color:var(--red);display:grid;place-items:center;font-weight:700;font-size:11px}
+.app-red{background:var(--red);color:#fff;border-bottom:0}
+.app-red .who{color:#fff}
+.app-red .avatar{background:rgba(255,255,255,.2);color:#fff}
+
+.sidebar-app{display:grid;grid-template-columns:170px 1fr;min-height:520px}
+.side{background:var(--sunk);border-right:1px solid var(--line);padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.side a{display:block;padding:8px 10px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none}
+.side a.on{background:var(--red-tint);color:var(--red);font-weight:700}
+.main{padding:18px 20px;display:flex;flex-direction:column;gap:16px}
+.main h2{font-size:20px}
+.crumbs{font-size:12px;color:var(--muted)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-size:24px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi.hot{border-color:var(--red-line);background:var(--red-tint)}
+.kpi.hot b{color:var(--red)}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:middle}
+tr.sel td{background:var(--red-tint)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.p-pend{background:var(--warn-tint);color:var(--warn)}
+.p-ok{background:var(--ok-tint);color:var(--ok)}
+.p-route{background:var(--info-tint);color:var(--info)}
+.p-bad{background:var(--red-tint);color:var(--red)}
+.p-mute{background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700;background:var(--red);color:#fff}
+.btn:hover{background:var(--red-deep)}
+.btn.ghost{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{background:var(--sunk)}
+.btn.sm{padding:6px 10px;font-size:12px}
+.btn.block{width:100%;padding:13px}
+.btn.okb{background:var(--ok)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.end{justify-content:flex-end}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.panel h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:700}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:700}
+.inp{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;font-size:14px;color:var(--ink);font-weight:400;width:100%}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.check{display:flex;gap:8px;align-items:center;font-size:13px}
+.check input{accent-color:var(--red);width:16px;height:16px}
+
+/* login */
+.login{display:grid;grid-template-columns:1.1fr 1fr;min-height:520px}
+.login-art{background:var(--red);color:#fff;padding:32px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.login-art .big{font-size:34px;font-weight:700;line-height:1.05;letter-spacing:-.02em;max-width:12ch}
+.login-art p{opacity:.9;max-width:34ch}
+.login-art .road{position:absolute;right:-40px;bottom:-40px;width:320px;opacity:.18}
+.login-form{padding:40px 36px;display:flex;flex-direction:column;gap:14px;justify-content:center;background:var(--surface)}
+.login-form img{height:34px;align-self:flex-start;background:#fff;border-radius:4px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:3px}
+.seg button{border:0;background:none;padding:8px;border-radius:6px;font-weight:700;font-size:12px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--red);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.small{font-size:12px;color:var(--muted)}
+.link{color:var(--red);font-weight:700;text-decoration:none}
+
+/* map */
+.map{background:var(--sunk);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.map svg{display:block;width:100%;height:auto}
+.st{stroke:var(--line);stroke-width:6;fill:none}
+.st2{stroke:var(--line);stroke-width:3;fill:none}
+.rt{stroke:var(--red);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 0}
+.pin{fill:var(--red)}
+.pin-d{fill:var(--ink)}
+.pin-t{fill:#fff;font:700 11px Arial, sans-serif}
+.pin-t2{fill:var(--surface);font:700 11px Arial, sans-serif}
+.truck{fill:var(--info)}
+
+/* stops list */
+.stops{display:flex;flex-direction:column}
+.stop{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}
+.stop .n{width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-weight:700;font-size:12px;display:grid;place-items:center}
+.stop .n.done{background:var(--ok)}
+.stop .n.depot{background:var(--ink);color:var(--surface)}
+.stop b{display:block;font-size:13px}
+.stop small{color:var(--muted);font-size:12px}
+.stop .eta{font-weight:700;font-variant-numeric:tabular-nums;font-size:13px;text-align:right}
+.drag{color:var(--muted);font-size:14px;letter-spacing:-2px;margin-right:4px}
+
+/* phone app */
+.m-pad{padding:16px;display:flex;flex-direction:column;gap:12px}
+.m-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.m-title{font-size:20px;font-weight:700;line-height:1.15}
+.m-foot{margin-top:auto;padding:12px 16px 18px;background:var(--surface);border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.otp{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.otp span{border:1.5px solid var(--line);border-radius:8px;height:44px;display:grid;place-items:center;font-size:20px;font-weight:700;background:var(--surface)}
+.otp span.f{border-color:var(--red)}
+.wa{background:var(--ok-tint);border-radius:12px;padding:12px;font-size:13px;display:flex;flex-direction:column;gap:6px}
+.bubble{background:var(--surface);border-radius:10px 10px 10px 2px;padding:10px 12px;font-size:13px;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.bubble .link{word-break:break-all}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.slot{border:1.5px solid var(--line);border-radius:10px;padding:10px;text-align:left;background:var(--surface)}
+.slot b{display:block;font-size:14px}
+.slot small{color:var(--muted);font-size:11px}
+.slot[aria-pressed="true"]{border-color:var(--red);background:var(--red-tint)}
+.slot[aria-pressed="true"] b{color:var(--red)}
+.big-eta{font-size:32px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.progress{height:6px;border-radius:999px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--red)}
+.actions3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.act{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 4px;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
+.act svg{width:20px;height:20px;stroke:var(--red);fill:none;stroke-width:2}
+.sig{height:90px;border:1.5px dashed var(--line);border-radius:10px;background:var(--surface);position:relative}
+.sig svg{position:absolute;inset:0;width:100%;height:100%}
+.sig path{stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round}
+.photo{height:70px;border-radius:10px;background:repeating-linear-gradient(135deg,var(--line) 0 8px,var(--sunk) 8px 16px);display:grid;place-items:center;font-size:11px;color:var(--muted);font-weight:700}
+.stars{display:flex;gap:4px;font-size:26px;color:var(--red)}
+.stars span.off{color:var(--line)}
+.opt3{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:12px;background:var(--surface);text-align:left}
+.opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto}
+.opt[aria-pressed="true"]{border-color:var(--red)}
+.opt[aria-pressed="true"] .dot{border:5px solid var(--red)}
+.opt b{display:block;font-size:13px}
+.opt small{font-size:11px;color:var(--muted)}
+.scan{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+
+/* timeline */
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tl li{display:grid;grid-template-columns:62px 18px 1fr;gap:8px;font-size:13px;padding-bottom:12px;position:relative}
+.tl time{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px;text-align:right}
+.tl .d{width:12px;height:12px;border-radius:50%;background:var(--ok);margin-top:3px;position:relative;z-index:1}
+.tl li:not(:last-child)::after{content:"";position:absolute;left:75px;top:15px;bottom:0;width:2px;background:var(--line)}
+.tl li.warn .d{background:var(--warn)}
+.tl li.now .d{background:var(--red);box-shadow:0 0 0 4px var(--red-tint)}
+.tl small{color:var(--muted);display:block}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;box-shadow:var(--shadow)}
+
+/* ---------- suggestions ---------- */
+.more{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:8px 64px}
+.more-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-top:3px solid var(--red);padding-top:18px;margin-bottom:18px}
+.more-head h2{font-size:26px;letter-spacing:-.02em}
+.more-head p{color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.col h3{font-size:14px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.col li b{display:block;font-size:14px}
+.col li span{color:var(--muted);font-size:13px}
+.tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:2px}
+.tag.mvp{background:var(--red);color:#fff}
+.tag.f2{background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+
+@media (max-width:600px){
+  .login{grid-template-columns:1fr}.login-art{display:none}
+}
+@media (prefers-reduced-motion:no-preference){
+  .screen:not([hidden]) .device{animation:in .25s ease-out}
+  @keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="logo-chip"><img src="logo-trento.jpg" alt="Trento"></div>
+    <div>
+      <h1>Coordinación de entregas · Prototipo</h1>
+      <div class="sub">Coordinación → hoja de ruta → entrega → respuesta de recepción</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="legend"><span>Coordinador</span><span>Chofer</span><span>Cliente</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="flow" aria-label="Paso a paso">
+    <h2>Paso a paso</h2>
+    <ol id="flowList"></ol>
+  </nav>
+
+  <main id="stages">
+
+  <!-- 1 LOGIN COORDINADOR -->
+  <section class="screen" data-role="coord" data-t="Ingreso coordinador" data-w="Web · oficina de logística"
+    data-h="Ingreso al sistema" data-p="Una sola pantalla de ingreso con selector de perfil. El coordinador entra desde la web con usuario corporativo."
+    data-li="Selector Coordinador / Chofer / Cliente|Recordar dispositivo y recuperar clave|Opcional: ingreso con cuenta Google o Microsoft de la empresa">
+    <div class="device"><div class="desk">
+      <div class="desk-bar"><i></i><i></i><i></i><div class="url">entregas.trento.com.ar/ingresar</div></div>
+      <div class="desk-body"><div class="desk-inner login">
+        <div class="login-art">
+          <div class="big">Cada entrega, coordinada y confirmada.</div>
+          <p>Programá horarios con tus clientes, armá la hoja de ruta y recibí la conformidad de recepción en un solo lugar.</p>
+          <svg class="road" viewBox="0 0 200 200"><path d="M10 190 C60 120 140 150 190 20" stroke="#fff" stroke-width="18" fill="none"/><path d="M10 190 C60 120 140 150 190 20" stroke="#D71F2B" stroke-width="3" stroke-dasharray="12 10" fill="none"/></svg>
+          <div class="small" style="color:#fff;opacity:.8">Trento Logística · v0.1 prototipo</div>
+        </div>
+        <form class="login-form" data-next>
+          <img src="logo-trento.jpg" alt="Trento">
+          <h2 style="font-size:22px">Ingresá a tu cuenta</h2>
+          <div class="seg" role="group" aria-label="Perfil">
+            <button type="button" aria-pressed="true">Coordinador</button>
+            <button type="button" aria-pressed="false">Chofer</button>
+            <button type="button" aria-pressed="false">Cliente</button>
+          </div>
+          <label class="f">Usuario<input id="l-user" class="inp" value="mgonzalez@trento.com.ar"></label>
+          <label class="f">Contraseña<input id="l-pass" class="inp" type="password" value="trento2026"></label>
+          <div class="row" style="justify-content:space-between"><label class="check"><input id="l-rem" type="checkbox" checked> Recordarme</label><a class="link small" href="#">¿Olvidaste tu clave?</a></div>
+          <button class="btn block" type="submit">Ingresar</button>
+        </form>
+      </div></div>
+    </div></div>
+  </section>
+
+  <!-- 2 PANEL -->
+  <section class="screen" data-role="coord" data-t="Panel de pedidos" data-w="Qué hay que coordinar hoy"
+    data-h="Panel del coordinador" data-p="Vista de inicio: lo que necesita atención arriba, los pedidos abajo con su estado de coordinación."
+    data-li="Pedidos importados del ERP / facturación|Estados: Por coordinar, Esperando cliente, Confirmado, En ruta, Entregado, Con incidencia|Filtros por zona, fecha y cliente">
+    <div class="device"><div class="desk">
+      <div class="desk-bar"><i></i><i></i><i></i><div class="url">entregas.trento.com.ar/panel</div></div>
+      <div class="desk-body"><div class="desk-inner">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">Entregas</span><div class="who">Martina González · Coordinación <span class="avatar">MG</span></div></div>
+        <div class="sidebar-app">
+          <div class="side"><a class="on" href="#">Panel</a><a href="#">Pedidos</a><a href="#">Hojas de ruta</a><a href="#">Seguimiento</a><a href="#">Clientes</a><a href="#">Flota y choferes</a><a href="#">Reportes</a></div>
+          <div class="main">
+            <div class="row" style="justify-content:space-between"><div><div class="crumbs">Martes 23/09/2026</div><h2>Buen día, Martina</h2></div><div class="row"><button class="btn ghost sm" type="button">Importar pedidos</button><button class="btn sm" type="button">+ Nuevo pedido</button></div></div>
+            <div class="kpis">
+              <div class="kpi hot"><b>14</b><span>Por coordinar</span></div>
+              <div class="kpi"><b>5</b><span>Esperando respuesta del cliente</span></div>
+              <div class="kpi"><b>22</b><span>Confirmados para mañana</span></div>
+              <div class="kpi"><b>2</b><span>Con incidencia</span></div>
+            </div>
+            <table>
+              <thead><tr><th>Pedido</th><th>Cliente</th><th>Zona</th><th>Bultos</th><th>Fecha pedida</th><th>Estado</th><th></th></tr></thead>
+              <tbody>
+                <tr class="sel"><td><b>TR-24817</b></td><td>Ferretería Del Sur</td><td>Lanús</td><td>12 · 340 kg</td><td>25/09</td><td><span class="pill p-pend">Por coordinar</span></td><td><button class="btn sm" type="button" data-next>Coordinar</button></td></tr>
+                <tr><td>TR-24815</td><td>Distribuidora Norte SRL</td><td>San Martín</td><td>30 · 1.1 t</td><td>25/09</td><td><span class="pill p-pend">Por coordinar</span></td><td><button class="btn ghost sm" type="button">Coordinar</button></td></tr>
+                <tr><td>TR-24809</td><td>Corralón El Puente</td><td>Avellaneda</td><td>8 · 610 kg</td><td>25/09</td><td><span class="pill p-route">Esperando cliente</span></td><td><button class="btn ghost sm" type="button">Ver</button></td></tr>
+                <tr><td>TR-24802</td><td>Sanitarios Quilmes</td><td>Quilmes</td><td>5 · 120 kg</td><td>25/09</td><td><span class="pill p-ok">Confirmado</span></td><td><button class="btn ghost sm" type="button">Ver</button></td></tr>
+                <tr><td>TR-24796</td><td>Obra Torre Belgrano</td><td>CABA</td><td>44 · 2.3 t</td><td>24/09</td><td><span class="pill p-bad">Incidencia</span></td><td><button class="btn ghost sm" type="button">Resolver</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div></div>
+    </div></div>
+  </section>
+
+  <!-- 3 COORDINAR -->
+  <section class="screen" data-role="coord" data-t="Coordinar entrega" data-w="Proponer día y franja al cliente"
+    data-h="Coordinar la entrega" data-p="El coordinador propone uno o más turnos según la capacidad de la flota y los requisitos del lugar, y los envía al cliente."
+    data-li="El sistema sugiere franjas con cupo en la zona|Requisitos de descarga: rampa, autoelevador, ayudante, turno en muelle|Aviso por WhatsApp, SMS o email con link seguro">
+    <div class="device"><div class="desk">
+      <div class="desk-bar"><i></i><i></i><i></i><div class="url">entregas.trento.com.ar/pedidos/TR-24817/coordinar</div></div>
+      <div class="desk-body"><div class="desk-inner">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">Entregas</span><div class="who">Martina González <span class="avatar">MG</span></div></div>
+        <div class="main">
+          <div><div class="crumbs">Pedidos / TR-24817</div><h2>Coordinar entrega · Ferretería Del Sur</h2></div>
+          <div class="grid2">
+            <div class="panel">
+              <h4>Pedido y destino</h4>
+              <dl class="kv">
+                <dt>Dirección</dt><dd>Av. Hipólito Yrigoyen 4520, Lanús</dd>
+                <dt>Contacto</dt><dd>Carlos Ibáñez · 11 5555-0192</dd>
+                <dt>Carga</dt><dd>12 bultos · 340 kg · 1,8 m³</dd>
+                <dt>Remito</dt><dd>R 0003-00018841</dd>
+                <dt>Horario local</dt><dd>Lun a vie 8:00–17:00</dd>
+              </dl>
+              <h4>Requisitos de descarga</h4>
+              <div class="chips">
+                <button type="button" class="chip" aria-pressed="true">Descarga en vereda</button>
+                <button type="button" class="chip" aria-pressed="false">Rampa</button>
+                <button type="button" class="chip" aria-pressed="true">Ayudante</button>
+                <button type="button" class="chip" aria-pressed="false">Autoelevador</button>
+                <button type="button" class="chip" aria-pressed="false">Turno en muelle</button>
+              </div>
+            </div>
+            <div class="panel">
+              <h4>Turnos a proponer · jueves 25/09</h4>
+              <div class="chips">
+                <button type="button" class="chip" aria-pressed="true">08:00–10:00</button>
+                <button type="button" class="chip" aria-pressed="true">10:00–12:00</button>
+                <button type="button" class="chip" aria-pressed="false">14:00–16:00 · sin cupo</button>
+              </div>
+              <div class="small">Cupo en zona Sur: camión AB 123 CD con 62% de capacidad ocupada.</div>
+              <label class="f">Alternativa<input id="c-alt" class="inp" value="Viernes 26/09 · 08:00–12:00"></label>
+              <h4>Avisar al cliente por</h4>
+              <div class="row">
+                <label class="check"><input id="c-wa" type="checkbox" checked> WhatsApp</label>
+                <label class="check"><input id="c-mail" type="checkbox" checked> Email</label>
+                <label class="check"><input id="c-sms" type="checkbox"> SMS</label>
+              </div>
+              <label class="f">Responder antes de<input id="c-limit" class="inp" value="Miércoles 24/09 · 14:00"></label>
+            </div>
+          </div>
+          <div class="row end"><button class="btn ghost" type="button">Guardar borrador</button><button class="btn" type="button" data-next data-toast="Propuesta enviada a Ferretería Del Sur">Enviar propuesta al cliente</button></div>
+        </div>
+      </div></div>
+    </div></div>
+  </section>
+
+  <!-- 4 CLIENTE ACCESO -->
+  <section class="screen" data-role="cliente" data-t="Ingreso cliente" data-w="Link por WhatsApp + código"
+    data-h="El cliente recibe el aviso" data-p="El cliente no necesita crear usuario: entra desde el link del mensaje y valida con un código de 6 dígitos enviado a su teléfono."
+    data-li="Link único por pedido, vence al confirmar la entrega|Clientes frecuentes pueden tener cuenta con historial|Todo el texto en lenguaje simple, sin jerga interna">
+    <div class="device"><div class="phone"><div class="phone-scr">
+      <div class="phone-status"><span>09:41</span><span>●●● 5G</span></div>
+      <div class="phone-body">
+        <div class="m-pad">
+          <div class="wa">
+            <b style="font-size:12px">Trento Logística · WhatsApp</b>
+            <div class="bubble">Hola Carlos 👋 Tenemos listo tu pedido <b>TR-24817</b> (12 bultos). Elegí el horario de entrega acá:<br><span class="link">entregas.trento.com.ar/c/8FK2Q</span></div>
+          </div>
+          <div class="m-card" style="align-items:center;text-align:center;gap:12px">
+            <img src="logo-trento.jpg" alt="Trento" style="height:28px;background:#fff;border-radius:4px">
+            <div class="m-title">Confirmá que sos vos</div>
+            <p class="small">Te enviamos un código al 11 •••• 0192</p>
+            <div class="otp" style="width:100%"><span class="f">4</span><span class="f">8</span><span class="f">1</span><span class="f">0</span><span class="f">7</span><span class="f">2</span></div>
+            <a class="link small" href="#">Reenviar código en 0:42</a>
+          </div>
+        </div>
+        <div class="m-foot"><button class="btn block" type="button" data-next>Continuar</button></div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 5 CLIENTE CONFIRMA -->
+  <section class="screen" data-role="cliente" data-t="Elegir horario" data-w="Cliente confirma o reprograma"
+    data-h="El cliente elige el turno" data-p="Confirma una de las franjas propuestas o pide otra fecha. También deja quién recibe y cómo acceder."
+    data-li="Si pide otra fecha, vuelve al coordinador como 'Reprogramación solicitada'|Datos de quien recibe y referencias de acceso|Recordatorio automático el día anterior">
+    <div class="device"><div class="phone"><div class="phone-scr">
+      <div class="phone-status"><span>09:43</span><span>●●● 5G</span></div>
+      <div class="phone-body">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">Tu entrega</span></div>
+        <div class="m-pad">
+          <div><div class="small">Pedido TR-24817 · 12 bultos</div><div class="m-title">¿Cuándo te lo llevamos?</div></div>
+          <div class="small" style="font-weight:700">Jueves 25 de septiembre</div>
+          <div class="slots">
+            <button type="button" class="slot" aria-pressed="true"><b>08:00 – 10:00</b><small>Mañana temprano</small></button>
+            <button type="button" class="slot" aria-pressed="false"><b>10:00 – 12:00</b><small>Media mañana</small></button>
+          </div>
+          <button type="button" class="slot" aria-pressed="false" style="width:100%"><b>Viernes 26 · 08:00 – 12:00</b><small>Alternativa</small></button>
+          <a class="link small" href="#">Ninguno me sirve, proponer otra fecha</a>
+          <label class="f">¿Quién recibe?<input id="cl-rec" class="inp" value="Carlos Ibáñez · Encargado depósito"></label>
+          <label class="f">Indicaciones de acceso<textarea id="cl-acc" class="inp" rows="2">Portón gris lateral. Tocar timbre “Depósito”.</textarea></label>
+        </div>
+        <div class="m-foot"><button class="btn block" type="button" data-next data-toast="Turno confirmado · Jue 25/09, 08:00–10:00">Confirmar entrega</button></div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 6 HOJA DE RUTA -->
+  <section class="screen" data-role="coord" data-t="Armar hoja de ruta" data-w="Ordenar paradas y asignar chofer"
+    data-h="Hoja de ruta" data-p="Con los turnos confirmados, el sistema propone el orden de paradas respetando las franjas de cada cliente. El coordinador ajusta y publica."
+    data-li="Arrastrar para reordenar paradas|Control de capacidad: peso, volumen y bultos por camión|Al publicar, el chofer la recibe en su app y se genera el PDF">
+    <div class="device"><div class="desk">
+      <div class="desk-bar"><i></i><i></i><i></i><div class="url">entregas.trento.com.ar/hojas-de-ruta/HR-0925-03</div></div>
+      <div class="desk-body"><div class="desk-inner">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">Entregas</span><div class="who">Martina González <span class="avatar">MG</span></div></div>
+        <div class="main">
+          <div class="row" style="justify-content:space-between">
+            <div><div class="crumbs">Hojas de ruta / Jueves 25/09</div><h2>HR-0925-03 · Zona Sur</h2></div>
+            <div class="row">
+              <label class="f" style="flex-direction:row;align-items:center;gap:6px">Camión<select id="hr-truck" class="inp" style="width:auto;padding:6px 8px"><option>AB 123 CD · 3,5 t</option></select></label>
+              <label class="f" style="flex-direction:row;align-items:center;gap:6px">Chofer<select id="hr-driver" class="inp" style="width:auto;padding:6px 8px"><option>Diego Ramírez</option></select></label>
+            </div>
+          </div>
+          <div class="grid2" style="grid-template-columns:1.1fr 1fr">
+            <div class="panel" style="padding:8px 12px">
+              <div class="stops">
+                <div class="stop"><span class="n depot">D</span><div><b>Depósito Trento · Barracas</b><small>Salida · carga verificada</small></div><span class="eta">07:15</span></div>
+                <div class="stop"><span class="n">1</span><div><b><span class="drag">⋮⋮</span>Ferretería Del Sur · TR-24817</b><small>Lanús · 12 bultos · franja 08–10</small></div><span class="eta">08:05</span></div>
+                <div class="stop"><span class="n">2</span><div><b><span class="drag">⋮⋮</span>Sanitarios Quilmes · TR-24802</b><small>Quilmes · 5 bultos · franja 09–12</small></div><span class="eta">09:10</span></div>
+                <div class="stop"><span class="n">3</span><div><b><span class="drag">⋮⋮</span>Corralón El Puente · TR-24809</b><small>Avellaneda · 8 bultos · franja 10–13</small></div><span class="eta">10:25</span></div>
+                <div class="stop"><span class="n">4</span><div><b><span class="drag">⋮⋮</span>Pinturerías Banfield · TR-24790</b><small>Banfield · 20 bultos · franja 11–14</small></div><span class="eta">11:40</span></div>
+                <div class="stop"><span class="n depot">D</span><div><b>Regreso a depósito</b><small>Rendición de remitos</small></div><span class="eta">13:20</span></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="map">
+                <svg viewBox="0 0 320 220" role="img" aria-label="Mapa esquemático del recorrido">
+                  <path class="st" d="M0 60 H320 M0 150 H320 M90 0 V220 M220 0 V220"/>
+                  <path class="st2" d="M0 105 H320 M40 0 V220 M160 0 V220 M270 0 V220 M0 195 H320 M0 20 H320"/>
+                  <path class="rt" d="M40 20 L90 20 L90 105 L160 105 L160 150 L270 150 L270 195 L220 195 L220 60 L90 60 L40 20"/>
+                  <circle class="pin-d" cx="40" cy="20" r="11"/><text class="pin-t2" x="40" y="24" text-anchor="middle">D</text>
+                  <circle class="pin" cx="90" cy="105" r="11"/><text class="pin-t" x="90" y="109" text-anchor="middle">1</text>
+                  <circle class="pin" cx="160" cy="150" r="11"/><text class="pin-t" x="160" y="154" text-anchor="middle">2</text>
+                  <circle class="pin" cx="270" cy="195" r="11"/><text class="pin-t" x="270" y="199" text-anchor="middle">3</text>
+                  <circle class="pin" cx="220" cy="60" r="11"/><text class="pin-t" x="220" y="64" text-anchor="middle">4</text>
+                </svg>
+              </div>
+              <div class="panel">
+                <h4>Capacidad AB 123 CD</h4>
+                <div class="scan"><span>Peso 2.170 / 3.500 kg</span><b>62%</b></div><div class="progress"><i style="width:62%"></i></div>
+                <div class="scan"><span>Volumen 9,4 / 16 m³</span><b>59%</b></div><div class="progress"><i style="width:59%"></i></div>
+                <div class="small">4 paradas · 48 km · 6 h 05 min estimadas</div>
+              </div>
+            </div>
+          </div>
+          <div class="row end"><button class="btn ghost" type="button">Descargar PDF</button><button class="btn ghost" type="button">Optimizar orden</button><button class="btn" type="button" data-next data-toast="Hoja de ruta publicada · Diego Ramírez fue notificado">Publicar hoja de ruta</button></div>
+        </div>
+      </div></div>
+    </div></div>
+  </section>
+
+  <!-- 7 LOGIN CHOFER -->
+  <section class="screen" data-role="chofer" data-t="Ingreso chofer" data-w="App móvil · DNI + PIN"
+    data-h="El chofer ingresa a la app" data-p="Ingreso rápido pensado para el celular: DNI y PIN de 4 dígitos, más la patente del vehículo que maneja hoy."
+    data-li="Botones grandes, legibles al sol|Funciona sin señal y sincroniza después|Checklist del vehículo antes de salir">
+    <div class="device"><div class="phone"><div class="phone-scr">
+      <div class="phone-status"><span>06:58</span><span>●●● 4G</span></div>
+      <div class="phone-body" style="background:var(--red);color:#fff">
+        <div class="m-pad" style="flex:1;justify-content:center;gap:16px">
+          <div style="background:#fff;border-radius:8px;padding:10px;align-self:flex-start"><img src="logo-trento.jpg" alt="Trento" style="height:30px;display:block"></div>
+          <div class="m-title" style="font-size:26px">Buen día.<br>¿Listo para salir?</div>
+          <label class="f" style="color:#fff">DNI<input id="ch-dni" class="inp" value="30.456.789"></label>
+          <label class="f" style="color:#fff">PIN<input id="ch-pin" class="inp" type="password" value="1234"></label>
+          <label class="f" style="color:#fff">Patente del vehículo<input id="ch-pat" class="inp" value="AB 123 CD"></label>
+        </div>
+        <div class="m-foot" style="background:var(--red);border-top:0"><button class="btn block" type="button" data-next style="background:#fff;color:#A3131D">Ingresar</button></div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 8 HOJA DE RUTA CHOFER -->
+  <section class="screen" data-role="chofer" data-t="Mi hoja de ruta" data-w="Recorrido del día en el celular"
+    data-h="Hoja de ruta del chofer" data-p="El chofer ve las paradas en orden, con franja horaria, bultos y observaciones. Cada parada cambia de estado a medida que avanza."
+    data-li="Aviso automático al cliente cuando el camión sale hacia su parada|Navegación con Google Maps / Waze|Reportar demora o incidencia en 2 toques">
+    <div class="device"><div class="phone"><div class="phone-scr">
+      <div class="phone-status"><span>07:52</span><span>●●● 4G</span></div>
+      <div class="phone-body">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">HR-0925-03</span><div class="who"><span class="avatar">DR</span></div></div>
+        <div class="m-pad">
+          <div class="m-card">
+            <div class="scan"><b>Jueves 25/09 · AB 123 CD</b><span class="pill p-route">En ruta</span></div>
+            <div class="scan small"><span>1 de 4 paradas</span><span>48 km</span></div>
+            <div class="progress"><i style="width:12%"></i></div>
+          </div>
+          <div class="m-card" style="border-color:var(--red);box-shadow:0 0 0 1px var(--red)">
+            <div class="scan"><span class="pill p-bad">Próxima parada</span><b style="font-variant-numeric:tabular-nums">08:05</b></div>
+            <b style="font-size:16px">1 · Ferretería Del Sur</b>
+            <div class="small">Av. H. Yrigoyen 4520, Lanús · 12 bultos</div>
+            <div class="small">Portón gris lateral. Tocar timbre “Depósito”. Pide ayudante.</div>
+            <button class="btn block" type="button" data-next>Ir a la parada</button>
+          </div>
+          <div class="stops">
+            <div class="stop"><span class="n">2</span><div><b>Sanitarios Quilmes</b><small>5 bultos · 09–12</small></div><span class="eta">09:10</span></div>
+            <div class="stop"><span class="n">3</span><div><b>Corralón El Puente</b><small>8 bultos · 10–13</small></div><span class="eta">10:25</span></div>
+            <div class="stop"><span class="n">4</span><div><b>Pinturerías Banfield</b><small>20 bultos · 11–14</small></div><span class="eta">11:40</span></div>
+          </div>
+        </div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 9 ENTREGA CHOFER -->
+  <section class="screen" data-role="chofer" data-t="Registrar entrega" data-w="Bultos, foto y firma"
+    data-h="Entrega en destino" data-p="Al llegar, el chofer marca 'Llegué' (queda registrada hora y ubicación), controla bultos, saca foto de la mercadería descargada y toma la firma de quien recibe."
+    data-li="Escaneo de etiquetas de bultos o conteo manual|Foto obligatoria como comprobante|Si falta o hay daño: se registra como entrega parcial">
+    <div class="device"><div class="phone"><div class="phone-scr">
+      <div class="phone-status"><span>08:21</span><span>●●● 4G</span></div>
+      <div class="phone-body">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">Parada 1 · TR-24817</span></div>
+        <div class="m-pad">
+          <div class="actions3">
+            <button class="act" type="button"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="6"/></svg>Llegué 08:14</button>
+            <button class="act" type="button"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Llamar</button>
+            <button class="act" type="button"><svg viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>Incidencia</button>
+          </div>
+          <div class="m-card">
+            <div class="scan"><b>Bultos controlados</b><b style="color:var(--ok)">12 / 12</b></div>
+            <div class="progress"><i style="width:100%;background:var(--ok)"></i></div>
+          </div>
+          <div class="m-card">
+            <b>Foto de la entrega</b>
+            <div class="photo">IMG_0825_0816.jpg · tomada</div>
+          </div>
+          <div class="m-card">
+            <b>Firma de quien recibe</b>
+            <div class="sig"><svg viewBox="0 0 280 90"><path d="M20 60 C40 20 60 80 80 45 S120 20 130 55 S170 70 190 35 S240 50 260 40"/></svg></div>
+            <label class="f">Aclaración y DNI<input id="ch-rec" class="inp" value="Carlos Ibáñez · 27.889.001"></label>
+          </div>
+        </div>
+        <div class="m-foot"><button class="btn block okb" type="button" data-next data-toast="Entrega registrada · se pidió conformidad al cliente">Confirmar entrega</button></div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 10 CLIENTE RESPUESTA -->
+  <section class="screen" data-role="cliente" data-t="Respuesta de recepción" data-w="Conforme / con observaciones"
+    data-h="Respuesta de recepción del cliente" data-p="Minutos después de la entrega el cliente recibe el comprobante y responde si recibió conforme, con observaciones o con rechazo parcial."
+    data-li="Comprobante con foto, firma y hora de entrega|Observaciones con foto: faltante, daño, error de producto|Calificación del servicio y del chofer">
+    <div class="device"><div class="phone"><div class="phone-scr">
+      <div class="phone-status"><span>08:30</span><span>●●● 5G</span></div>
+      <div class="phone-body">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">Tu entrega</span></div>
+        <div class="m-pad">
+          <div class="m-card">
+            <div class="scan"><span class="pill p-ok">Entregado 08:16</span><span class="small">TR-24817</span></div>
+            <div class="small">Recibió Carlos Ibáñez · 12 bultos · Chofer Diego R.</div>
+            <a class="link small" href="#">Ver comprobante (foto + firma)</a>
+          </div>
+          <div class="m-title" style="font-size:18px">¿Cómo recibiste la mercadería?</div>
+          <div class="opt3">
+            <button class="opt" type="button" aria-pressed="false"><span class="dot"></span><span><b>Todo conforme</b><small>Recibí todo en buen estado</small></span></button>
+            <button class="opt" type="button" aria-pressed="true"><span class="dot"></span><span><b>Con observaciones</b><small>Faltante, daño o producto equivocado</small></span></button>
+            <button class="opt" type="button" aria-pressed="false"><span class="dot"></span><span><b>Rechazo parcial</b><small>Devuelvo parte del pedido</small></span></button>
+          </div>
+          <label class="f">Detalle<textarea id="cl-obs" class="inp" rows="2">1 caja de cerámicos con 3 piezas rotas (bulto 7/12).</textarea></label>
+          <div class="photo" style="height:54px">+ Adjuntar foto</div>
+          <div><div class="small" style="font-weight:700">Calificá la entrega</div><div class="stars" aria-label="4 de 5"><span>★</span><span>★</span><span>★</span><span>★</span><span class="off">★</span></div></div>
+        </div>
+        <div class="m-foot"><button class="btn block" type="button" data-next data-toast="Respuesta enviada · Trento abrió el reclamo R-1182">Enviar respuesta</button></div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <!-- 11 CIERRE -->
+  <section class="screen" data-role="coord" data-t="Seguimiento y cierre" data-w="Trazabilidad completa del pedido"
+    data-h="Seguimiento y cierre" data-p="El coordinador ve toda la historia del pedido en una línea de tiempo y gestiona la observación del cliente antes de cerrarlo."
+    data-li="Reclamo abierto automáticamente si hay observaciones|Reposición o nota de crédito en 1 clic|El pedido pasa a 'Cerrado' cuando se resuelve">
+    <div class="device"><div class="desk">
+      <div class="desk-bar"><i></i><i></i><i></i><div class="url">entregas.trento.com.ar/pedidos/TR-24817</div></div>
+      <div class="desk-body"><div class="desk-inner">
+        <div class="app-head app-red"><div class="mark"><img src="logo-trento.jpg" alt=""></div><span class="ttl">Entregas</span><div class="who">Martina González <span class="avatar">MG</span></div></div>
+        <div class="main">
+          <div class="row" style="justify-content:space-between"><div><div class="crumbs">Pedidos / TR-24817</div><h2>Ferretería Del Sur</h2></div><span class="pill p-pend" style="font-size:12px">Entregado con observaciones</span></div>
+          <div class="grid2">
+            <div class="panel">
+              <h4>Línea de tiempo</h4>
+              <ol class="tl">
+                <li><time>23/09 09:12</time><span class="d"></span><span>Propuesta enviada al cliente<small>WhatsApp + email · 2 franjas</small></span></li>
+                <li><time>23/09 09:43</time><span class="d"></span><span>Cliente confirmó jue 25/09, 08–10<small>Recibe Carlos Ibáñez</small></span></li>
+                <li><time>24/09 16:30</time><span class="d"></span><span>Incluido en HR-0925-03<small>AB 123 CD · Diego Ramírez</small></span></li>
+                <li><time>25/09 07:52</time><span class="d"></span><span>En camino · aviso al cliente<small>ETA 08:05</small></span></li>
+                <li><time>25/09 08:16</time><span class="d"></span><span>Entregado 12/12 bultos<small>Foto + firma · 1,2 km del punto: OK</small></span></li>
+                <li class="warn now"><time>25/09 08:30</time><span class="d"></span><span><b>Cliente: con observaciones</b><small>3 cerámicos rotos · bulto 7/12 · ★★★★☆</small></span></li>
+              </ol>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="panel">
+                <h4>Reclamo R-1182</h4>
+                <div class="photo">Foto enviada por el cliente</div>
+                <p style="font-size:13px">“1 caja de cerámicos con 3 piezas rotas (bulto 7/12).”</p>
+                <div class="chips">
+                  <button type="button" class="chip" aria-pressed="true">Reponer en próxima entrega</button>
+                  <button type="button" class="chip" aria-pressed="false">Nota de crédito</button>
+                  <button type="button" class="chip" aria-pressed="false">Retirar mercadería</button>
+                </div>
+              </div>
+              <div class="panel">
+                <h4>Comprobante de entrega</h4>
+                <dl class="kv"><dt>Hora</dt><dd>08:16 (en franja)</dd><dt>Recibió</dt><dd>Carlos Ibáñez · 27.889.001</dd><dt>Puntualidad</dt><dd style="color:var(--ok)">A tiempo</dd></dl>
+              </div>
+            </div>
+          </div>
+          <div class="row end"><button class="btn ghost" type="button">Responder al cliente</button><button class="btn" type="button" data-toast="Reposición agendada · el pedido queda en seguimiento">Resolver y cerrar</button></div>
+        </div>
+      </div></div>
+    </div></div>
+  </section>
+
+  </main>
+</div>
+
+<section class="more" aria-labelledby="moreT">
+  <div class="more-head"><h2 id="moreT">Qué más le agregaría</h2><p><span class="tag mvp">MVP</span> para la primera versión · <span class="tag f2">Fase 2</span> una vez andando</p></div>
+  <div class="cols">
+    <div class="col"><h3>Para el cliente</h3><ul>
+      <li><b>Seguimiento en vivo <span class="tag mvp">MVP</span></b><span>Link tipo “tu camión está a 3 paradas / 15 min”, sin instalar nada.</span></li>
+      <li><b>Recordatorio el día anterior <span class="tag mvp">MVP</span></b><span>Mensaje automático con la franja y opción de reprogramar hasta cierta hora.</span></li>
+      <li><b>Portal de cliente frecuente <span class="tag f2">Fase 2</span></b><span>Historial de entregas, remitos y comprobantes descargables.</span></li>
+    </ul></div>
+    <div class="col"><h3>Para el coordinador</h3><ul>
+      <li><b>Integración con el ERP / facturación <span class="tag mvp">MVP</span></b><span>Que los pedidos y remitos entren solos, sin cargarlos a mano.</span></li>
+      <li><b>Optimización automática de rutas <span class="tag f2">Fase 2</span></b><span>Orden de paradas por franja, tránsito y capacidad del camión.</span></li>
+      <li><b>Alertas de riesgo <span class="tag mvp">MVP</span></b><span>Aviso si un camión se atrasa y va a llegar fuera de la franja confirmada.</span></li>
+      <li><b>Tablero de indicadores <span class="tag f2">Fase 2</span></b><span>Entregas a tiempo (OTIF), reclamos por zona, calificación por chofer.</span></li>
+    </ul></div>
+    <div class="col"><h3>Para el chofer</h3><ul>
+      <li><b>Modo sin señal <span class="tag mvp">MVP</span></b><span>Registra todo offline y sincroniza al recuperar conexión.</span></li>
+      <li><b>Checklist de vehículo <span class="tag f2">Fase 2</span></b><span>Control de salida: neumáticos, luces, documentación, carga asegurada.</span></li>
+      <li><b>Rendición digital <span class="tag f2">Fase 2</span></b><span>Remitos firmados y cobros contra entrega cerrados desde la app.</span></li>
+    </ul></div>
+    <div class="col"><h3>Control y seguridad</h3><ul>
+      <li><b>Geovalidación de la entrega <span class="tag mvp">MVP</span></b><span>Solo permite “Entregado” cerca de la dirección del cliente.</span></li>
+      <li><b>Permisos por perfil <span class="tag mvp">MVP</span></b><span>Supervisor, coordinador, chofer, cliente; cada uno ve lo suyo.</span></li>
+      <li><b>Retiros y devoluciones <span class="tag f2">Fase 2</span></b><span>El mismo circuito para logística inversa y reposiciones.</span></li>
+    </ul></div>
+  </div>
+</section>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  const screens=[...document.querySelectorAll('.screen')];
+  const list=document.getElementById('flowList');
+  const roleName={coord:'Coordinador',chofer:'Chofer',cliente:'Cliente'};
+  let cur=0;
+
+  screens.forEach((s,i)=>{
+    const li=document.createElement('li');
+    li.className='r-'+s.dataset.role;
+    li.innerHTML='<button type="button"><span class="num">'+(i+1)+'</span><span><span class="t">'+s.dataset.t+'</span><br><span class="w">'+roleName[s.dataset.role]+' · '+s.dataset.w+'</span></span></button>';
+    li.querySelector('button').addEventListener('click',()=>show(i,true));
+    list.appendChild(li);
+
+    const note=document.createElement('aside');
+    note.className='note';
+    note.innerHTML='<span class="role '+s.dataset.role+'">'+roleName[s.dataset.role]+'</span>'+
+      '<h3>'+(i+1)+'. '+s.dataset.h+'</h3><p>'+s.dataset.p+'</p>'+
+      '<ul>'+s.dataset.li.split('|').map(x=>'<li>'+x+'</li>').join('')+'</ul>'+
+      '<div class="pager"><button type="button" class="prev">Anterior</button><button type="button" class="next">Siguiente</button></div>';
+    const wrap=document.createElement('div');
+    wrap.className='stage';
+    const dev=s.querySelector('.device');
+    s.insertBefore(wrap,dev); wrap.appendChild(dev); wrap.appendChild(note);
+    note.querySelector('.prev').disabled=i===0;
+    note.querySelector('.next').disabled=i===screens.length-1;
+    note.querySelector('.prev').addEventListener('click',()=>show(i-1,true));
+    note.querySelector('.next').addEventListener('click',()=>show(i+1,true));
+  });
+
+  function show(i,scroll){
+    if(i<0||i>=screens.length)return;
+    cur=i;
+    screens.forEach((s,j)=>s.hidden=j!==i);
+    list.querySelectorAll('button').forEach((b,j)=>{ if(j===i)b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+    const active=list.children[i]; if(active&&active.scrollIntoView&&window.innerWidth<900)active.scrollIntoView({block:'nearest',inline:'center'});
+    if(scroll){ const top=document.getElementById('stages').getBoundingClientRect().top+window.scrollY-80; if(window.scrollY>top)window.scrollTo({top:top}); }
+    try{localStorage.setItem('trento-step',String(i));}catch(e){}
+  }
+
+  let t;
+  function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.hidden=false;clearTimeout(t);t=setTimeout(()=>el.hidden=true,2600);}
+
+  document.addEventListener('click',e=>{
+    const tg=e.target.closest('[data-toast]'); if(tg)toast(tg.dataset.toast);
+    const nx=e.target.closest('button[data-next]'); if(nx){e.preventDefault();show(cur+1,true);}
+    const tog=e.target.closest('.chip,.slot,.opt,.seg button');
+    if(tog){
+      const single=tog.matches('.slot,.opt,.seg button');
+      if(single){ const grp=tog.closest('.m-pad,.seg,.opt3')||tog.parentElement; grp.querySelectorAll(tog.matches('.seg button')?'.seg button':(tog.matches('.opt')?'.opt':'.slot')).forEach(b=>b.setAttribute('aria-pressed','false')); tog.setAttribute('aria-pressed','true'); }
+      else tog.setAttribute('aria-pressed',tog.getAttribute('aria-pressed')==='true'?'false':'true');
+    }
+    if(e.target.closest('a[href="#"]'))e.preventDefault();
+  });
+  document.querySelectorAll('form[data-next]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();show(cur+1,true);}));
+  document.addEventListener('keydown',e=>{ if(e.target.matches('input,textarea,select'))return; if(e.key==='ArrowRight')show(cur+1,true); if(e.key==='ArrowLeft')show(cur-1,true); });
+
+  let start=0; try{const v=parseInt(localStorage.getItem('trento-step'),10); if(v>=0&&v<screens.length)start=v;}catch(e){}
+  show(start,false);
+})();
+</script>
