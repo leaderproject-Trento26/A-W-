@@ -446,10 +446,10 @@ canvas.sig{display:block;width:100%;height:130px;border-radius:10px;border:1.5px
 (function(){
 'use strict';
 const LOGO='logo-trento.jpg';
-const KEY='trento-demo-v6';
+const KEY='trento-demo-v7';
 const HERO='TR-24817';
 const TRUCKS=[{pat:'AB 123 CD',kg:3500,m3:16,desc:'Mediano 3,5 t'},{pat:'AC 456 EF',kg:5000,m3:24,desc:'Grande 5 t'}];
-const DRIVERS=[{id:'dr',nombre:'Milena Rozo',dni:'30456789',ini:'MR',tel:'11 4402-7781'},{id:'sm',nombre:'Sofía Medina',dni:'32118404',ini:'SM',tel:'11 4402-7790'}];
+const DRIVERS=[{id:'dr',nombre:'Milena Rozo',dni:'30456789',ini:'MR',tel:'11 4402-7781'},{id:'sm',nombre:'Eugenia',dni:'32118404',ini:'EU',tel:'11 4402-7790'}];
 const SLOTS=[
   {v:'Jue 25/09 · 08:00–10:00'},{v:'Jue 25/09 · 10:00–12:00'},{v:'Jue 25/09 · 12:00–14:00'},{v:'Jue 25/09 · 14:00–16:00',full:true},
   {v:'Vie 26/09 · 08:00–12:00'},{v:'Vie 26/09 · 13:00–17:00'},{v:'Lun 29/09 · 08:00–12:00'}
@@ -496,9 +496,9 @@ function seed(){
   const conf=(d,t,turno,rec)=>fac(d,'10:05').concat([{d,t:'11:10',txt:'Propuesta enviada al cliente',sub:'WhatsApp · 2 franjas'},{d,t,txt:'Cliente confirmó '+turno,sub:'Recibe '+rec}]);
   const C=(id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,turno,extra)=>o(Object.assign({id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,remito:'R 0003-000'+id.slice(3),horario:'Lun a vie 8:00–17:00',estado:'confirmado',turno,recibe:contacto,acceso:'',tl:conf('22/09','15:30',turno,contacto)},extra||{}));
   const W=(t,title,body,act)=>({to:'cliente',d:'18/09',t,title,body,oid:'TR-24701',act,read:true,seen:true});
-  return {v:6,seq:{hr:3,rec:1182},rutas:[],npsHist:npsSeed(),notifs:[
+  return {v:7,seq:{hr:3,rec:1182},rutas:[],npsHist:npsSeed(),notifs:[
       W('07:32','🚚 Tu pedido salió','Tu pedido TR-24701 ya salió del depósito. Llega hoy entre las 08:15 y 09:45. Estate atento para recibirlo.','salio'),
-      W('08:57','⏱ Tu pedido llega en 15 minutos','Sofía Medina está a unos 15 minutos de Av. Hipólito Yrigoyen 4520, Lanús. Preparate para recibir 6 bultos.','15'),
+      W('08:57','⏱ Tu pedido llega en 15 minutos','Eugenia está a unos 15 minutos de Av. Hipólito Yrigoyen 4520, Lanús. Preparate para recibir 6 bultos.','15'),
       W('09:13','✅ Entregamos tu pedido','TR-24701 · recibió Milena Rozo a las 09:12. ¿Cómo recibiste la mercadería?','entregado'),
       {to:'wa-out',d:'18/09',t:'09:40',body:'✅ Todo conforme',oid:'TR-24701',read:true},
       W('09:40','¡Gracias por tu respuesta!','Registramos tu conformidad para TR-24701. ¡Hasta la próxima!','gracias'),
@@ -533,13 +533,13 @@ function seed(){
     C('TR-24787','flp','Ferretería La Plata Centro','La Plata','Calle 12 N° 890, La Plata','Noelia Arce','221 555-6672',6,260,1.2,'Jue 25/09 · 08:00–10:00',{acceso:'Descarga sobre calle 12, antes de las 11'}),
     /* ---- historial del cliente demo ---- */
     o({id:'TR-24701',cli:'fds',cliente:'Ferretería Del Sur',zona:'Lanús',dir:'Av. Hipólito Yrigoyen 4520, Lanús',contacto:'Milena Rozo',tel:'11 5555-0192',bultos:6,kg:180,m3:.9,remito:'R 0003-00018502',horario:'Lun a vie 8:00–17:00',estado:'cerrado',turno:'Jue 18/09 · 08:00–10:00',recibe:'Milena Rozo',rango:'08:15 y 09:45',
-      entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Milena Rozo',foto:null,firma:null,chofer:'Sofía Medina'},respuesta:{tipo:'conforme',detalle:''},npsAsk:true,nps:{score:10,motivos:['Avisos y comunicación'],comentario:'',motDone:true},
-      tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 bultos',sub:'Sofía Medina'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
+      entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Milena Rozo',foto:null,firma:null,chofer:'Eugenia'},respuesta:{tipo:'conforme',detalle:''},npsAsk:true,nps:{score:10,motivos:['Avisos y comunicación'],comentario:'',motDone:true},
+      tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 bultos',sub:'Eugenia'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
   ]};
 }
 let S, ui;
 function load(){
-  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===6){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
+  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===7){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
   S=seed();ui=freshUI();
 }
 function freshUI(){return {screen:'home',view:'panel',orderId:null,filter:'todos',zone:'todas',bell:false,draft:null,driver:null,stop:null,guideOff:false,kView:'lista',kOrder:null};}
@@ -669,7 +669,7 @@ function npsSeed(){
       let mot=cat==='pro'?[pick(motGood)]:[pick(motBad)];
       if(cat==='det'&&r()<.35){const m2=pick(motBad);if(!mot.includes(m2))mot.push(m2);}
       const comentario=cat==='det'?pick(com[mot[0]]):cat==='pas'?(r()<.5?pick(com[mot[0]]):''):(r()<.35?pick(good):'');
-      out.push({id:'N'+(++id),cliente:pick(cli[z]),zona:z,chofer:r()<.5?'Milena Rozo':'Sofía Medina',score,motivos:mot,comentario,d:pick(days[wi]),w:wi,followed:!(cat==='det'&&wi>=5)});
+      out.push({id:'N'+(++id),cliente:pick(cli[z]),zona:z,chofer:r()<.5?'Milena Rozo':'Eugenia',score,motivos:mot,comentario,d:pick(days[wi]),w:wi,followed:!(cat==='det'&&wi>=5)});
     }
   });
   return out;
@@ -1420,7 +1420,7 @@ const F={
   loginCoord(){ui.screen='coord';ui.view='panel';render();toast('Hola, Milena Rozo');},
   loginChofer(){
     const dni=$('#ld-dni').value.replace(/\D/g,'');const d=DRIVERS.find(x=>x.dni===dni);const e=$('#ld-err');
-    if(!d){e.textContent='No encontramos ese DNI. Probá con Milena Rozo o Sofía Medina.';e.hidden=false;return;}
+    if(!d){e.textContent='No encontramos ese DNI. Probá con Milena Rozo o Eugenia.';e.hidden=false;return;}
     if($('#ld-pin').value.length!==4){e.textContent='El PIN tiene 4 dígitos.';e.hidden=false;return;}
     ui.driver=d.id;ui.screen='chofer';ui.view='ruta';ui.stop=null;render();toast('Hola, '+d.nombre);
   },
