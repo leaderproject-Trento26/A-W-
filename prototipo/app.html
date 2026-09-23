@@ -6,6 +6,7 @@
   --ink:#231A1B; --muted:#6F6263; --line:#E7DEDE; --ground:#F4EFEF; --surface:#FFFFFF; --sunk:#FAF7F7;
   --ok:#1D8A56; --ok-tint:#E4F4EC; --warn:#B86F00; --warn-tint:#FCF1DC; --info:#2B5DA8; --info-tint:#E6EEF9;
   --shadow:0 18px 40px -20px rgba(90,20,25,.35);
+  --wa-bg:#EFE7DE; --wa-in:#FFFFFF; --wa-out:#D9FDD3; --wa-head:#1F5C4F; --wa-link:#027EB5; --wa-sys:#FFF3C4;
   --font:Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
 @media (prefers-color-scheme: dark){
@@ -15,6 +16,7 @@
     --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
     --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
     --shadow:0 18px 40px -20px rgba(0,0,0,.7);
+    --wa-bg:#0B141A; --wa-in:#202C33; --wa-out:#005C4B; --wa-head:#202C33; --wa-link:#53BDEB; --wa-sys:#182229;
   }
 }
 :root[data-theme="dark"]{
@@ -23,6 +25,7 @@
   --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
   --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
   --shadow:0 18px 40px -20px rgba(0,0,0,.7);
+  --wa-bg:#0B141A; --wa-in:#202C33; --wa-out:#005C4B; --wa-head:#202C33; --wa-link:#53BDEB; --wa-sys:#182229;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -324,6 +327,35 @@ canvas.sig{display:block;width:100%;height:130px;border-radius:10px;border:1.5px
 .slots5{display:flex;gap:4px}
 .slots5 i{flex:1;height:10px;border-radius:3px;background:var(--line)}
 .slots5 i.on{background:var(--red)}
+/* WhatsApp simulation */
+.wa-shell{background:var(--wa-bg);height:100vh;min-height:0}
+.wa-top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--wa-head);color:#fff;display:flex;align-items:center;gap:10px;padding:8px 12px;min-height:56px}
+.wa-top .back{background:none;border:0;color:#fff;font-size:20px;width:30px;height:34px;padding:0}
+.wa-top .out{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:6px;padding:7px 10px;font-weight:700;font-size:12px;margin-left:auto}
+.wa-av{width:38px;height:38px;border-radius:50%;overflow:hidden;background:#fff;flex:0 0 auto}
+.wa-av img{height:38px;max-width:none;display:block}
+.wa-who{display:flex;flex-direction:column;min-width:0}
+.wa-who b{font-size:15px;white-space:nowrap}
+.wa-who small{font-size:12px;opacity:.8}
+.wa-ver{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#25D366;color:#fff;font-size:10px;vertical-align:1px}
+.wa-body{flex:1;overflow-y:auto;padding:12px 12px 16px;display:flex;flex-direction:column;gap:6px;background:var(--wa-bg)}
+.wa-body.mini{max-height:340px;border-radius:8px;padding:10px}
+.wa-sys{align-self:center;background:var(--wa-sys);color:var(--ink);font-size:11.5px;text-align:center;padding:6px 10px;border-radius:8px;max-width:92%;box-shadow:0 1px .5px rgba(0,0,0,.1)}
+.wa-day{align-self:center;background:var(--wa-in);color:var(--muted);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;margin:6px 0 2px;box-shadow:0 1px .5px rgba(0,0,0,.1)}
+.wa-b{max-width:84%;padding:7px 9px 5px;border-radius:8px;font-size:14px;line-height:1.35;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px .5px rgba(0,0,0,.13);color:var(--ink)}
+.wa-b.in{align-self:flex-start;background:var(--wa-in);border-top-left-radius:2px}
+.wa-b.out{align-self:flex-end;background:var(--wa-out);border-top-right-radius:2px}
+.wa-b .wa-t{font-size:14px}
+.wa-b time{align-self:flex-end;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.wa-b time i{font-style:normal;color:#53BDEB}
+.wa-btns{display:flex;flex-direction:column;margin:4px -9px -2px;border-top:1px solid var(--line)}
+.wa-qr,.wa-cta{background:none;border:0;border-bottom:1px solid var(--line);padding:9px 8px;color:var(--wa-link);font-weight:700;font-size:13.5px;text-align:center}
+.wa-qr:last-child,.wa-cta:last-child{border-bottom:0}
+.wa-qr:hover,.wa-cta:hover{background:var(--sunk)}
+.wa-qr.ro,.wa-cta.ro{display:block;cursor:default;opacity:.75}
+.wa-comp{display:flex;gap:8px;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));background:var(--wa-bg)}
+.wa-inp{flex:1;border:0;border-radius:22px;padding:11px 16px;background:var(--wa-in);color:var(--ink);font-size:15px;box-shadow:0 1px .5px rgba(0,0,0,.13)}
+.wa-send{width:44px;height:44px;border-radius:50%;border:0;background:#00A884;color:#fff;font-size:18px;flex:0 0 auto}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:11px 16px;border-radius:8px;font-weight:700;font-size:13px;box-shadow:var(--shadow);z-index:50;max-width:calc(100% - 32px);text-align:center}
 @media (prefers-reduced-motion:no-preference){
   .enter{animation:in .22s ease-out}
@@ -338,10 +370,10 @@ canvas.sig{display:block;width:100%;height:130px;border-radius:10px;border:1.5px
 (function(){
 'use strict';
 const LOGO='logo-trento.jpg';
-const KEY='trento-demo-v3';
+const KEY='trento-demo-v4';
 const HERO='TR-24817';
 const TRUCKS=[{pat:'AB 123 CD',kg:3500,m3:16,desc:'Mediano 3,5 t'},{pat:'AC 456 EF',kg:5000,m3:24,desc:'Grande 5 t'}];
-const DRIVERS=[{id:'dr',nombre:'Diego Ramírez',dni:'30456789',ini:'DR',tel:'11 4402-7781'},{id:'sm',nombre:'Sofía Medina',dni:'32118404',ini:'SM',tel:'11 4402-7790'}];
+const DRIVERS=[{id:'dr',nombre:'Milena Rozo',dni:'30456789',ini:'MR',tel:'11 4402-7781'},{id:'sm',nombre:'Sofía Medina',dni:'32118404',ini:'SM',tel:'11 4402-7790'}];
 const SLOTS=[
   {v:'Jue 25/09 · 08:00–10:00'},{v:'Jue 25/09 · 10:00–12:00'},{v:'Jue 25/09 · 12:00–14:00'},{v:'Jue 25/09 · 14:00–16:00',full:true},
   {v:'Vie 26/09 · 08:00–12:00'},{v:'Vie 26/09 · 13:00–17:00'},{v:'Lun 29/09 · 08:00–12:00'}
@@ -387,11 +419,17 @@ function seed(){
   const fac=(d,t)=>[{d,t,txt:'Pedido facturado',sub:'Importado del sistema de facturación'}];
   const conf=(d,t,turno,rec)=>fac(d,'10:05').concat([{d,t:'11:10',txt:'Propuesta enviada al cliente',sub:'WhatsApp · 2 franjas'},{d,t,txt:'Cliente confirmó '+turno,sub:'Recibe '+rec}]);
   const C=(id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,turno,extra)=>o(Object.assign({id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,remito:'R 0003-000'+id.slice(3),horario:'Lun a vie 8:00–17:00',estado:'confirmado',turno,recibe:contacto,acceso:'',tl:conf('22/09','15:30',turno,contacto)},extra||{}));
-  return {v:3,seq:{hr:3,rec:1182},rutas:[],notifs:[
+  const W=(t,title,body,act)=>({to:'cliente',d:'18/09',t,title,body,oid:'TR-24701',act,read:true,seen:true});
+  return {v:4,seq:{hr:3,rec:1182},rutas:[],notifs:[
+      W('07:32','🚚 Tu pedido salió','Tu pedido TR-24701 ya salió del depósito. Llega hoy entre las 08:15 y 09:45. Estate atento para recibirlo.','salio'),
+      W('08:57','⏱ Tu pedido llega en 15 minutos','Sofía Medina está a unos 15 minutos de Av. Hipólito Yrigoyen 4520, Lanús. Preparate para recibir 6 bultos.','15'),
+      W('09:13','✅ Entregamos tu pedido','TR-24701 · recibió Milena Rozo a las 09:12. ¿Cómo recibiste la mercadería?','entregado'),
+      {to:'wa-out',d:'18/09',t:'09:40',body:'✅ Todo conforme',oid:'TR-24701',read:true},
+      W('09:40','¡Gracias por tu respuesta!','Registramos tu conformidad para TR-24701. ¡Hasta la próxima!','gracias'),
       {to:'coord',d:'23/09',t:'08:02',title:'4 pedidos nuevos para coordinar',body:'Importados del sistema de facturación: Zona Sur 1, Zona Norte 1, Capital 1, La Plata 1.',read:false}
     ],orders:[
     /* ---- Zona Sur ---- */
-    o({id:'TR-24817',cli:'fds',cliente:'Ferretería Del Sur',zona:'Lanús',dir:'Av. Hipólito Yrigoyen 4520, Lanús',contacto:'Carlos Ibáñez',tel:'11 5555-0192',bultos:12,kg:340,m3:1.8,remito:'R 0003-00018841',horario:'Lun a vie 8:00–17:00',estado:'por_coordinar',requisitos:['Descarga en vereda','Ayudante'],tl:fac('22/09','17:40')}),
+    o({id:'TR-24817',cli:'fds',cliente:'Ferretería Del Sur',zona:'Lanús',dir:'Av. Hipólito Yrigoyen 4520, Lanús',contacto:'Milena Rozo',tel:'11 5555-0192',bultos:12,kg:340,m3:1.8,remito:'R 0003-00018841',horario:'Lun a vie 8:00–17:00',estado:'por_coordinar',requisitos:['Descarga en vereda','Ayudante'],tl:fac('22/09','17:40')}),
     o({id:'TR-24809',cli:'cep',cliente:'Corralón El Puente',zona:'Avellaneda',dir:'Av. Mitre 1840, Avellaneda',contacto:'Jorge Sosa',tel:'11 5555-8127',bultos:8,kg:610,m3:2.1,remito:'R 0003-00018829',horario:'Lun a vie 7:30–16:00',estado:'esperando_cliente',turnos:['Jue 25/09 · 10:00–12:00','Jue 25/09 · 12:00–14:00'],requisitos:['Descarga en vereda'],
       tl:fac('22/09','11:20').concat([{d:'23/09',t:'08:40',txt:'Propuesta enviada al cliente',sub:'WhatsApp · 2 franjas'}])}),
     C('TR-24802','saq','Sanitarios Quilmes','Quilmes','Calchaquí 3301, Quilmes','Ana Ferreyra','11 5555-4471',5,120,.6,'Jue 25/09 · 10:00–12:00',{acceso:'Portón negro sobre Calchaquí'}),
@@ -414,14 +452,14 @@ function seed(){
     C('TR-24791','aen','Aberturas Ensenada','Ensenada','Av. Horacio Cestino 620, Ensenada','Ricardo Funes','221 555-3317',12,780,3.6,'Jue 25/09 · 12:00–14:00',{requisitos:['Ayudante']}),
     C('TR-24787','flp','Ferretería La Plata Centro','La Plata','Calle 12 N° 890, La Plata','Noelia Arce','221 555-6672',6,260,1.2,'Jue 25/09 · 08:00–10:00',{acceso:'Descarga sobre calle 12, antes de las 11'}),
     /* ---- historial del cliente demo ---- */
-    o({id:'TR-24701',cli:'fds',cliente:'Ferretería Del Sur',zona:'Lanús',dir:'Av. Hipólito Yrigoyen 4520, Lanús',contacto:'Carlos Ibáñez',tel:'11 5555-0192',bultos:6,kg:180,m3:.9,remito:'R 0003-00018502',horario:'Lun a vie 8:00–17:00',estado:'cerrado',turno:'Jue 18/09 · 08:00–10:00',recibe:'Carlos Ibáñez',rango:'08:15 y 09:45',
-      entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Carlos Ibáñez',foto:null,firma:null,chofer:'Diego Ramírez'},respuesta:{tipo:'conforme',estrellas:5,detalle:''},
-      tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 bultos',sub:'Diego Ramírez'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
+    o({id:'TR-24701',cli:'fds',cliente:'Ferretería Del Sur',zona:'Lanús',dir:'Av. Hipólito Yrigoyen 4520, Lanús',contacto:'Milena Rozo',tel:'11 5555-0192',bultos:6,kg:180,m3:.9,remito:'R 0003-00018502',horario:'Lun a vie 8:00–17:00',estado:'cerrado',turno:'Jue 18/09 · 08:00–10:00',recibe:'Milena Rozo',rango:'08:15 y 09:45',
+      entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Milena Rozo',foto:null,firma:null,chofer:'Sofía Medina'},respuesta:{tipo:'conforme',estrellas:5,detalle:''},
+      tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 bultos',sub:'Sofía Medina'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
   ]};
 }
 let S, ui;
 function load(){
-  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===3){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
+  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===4){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
   S=seed();ui=freshUI();
 }
 function freshUI(){return {screen:'home',view:'panel',orderId:null,filter:'todos',zone:'todas',bell:false,draft:null,driver:null,stop:null,guideOff:false,kView:'lista',kOrder:null};}
@@ -436,7 +474,8 @@ function etaFor(i,r){return hm(etaMin(i,r));}
 /* rango horario que se informa al cliente al salir: ±45 min alrededor de la ETA, redondeado a 15 min */
 function rangoFor(i,r){const m=etaMin(i,r);const lo=Math.floor((m-45)/15)*15,hi=Math.ceil((m+45)/15)*15;return hm(lo)+' y '+hm(hi);}
 function minsNow(){const d=new Date();return d.getHours()*60+d.getMinutes();}
-function notify(to,title,body,oid){S.notifs.push(Object.assign({to,title,body,oid:oid||null,read:false},now()));}
+function notify(to,title,body,oid,act){S.notifs.push(Object.assign({to,title,body,oid:oid||null,act:act||null,read:false},now()));}
+function waOut(oid,body){S.notifs.push(Object.assign({to:'wa-out',oid:oid||null,body,read:true},now()));}
 function unread(to){return S.notifs.filter(n=>n.to===to&&!n.read&&(to!=='cliente'||!n.oid||ord(n.oid).cli==='fds')).length;}
 function myNotifs(to){return S.notifs.filter(n=>n.to===to&&(to!=='cliente'||!n.oid||ord(n.oid).cli==='fds')&&(to!=='chofer'||!n.drv||n.drv===ui.driver)).slice().reverse();}
 function bellHTML(to){
@@ -500,11 +539,11 @@ function guideInfo(){
     por_coordinar:['coord','Coordinador','Abrí el pedido TR-24817 (Ferretería Del Sur) y enviá la propuesta de horarios.'],
     reprogramar:['coord','Coordinador','El cliente pidió otra fecha para TR-24817. Proponé nuevos turnos.'],
     no_entregado:['coord','Coordinador','La entrega de TR-24817 no se pudo hacer. Proponé una nueva fecha.'],
-    esperando_cliente:['cliente','Cliente','Entrá como Ferretería Del Sur y elegí el horario de entrega.'],
+    esperando_cliente:['cliente','Cliente','Abrí el WhatsApp de Trento Logística y elegí el horario con un botón (o tocá el link para verlo en la web).'],
     confirmado:['coord','Coordinador','TR-24817 está confirmado. En Hojas de ruta › Zona Sur tocá “Completar camión” (máx. 5 clientes) y publicá.'],
     programado:['chofer','Chofer','Ingresá, completá el checklist e iniciá el recorrido: se avisa al coordinador y a cada cliente su rango horario.'],
     en_ruta:['chofer','Chofer','En la próxima parada tocá “Voy para allá” para avisar “llego en 15 min” y registrá la entrega. Como cliente mirá el seguimiento.'],
-    entregado:['cliente','Cliente','Revisá el comprobante y respondé cómo recibiste la mercadería.'],
+    entregado:['cliente','Cliente','En WhatsApp respondé “Todo conforme” o “Tengo una observación”.'],
     con_obs:['coord','Coordinador','El cliente dejó observaciones. Resolvé el reclamo y cerrá el pedido.'],
     cerrado:['home','Listo','Circuito completo para TR-24817. Podés reiniciar la demo desde el inicio.']
   };
@@ -513,7 +552,7 @@ function guideInfo(){
 function guideHTML(){
   if(ui.guideOff)return '';
   const g=guideInfo();
-  const here=(ui.screen===g[0])||(g[0]==='home'&&ui.screen==='home');
+  const here=[g[0],'login-'+g[0],'otp-'+g[0]].includes(ui.screen)&&!(g[0]==='cliente'&&ui.screen==='login-cliente'&&false);
   const btn=here?'':(g[0]==='home'?'<button type="button" data-a="logout">Ir al inicio</button>':'<button type="button" data-a="guideGo" data-r="'+g[0]+'">Entrar como '+g[1]+'</button>');
   return '<div class="guide"><span class="tag">Demo · siguiente paso</span><span class="txt"><b>'+esc(g[1])+':</b> '+esc(g[2])+'</span>'+btn+'<button type="button" class="x" data-a="guideHide" aria-label="Ocultar guía">✕</button></div>';
 }
@@ -527,6 +566,7 @@ function render(){
   else if(s==='login-coord')h=loginCoordV();
   else if(s==='login-chofer')h=loginChoferV();
   else if(s==='login-cliente')h=loginClienteV();
+  else if(s==='otp-cliente')h=otpClienteV();
   else if(s==='coord')h=coordV();
   else if(s==='chofer')h=choferV();
   else if(s==='cliente')h=clienteV();
@@ -537,6 +577,7 @@ function render(){
 }
 function afterRender(){
   if(ui.screen==='chofer'&&ui.view==='parada')initSig();
+  const wb=$('#wa-body');if(wb)wb.scrollTop=wb.scrollHeight;
 }
 
 /* ---------- home ---------- */
@@ -548,7 +589,7 @@ function homeV(){
     '<div class="roles">'+
       '<button type="button" class="role-card rc-coord" data-a="go" data-s="login-coord"><span class="ic">'+I.desk+'</span><h2>Coordinador</h2><p>Web de logística. Coordina turnos con clientes, arma y publica la hoja de ruta, gestiona reclamos.</p><span class="go">Ingresar →</span></button>'+
       '<button type="button" class="role-card rc-chofer" data-a="go" data-s="login-chofer"><span class="ic">'+I.truck+'</span><h2>Chofer</h2><p>App en el celular. Ve su recorrido, registra llegada, bultos, foto y firma en cada parada.</p><span class="go">Ingresar →</span></button>'+
-      '<button type="button" class="role-card rc-cliente" data-a="go" data-s="login-cliente"><span class="ic">'+I.box+'</span><h2>Cliente</h2><p>Entra desde el link de WhatsApp. Elige horario, sigue el camión y responde cómo recibió.</p><span class="go">Ingresar →</span></button>'+
+      '<button type="button" class="role-card rc-cliente" data-a="go" data-s="login-cliente"><span class="ic">'+I.box+'</span><h2>Cliente</h2><p>Recibe todo por WhatsApp de Trento Logística: elige horario con un botón, sigue el camión y confirma la recepción.</p><span class="go">Ingresar →</span></button>'+
     '</div>'+
     '<div class="home-foot"><div class="status-strip"><span class="small">Estado de la demo:</span>'+
       '<span class="pill p-warn">'+c(['por_coordinar','reprogramar','no_entregado'])+' por coordinar</span>'+
@@ -577,7 +618,7 @@ function loginCoordV(){
 function loginChoferV(){
   return '<div class="m-shell"><div class="login-red"><div class="m-content" style="justify-content:center;gap:16px">'+
     '<div class="logo-chip" style="align-self:flex-start;padding:8px 10px"><img src="'+LOGO+'" alt="Trento" style="height:28px"></div>'+
-    '<div class="m-title" style="font-size:28px">Buen día.<br>¿Listo para salir?</div>'+
+    '<div class="m-title" style="font-size:28px">Hola, Milena Rozo.<br>¿Lista para salir?</div>'+
     '<form data-form="loginChofer" style="display:flex;flex-direction:column;gap:14px">'+
     '<label class="f">DNI<input id="ld-dni" class="inp" inputmode="numeric" value="'+esc(ui.dniPref||'30.456.789')+'"></label>'+
     '<div class="quick"><span style="font-size:12px;opacity:.85">Probar como:</span>'+DRIVERS.map(d=>'<button type="button" data-a="pickDriver" data-id="'+d.id+'">'+esc(d.nombre)+'</button>').join('')+'</div>'+
@@ -587,24 +628,48 @@ function loginChoferV(){
     '<button type="button" class="linkbtn" style="color:#fff" data-a="logout">← Elegir otro perfil</button>'+
   '</div></div></div>';
 }
+function waMsgs(oid){return S.notifs.filter(n=>(n.to==='cliente'||n.to==='wa-out')&&(oid?n.oid===oid:(!n.oid||ord(n.oid).cli==='fds')));}
+/* botones de cada mensaje: respuestas rápidas (se contestan dentro de WhatsApp, sin código) y link a la web (pide código la primera vez) */
+function waBtns(n,live){
+  const o=n.oid&&ord(n.oid);if(!o)return '';
+  let q=[],cta=null;
+  if(n.act==='elegir'){if(o.estado==='esperando_cliente')q=o.turnos.map(t=>['waSlot',t.split(' · ')[0]+' · '+t.split(' · ')[1],t]);cta='Ver opciones en la web';}
+  else if(n.act==='salio'||n.act==='15')cta='Seguir mi envío';
+  else if(n.act==='entregado'){if(o.estado==='entregado')q=[['waOk','✅ Todo conforme',''],['waObs','⚠️ Tengo una observación','']];cta='Ver comprobante';}
+  else if(['conf','reclamo','fallo','msg'].includes(n.act))cta='Ver mi pedido';
+  if(!q.length&&!cta)return '';
+  if(!live)return '<div class="wa-btns">'+q.map(x=>'<span class="wa-qr ro">'+esc(x[1])+'</span>').join('')+(cta?'<span class="wa-cta ro">🔗 '+cta+'</span>':'')+'</div>';
+  return '<div class="wa-btns">'+q.map(x=>'<button type="button" class="wa-qr" data-a="'+x[0]+'" data-id="'+o.id+'" data-v="'+esc(x[2])+'">'+esc(x[1])+'</button>').join('')+
+    (cta?'<button type="button" class="wa-cta" data-a="waOpen" data-id="'+o.id+'">🔗 '+cta+'</button>':'')+'</div>';
+}
+function waThread(list,live){
+  let lastD='';
+  return list.map(n=>{
+    const day=n.d!==lastD?'<div class="wa-day">'+n.d+'</div>':'';lastD=n.d;
+    if(n.to==='wa-out')return day+'<div class="wa-b out"><span>'+esc(n.body)+'</span><time>'+n.t+' <i>✓✓</i></time></div>';
+    return day+'<div class="wa-b in">'+(n.title?'<b class="wa-t">'+esc(n.title)+'</b>':'')+'<span>'+esc(n.body)+'</span>'+waBtns(n,live)+'<time>'+n.t+'</time></div>';
+  }).join('');
+}
 function loginClienteV(){
-  const o=ord(HERO);
-  let msg;
-  if(o.estado==='esperando_cliente')msg='Hola Carlos 👋 Tu pedido <b>'+o.id+'</b> ('+o.bultos+' bultos) está listo. Elegí el horario de entrega acá:';
-  else if(o.estado==='en_ruta')msg='🚚 Tu pedido <b>'+o.id+'</b> ya está en camino. Seguilo en vivo:';
-  else if(o.estado==='entregado')msg='✅ Entregamos tu pedido <b>'+o.id+'</b>. Contanos cómo lo recibiste:';
-  else msg='Hola Carlos, seguí tus entregas de Trento desde acá:';
-  const ln=myNotifs('cliente')[0];if(ln)msg='<b>'+esc(ln.title)+'</b><br>'+esc(ln.body);
-  return '<div class="m-shell"><div class="m-top"><span class="mark"><img src="'+LOGO+'" alt=""></span><span class="ttl">Entregas Trento</span></div>'+
+  const list=waMsgs(null);
+  return '<div class="m-shell wa-shell"><div class="wa-top"><button type="button" class="back" data-a="logout" aria-label="Volver">←</button><span class="wa-av"><img src="'+LOGO+'" alt=""></span><div class="wa-who"><b>Trento Logística <span class="wa-ver" title="Cuenta de empresa verificada">✓</span></b><small>Cuenta de empresa</small></div>'+
+    (ui.kVerified?'<button type="button" class="out" data-a="go" data-s="cliente">Mis entregas</button>':'')+'</div>'+
+    guideHTML()+
+    '<div class="wa-body" id="wa-body"><div class="wa-sys">Chat de WhatsApp entre Trento Logística y Milena Rozo (Ferretería Del Sur · 11 5555-0192). Los avisos llegan desde el número oficial verificado de Trento.</div>'+
+    waThread(list,true)+
+    '</div><form class="wa-comp" data-form="waSend"><input id="wa-in" class="wa-inp" placeholder="Escribí un mensaje" autocomplete="off" aria-label="Mensaje"><button type="submit" class="wa-send" aria-label="Enviar">➤</button></form></div>';
+}
+function otpClienteV(){
+  return '<div class="m-shell"><div class="m-top"><button type="button" class="back" data-a="go" data-s="login-cliente" aria-label="Volver a WhatsApp">←</button><span class="ttl">entregas.trento.com.ar</span></div>'+
     '<div class="m-content">'+
-    '<div class="wa"><span class="lbl" style="color:var(--ok)">WhatsApp · Trento Logística</span><div class="bubble">'+msg+'<br><span style="color:var(--red);font-weight:700;word-break:break-all">entregas.trento.com.ar/c/8FK2Q</span></div></div>'+
     '<form class="card" data-form="loginCliente" style="text-align:center;align-items:center;gap:12px">'+
-    '<div class="m-title">Confirmá que sos vos</div><p class="small">Te enviamos un código de 6 dígitos al 11 •••• 0192</p>'+
+    '<img src="'+LOGO+'" alt="Trento" style="height:26px;background:#fff;border-radius:4px">'+
+    '<div class="m-title">Confirmá que sos vos</div><p class="small">Te enviamos un código de 6 dígitos por SMS al 11 •••• 0192</p>'+
     '<label class="f" style="width:100%">Código<input id="lk-otp" class="inp otp" inputmode="numeric" maxlength="6" value="481072"></label>'+
     '<div id="lk-err" class="err" hidden></div>'+
     '<button class="btn block" type="submit">Continuar</button>'+
     '<button type="button" class="linkbtn" data-a="toastOnly" data-m="Te reenviamos el código por SMS">Reenviar código</button></form>'+
-    '<button type="button" class="linkbtn" data-a="logout">← Elegir otro perfil</button>'+
+    '<div class="note info"><b>¿Por qué te pedimos un código?</b>El link de WhatsApp se puede reenviar. El código llega solo a tu celular registrado, así nadie más ve tu pedido. Lo pedimos una sola vez: este teléfono queda recordado 30 días.</div>'+
     '</div></div>';
 }
 
@@ -646,7 +711,7 @@ function cPanel(){
   if(!list.length)body='<tr><td colspan="6"><div class="empty">No hay pedidos con este filtro.</div></td></tr>';
   else if(ui.zone==='todas')body=ZN_ORDER.map(z=>{const l=list.filter(o=>zoneOf(o)===z);return l.length?'<tr class="grp"><td colspan="6">'+ZN[z]+' · '+l.length+'</td></tr>'+l.map(rows).join(''):'';}).join('');
   else body=list.map(rows).join('');
-  return '<div class="row sb"><div><div class="crumbs">Hoy '+n.d+'</div><h1>Hola, Milena</h1></div>'+
+  return '<div class="row sb"><div><div class="crumbs">Hoy '+n.d+'</div><h1>Hola, Milena Rozo</h1></div>'+
     '<div class="row"><button type="button" class="btn ghost sm" data-a="toastOnly" data-m="Se importaron 0 pedidos nuevos del sistema de facturación">Importar pedidos</button></div></div>'+
     '<div class="ztabs">'+ztab('todas','Todas las zonas')+ZN_ORDER.map(z=>ztab(z,ZN[z])).join('')+'</div>'+
     '<div class="kpis">'+kp.map(k=>'<button type="button" class="kpi'+(k[2]&&cnt(k[0])?' hot':'')+'" data-a="setFilter" data-f="'+k[0]+'" aria-pressed="'+(ui.filter===k[0])+'"><b>'+cnt(k[0])+'</b><span>'+k[1]+'</span></button>').join('')+'</div>'+
@@ -714,7 +779,10 @@ function cPedido(){
     '<div class="grid2"><div class="col"><div class="panel"><span class="lbl">Pedido y destino</span><dl class="kv">'+
       '<dt>Pedido</dt><dd>'+o.id+'</dd><dt>Dirección</dt><dd>'+esc(o.dir)+'</dd><dt>Contacto</dt><dd>'+esc(o.contacto)+' · '+esc(o.tel)+'</dd><dt>Carga</dt><dd>'+o.bultos+' bultos · '+kgf(o.kg)+' kg · '+m3f(o.m3)+' m³</dd><dt>Remito</dt><dd>'+esc(o.remito)+'</dd><dt>Horario del local</dt><dd>'+esc(o.horario)+'</dd></dl>'+
       '<span class="lbl">Requisitos de descarga</span><div class="chips" data-group="req">'+REQS.map(r=>'<button type="button" class="chip" data-t="multi" data-v="'+r+'" aria-pressed="'+o.requisitos.includes(r)+'">'+r+'</button>').join('')+'</div></div>'+
-      '<div class="panel"><span class="lbl">Historial</span>'+tlHTML(o)+'</div></div>'+
+      '<div class="panel"><span class="lbl">Historial</span>'+tlHTML(o)+'</div>'+
+      '<div class="panel"><div class="row sb"><span class="lbl">WhatsApp con el cliente</span><span class="small">'+esc(o.contacto)+' · '+esc(o.tel)+'</span></div>'+
+        '<div class="wa-body mini">'+(waMsgs(o.id).length?waThread(waMsgs(o.id),false):'<div class="wa-sys">Sin mensajes todavía. Los avisos automáticos aparecen acá.</div>')+'</div>'+
+        '<div class="row"><input id="cw-in" class="inp" style="flex:1" placeholder="Escribir al cliente por WhatsApp" aria-label="Mensaje al cliente"><button type="button" class="btn" data-a="cWaSend" data-id="'+o.id+'">Enviar</button></div></div></div>'+
     '<div class="col">'+act+'</div></div>';
 }
 function mapSVG(stops,doneFn,zone){
@@ -854,7 +922,7 @@ function choferV(){
   return mShell('Mi recorrido',body,'',false,d);
 }
 function mShell(title,body,foot,back,d){
-  return '<div class="m-shell"><div class="m-top">'+(back?'<button type="button" class="back" data-a="'+back+'" aria-label="Volver">←</button>':'<span class="mark"><img src="'+LOGO+'" alt=""></span>')+'<span class="ttl">'+esc(title)+'</span>'+bellHTML(ui.screen)+(d?'<span class="avatar">'+d.ini+'</span>':'')+'<button type="button" class="out" data-a="logout">Salir</button>'+bellPanel(ui.screen)+'</div>'+
+  return '<div class="m-shell"><div class="m-top">'+(back?'<button type="button" class="back" data-a="'+back+'" aria-label="Volver">←</button>':'<span class="mark"><img src="'+LOGO+'" alt=""></span>')+'<span class="ttl">'+esc(title)+'</span>'+(ui.screen==='cliente'?'<button type="button" class="out" data-a="go" data-s="login-cliente">WhatsApp</button>':bellHTML(ui.screen))+(d?'<span class="avatar">'+d.ini+'</span>':'')+'<button type="button" class="out" data-a="logout">Salir</button>'+bellPanel(ui.screen)+'</div>'+
     guideHTML()+'<div class="m-content">'+alertHTML(ui.screen)+body+'</div>'+(foot?'<div class="m-foot">'+foot+'</div>':'')+'</div>';
 }
 function dParada(){
@@ -910,7 +978,7 @@ function readPhoto(file,cb){
 function clienteV(){
   if(ui.kView==='pedido'&&ord(ui.kOrder))return kPedido();
   const l=S.orders.filter(o=>o.cli==='fds');
-  const body='<div><div class="small">Ferretería Del Sur</div><div class="m-title">Hola, Carlos</div></div>'+
+  const body='<div><div class="small">Ferretería Del Sur</div><div class="m-title">Hola, Milena Rozo</div></div>'+
     l.map(o=>'<button type="button" class="card tap'+(['esperando_cliente','entregado'].includes(o.estado)?' hl':'')+'" data-a="kOpen" data-id="'+o.id+'"><div class="row sb"><b>Pedido '+o.id+'</b><span class="pill '+EST[o.estado].kp+'">'+EST[o.estado].k+'</span></div><span class="small">'+o.bultos+' bultos · '+(o.turno?esc(o.turno):'Horario a coordinar')+'</span>'+trackerHTML(o,true)+'</button>').join('')+
     '<p class="small">¿Dudas? Escribinos por WhatsApp al 11 4000-8736.</p>';
   return mShell('Mis entregas',body,'',false,null);
@@ -930,7 +998,7 @@ function kPedido(){
       '<div class="opts" data-group="kslot">'+o.turnos.map((t,i)=>'<button type="button" class="opt" data-t="single" data-v="'+esc(t)+'" aria-pressed="'+(i===0)+'"><span class="dot"></span><span><b>'+esc(t.split(' · ')[1])+'</b><small>'+esc(t.split(' · ')[0])+'</small></span></button>').join('')+'</div>'+
       '<button type="button" class="linkbtn" data-a="kOther">Ninguno me sirve</button>'+
       '<div class="card" id="kother" hidden><label class="f">¿Qué día y horario te sirve?<textarea id="k-nota" class="inp" rows="2" placeholder="Ej.: viernes a la tarde"></textarea></label><button type="button" class="btn ghost block" data-a="kAskOther" data-id="'+o.id+'">Pedir otra fecha</button></div>'+
-      '<label class="f">¿Quién recibe?<input id="k-rec" class="inp" value="Carlos Ibáñez · Encargado de depósito"></label>'+
+      '<label class="f">¿Quién recibe?<input id="k-rec" class="inp" value="Milena Rozo · Encargada de depósito"></label>'+
       '<label class="f">Indicaciones para el chofer<textarea id="k-acc" class="inp" rows="2">Portón gris lateral. Tocar timbre “Depósito”.</textarea></label>';
     foot='<button type="button" class="btn block" data-a="kConfirm" data-id="'+o.id+'">Confirmar entrega</button>';
   }else if(e==='confirmado'||e==='programado'){
@@ -1001,11 +1069,12 @@ const A={
     o.requisitos=$$('[data-group="req"] [aria-pressed="true"]').map(b=>b.dataset.v);
     o.turnos=slots;o.turno=null;o.ruta=null;o.estado='esperando_cliente';
     log(o,'Propuesta enviada al cliente',can.join(' + ')+' · '+slots.length+' franja'+(slots.length>1?'s':'')+' · responder antes de '+$('#cn-lim').value);
-    notify('cliente','Elegí el horario de tu entrega','Tu pedido '+o.id+' ('+o.bultos+' bultos) está listo. Elegí cuándo recibirlo.',o.id);
+    notify('cliente','Elegí el horario de tu entrega','Hola '+o.contacto+' 👋 Tu pedido '+o.id+' ('+o.bultos+' bultos) está listo. Elegí cuándo querés recibirlo:',o.id,'elegir');
     render();toast('Propuesta enviada a '+o.cliente);
   },
+  cWaSend(el){const o=ord(el.dataset.id);const t=$('#cw-in').value.trim();if(!t)return;notify('cliente','Milena Rozo · Coordinación',t,o.id,'msg');log(o,'Mensaje por WhatsApp al cliente','“'+t+'”');render();toast('Mensaje enviado por WhatsApp');},
   resend(el){const o=ord(el.dataset.id);log(o,'Aviso reenviado al cliente','WhatsApp');render();toast('Aviso reenviado');},
-  confirmPhone(el){const o=ord(el.dataset.id);o.turno=$('#cp-slot').value;o.recibe=o.recibe||o.contacto;o.estado='confirmado';log(o,'Confirmado por teléfono: '+o.turno,'Cargado por Milena Rozo');render();toast('Turno confirmado');},
+  confirmPhone(el){const o=ord(el.dataset.id);o.turno=$('#cp-slot').value;o.recibe=o.recibe||o.contacto;o.estado='confirmado';log(o,'Confirmado por teléfono: '+o.turno,'Cargado por Milena Rozo · Coordinación');render();toast('Turno confirmado');},
   buildRoute(el){const z=zoneOf(ord(el.dataset.id));if(!ui.draft||ui.draft.zona!==z)ui.draft={camion:0,chofer:'dr',zona:z,stops:[]};if(!ui.draft.stops.includes(el.dataset.id)&&ui.draft.stops.length<MAX_STOPS)ui.draft.stops.push(el.dataset.id);ui.view='rutas';render();window.scrollTo(0,0);},
   drAdd(el){if(ui.draft.stops.length>=MAX_STOPS){toast('Máximo '+MAX_STOPS+' clientes por día');return;}ui.draft.stops.push(el.dataset.id);render();},
   drDel(el){ui.draft.stops.splice(+el.dataset.i,1);render();},
@@ -1026,7 +1095,7 @@ const A={
     const o=ord(el.dataset.id);const r=($('[data-group="res"] [aria-pressed="true"]')||{}).dataset;
     o.resolucion=r?r.v:'Resuelto';o.msgRes=$('#rs-msg').value.trim();o.estado='cerrado';
     log(o,'Reclamo '+o.reclamo+' resuelto: '+o.resolucion,'Mensaje enviado al cliente');log(o,'Pedido cerrado','');
-    notify('cliente','Resolvimos tu reclamo '+o.reclamo,o.resolucion+'. '+o.msgRes,o.id);
+    notify('cliente','Resolvimos tu reclamo '+o.reclamo,o.resolucion+'. '+o.msgRes,o.id,'reclamo');
     render();toast('Reclamo resuelto y pedido cerrado');
   },
   /* driver */
@@ -1035,14 +1104,14 @@ const A={
     const r=myRoute();r.estado='en_curso';r.salida=minsNow();const dv=drv(r.chofer);
     r.stops.forEach((id,i)=>{const o=ord(id);o.estado='en_ruta';o.rango=rangoFor(i,r);o.aviso15=false;
       log(o,'Salió del depósito','Aviso al cliente: llega entre las '+o.rango);
-      notify('cliente','🚚 Tu pedido salió','Tu pedido '+o.id+' ya salió del depósito. Llega hoy entre las '+o.rango+'. Estate atento para recibirlo.',o.id);});
+      notify('cliente','🚚 Tu pedido salió','Tu pedido '+o.id+' ya salió del depósito. Llega hoy entre las '+o.rango+'. Estate atento para recibirlo.',o.id,'salio');});
     notify('coord','🚚 '+r.id+' salió del depósito',dv.nombre+' · '+TRUCKS[r.camion].pat+' · '+ZN[r.zona]+' · '+r.stops.length+' clientes. Salida '+hm(r.salida)+'. Se avisó a cada cliente con su rango horario.');
     render();toast('Recorrido iniciado · avisamos a coordinación y a los clientes');
   },
   d15(el){
     const o=ord(el.dataset.id);o.aviso15=true;
     log(o,'Aviso: llega en ~15 min','WhatsApp al cliente');
-    notify('cliente','⏱ Tu pedido llega en 15 minutos',drv(ui.driver).nombre+' está a unos 15 minutos de '+o.dir+'. Preparate para recibir '+o.bultos+' bultos.',o.id);
+    notify('cliente','⏱ Tu pedido llega en 15 minutos',drv(ui.driver).nombre+' está a unos 15 minutos de '+o.dir+'. Preparate para recibir '+o.bultos+' bultos.',o.id,'15');
     render();toast('Avisamos a '+o.cliente+': llegás en ~15 min');
   },
   dOpen(el){const o=ord(el.dataset.id);ui.view='parada';ui.stop={id:o.id,llegada:null,bultos:0,foto:null,firma:null,recibio:''};render();window.scrollTo(0,0);},
@@ -1054,7 +1123,7 @@ const A={
     const o=ord(ui.stop.id);const m=$('[data-group="motivo"] [aria-pressed="true"]');
     o.estado='no_entregado';o.motivo=m?m.dataset.v:'Sin especificar';log(o,'No entregado: '+o.motivo,drv(ui.driver).nombre,'bad');
     notify('coord','No entregado: '+o.cliente,o.id+' · '+o.motivo+'. Hay que reprogramar.',o.id);
-    notify('cliente','No pudimos entregar tu pedido',o.id+': '+o.motivo+'. Te contactamos para reprogramar.',o.id);
+    notify('cliente','No pudimos entregar tu pedido',o.id+': '+o.motivo+'. Te contactamos para reprogramar.',o.id,'fallo');
     finishCheck(o);ui.view='ruta';ui.stop=null;render();toast('No entrega registrada · coordinación fue avisada');
   },
   dBul(el){const o=ord(ui.stop.id);ui.stop.bultos=Math.max(0,Math.min(o.bultos,ui.stop.bultos+ +el.dataset.d));updBul(o);},
@@ -1071,9 +1140,29 @@ const A={
     log(o,'Entregado '+s.bultos+'/'+o.bultos+' bultos'+(s.bultos<o.bultos?' (parcial)':''),'Recibió '+s.recibio+' · foto + firma',s.bultos<o.bultos?'warn':'');
     log(o,'Pedido de conformidad enviado al cliente','WhatsApp');
     notify('coord','Entregado: '+o.cliente,o.id+' · '+s.bultos+'/'+o.bultos+' bultos · recibió '+s.recibio+' a las '+n.t+'.',o.id);
-    notify('cliente','✅ Entregamos tu pedido',o.id+' · recibió '+s.recibio+' a las '+n.t+'. Contanos cómo lo recibiste.',o.id);
+    notify('cliente','✅ Entregamos tu pedido',o.id+' · recibió '+s.recibio+' a las '+n.t+'. ¿Cómo recibiste la mercadería?',o.id,'entregado');
     finishCheck(o);ui.view='ruta';ui.stop=null;render();window.scrollTo(0,0);toast('Entrega registrada · pedimos conformidad al cliente');
   },
+  /* WhatsApp (cliente) */
+  waOpen(el){ui.bell=false;if(ui.kVerified){ui.screen='cliente';ui.kView='pedido';ui.kOrder=el.dataset.id;ui.kStars=5;}else{ui.pend=el.dataset.id;ui.screen='otp-cliente';}render();window.scrollTo(0,0);},
+  waSlot(el){
+    const o=ord(el.dataset.id);if(o.estado!=='esperando_cliente'){toast('Ese pedido ya fue confirmado');return;}
+    const t=el.dataset.v;waOut(o.id,'Confirmo: '+t.replace(' · ',' de '));
+    o.turno=t;o.recibe=o.recibe||o.contacto;o.estado='confirmado';
+    log(o,'Cliente confirmó por WhatsApp: '+t,'Respuesta con botón · recibe '+o.recibe);
+    notify('coord','Turno confirmado: '+o.cliente,o.id+' · '+t+' · '+ZN[zoneOf(o)]+' (respondió por WhatsApp). Ya podés sumarlo a la hoja de ruta.',o.id);
+    notify('cliente','¡Listo! Entrega confirmada','Te esperamos el '+t.replace(' · ',' entre las ').replace('–',' y ')+'. El día de la entrega, cuando salga el camión, te avisamos con un rango horario.',o.id,'conf');
+    render();
+  },
+  waOk(el){
+    const o=ord(el.dataset.id);if(o.estado!=='entregado')return;
+    waOut(o.id,'✅ Todo conforme');o.respuesta={tipo:'conforme',estrellas:5,detalle:'',foto:null};o.estado='cerrado';
+    log(o,'Cliente: todo conforme','Respondió por WhatsApp');log(o,'Pedido cerrado','');
+    notify('coord','Recepción conforme: '+o.cliente,o.id+' · respondió por WhatsApp',o.id);
+    notify('cliente','¡Gracias por tu respuesta!','Registramos tu conformidad para '+o.id+'. ¡Hasta la próxima!',o.id,'gracias');
+    render();
+  },
+  waObs(el){waOut(el.dataset.id,'⚠️ Tengo una observación');A.waOpen(el);},
   /* client */
   kOpen(el){ui.bell=false;ui.kView='pedido';ui.kOrder=el.dataset.id;ui.kStars=5;ui.kFoto=null;render();window.scrollTo(0,0);},
   kBack(){ui.kView='lista';render();},
@@ -1107,18 +1196,25 @@ function finishCheck(o){const r=ruta(o.ruta);if(r&&r.stops.every(id=>ord(id).est
 
 /* forms */
 const F={
-  loginCoord(){ui.screen='coord';ui.view='panel';render();toast('Hola, Milena');},
+  loginCoord(){ui.screen='coord';ui.view='panel';render();toast('Hola, Milena Rozo');},
   loginChofer(){
     const dni=$('#ld-dni').value.replace(/\D/g,'');const d=DRIVERS.find(x=>x.dni===dni);const e=$('#ld-err');
-    if(!d){e.textContent='No encontramos ese DNI. Probá con Diego o Sofía.';e.hidden=false;return;}
+    if(!d){e.textContent='No encontramos ese DNI. Probá con Milena Rozo o Sofía Medina.';e.hidden=false;return;}
     if($('#ld-pin').value.length!==4){e.textContent='El PIN tiene 4 dígitos.';e.hidden=false;return;}
-    ui.driver=d.id;ui.screen='chofer';ui.view='ruta';ui.stop=null;render();toast('Hola, '+d.nombre.split(' ')[0]);
+    ui.driver=d.id;ui.screen='chofer';ui.view='ruta';ui.stop=null;render();toast('Hola, '+d.nombre);
   },
   loginCliente(){
     const v=$('#lk-otp').value.replace(/\D/g,'');const e=$('#lk-err');
     if(v.length!==6){e.textContent='El código tiene 6 dígitos.';e.hidden=false;return;}
-    ui.screen='cliente';const o=ord(HERO);
-    if(['esperando_cliente','en_ruta','entregado'].includes(o.estado)){ui.kView='pedido';ui.kOrder=HERO;ui.kStars=5;}else ui.kView='lista';
+    ui.kVerified=true;ui.screen='cliente';
+    if(ui.pend&&ord(ui.pend)){ui.kView='pedido';ui.kOrder=ui.pend;ui.kStars=5;}else ui.kView='lista';
+    ui.pend=null;render();toast('Hola, Milena Rozo');
+  },
+  waSend(){
+    const t=$('#wa-in').value.trim();if(!t)return;
+    const o=ord(HERO);waOut(null,t);
+    notify('coord','💬 WhatsApp de '+o.cliente,'“'+t+'”',o.id);
+    notify('cliente','Trento Logística','Recibimos tu mensaje. Milena Rozo de coordinación te responde en breve.',null,'auto');
     render();
   }
 };
