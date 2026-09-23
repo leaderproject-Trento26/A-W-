@@ -431,6 +431,23 @@ canvas.sig{display:block;width:100%;height:130px;border-radius:10px;border:1.5px
 .npsw{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
 .npsw .chip{padding:9px 0;border-radius:6px;text-align:center;font-size:13px}
 .npsw-l{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.qtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:980px){.qtiles{grid-template-columns:minmax(0,1fr)}}
+.tbl-wrap.flat{border:0;border-radius:0}
+table.qm{min-width:600px}
+table.qm td small{display:block;color:var(--muted);font-size:11px}
+table.qm tr.on td{background:var(--red-tint)}
+table.qm tbody tr:not([data-a]){cursor:default}
+.pbar{display:grid;grid-template-columns:1fr 40px;gap:8px;align-items:center}
+.pbar b{text-align:right;font-variant-numeric:tabular-nums}
+.ansrow{display:flex;gap:4px;flex-wrap:wrap}
+.ans{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.ans.ok{background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.ans.mid{background:var(--warn-tint);color:var(--warn)}
+.ans.bad{background:var(--nps-det);color:#fff}
+.encq{display:flex;flex-direction:column;gap:6px}
+.encq .opts3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.encq .chip{border-radius:8px;padding:9px 4px;text-align:center}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:11px 16px;border-radius:8px;font-weight:700;font-size:13px;box-shadow:var(--shadow);z-index:50;max-width:calc(100% - 32px);text-align:center}
 @media (prefers-reduced-motion:no-preference){
   .enter{animation:in .22s ease-out}
@@ -446,7 +463,7 @@ canvas.sig{display:block;width:100%;height:130px;border-radius:10px;border:1.5px
 (function(){
 'use strict';
 const LOGO='logo-trento.jpg';
-const KEY='trento-demo-v7';
+const KEY='trento-demo-v8';
 const HERO='TR-24817';
 const TRUCKS=[{pat:'AB 123 CD',kg:3500,m3:16,desc:'Mediano 3,5 t'},{pat:'AC 456 EF',kg:5000,m3:24,desc:'Grande 5 t'}];
 const DRIVERS=[{id:'dr',nombre:'Milena Rozo',dni:'30456789',ini:'MR',tel:'11 4402-7781'},{id:'sm',nombre:'Eugenia',dni:'32118404',ini:'EU',tel:'11 4402-7790'}];
@@ -496,16 +513,19 @@ function seed(){
   const conf=(d,t,turno,rec)=>fac(d,'10:05').concat([{d,t:'11:10',txt:'Propuesta enviada al cliente',sub:'WhatsApp · 2 franjas'},{d,t,txt:'Cliente confirmó '+turno,sub:'Recibe '+rec}]);
   const C=(id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,turno,extra)=>o(Object.assign({id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,remito:'R 0003-000'+id.slice(3),horario:'Lun a vie 8:00–17:00',estado:'confirmado',turno,recibe:contacto,acceso:'',tl:conf('22/09','15:30',turno,contacto)},extra||{}));
   const W=(t,title,body,act)=>({to:'cliente',d:'18/09',t,title,body,oid:'TR-24701',act,read:true,seen:true});
-  return {v:7,seq:{hr:3,rec:1182},rutas:[],npsHist:npsSeed(),notifs:[
+  return {v:8,seq:{hr:3,rec:1182},rutas:[],encHist:encSeed(),notifs:[
       W('07:32','🚚 Tu pedido salió','Tu pedido TR-24701 ya salió del depósito. Llega hoy entre las 08:15 y 09:45. Estate atento para recibirlo.','salio'),
       W('08:57','⏱ Tu pedido llega en 15 minutos','Eugenia está a unos 15 minutos de Av. Hipólito Yrigoyen 4520, Lanús. Preparate para recibir 6 bultos.','15'),
       W('09:13','✅ Entregamos tu pedido','TR-24701 · recibió Milena Rozo a las 09:12. ¿Cómo recibiste la mercadería?','entregado'),
       {to:'wa-out',d:'18/09',t:'09:40',body:'✅ Todo conforme',oid:'TR-24701',read:true},
       W('09:40','¡Gracias por tu respuesta!','Registramos tu conformidad para TR-24701. ¡Hasta la próxima!','gracias'),
-      W('09:40','⭐ Una pregunta rápida','Del 0 al 10, ¿qué tan probable es que recomiendes a Trento a un colega o conocido?','nps'),
-      {to:'wa-out',d:'18/09',t:'09:41',body:'10',oid:'TR-24701',read:true},
-      W('09:41','¡Gracias! 🙌','¿Qué fue lo que más valoraste de la entrega?','npsMot'),
-      {to:'wa-out',d:'18/09',t:'09:41',body:'Avisos y comunicación',oid:'TR-24701',read:true},
+      W('09:40','Nos ayudás a mejorar? 3 preguntas cortas · 1/3 ⏰','¿Llegamos dentro del horario que te avisamos?','qp'),
+      {to:'wa-out',d:'18/09',t:'09:40',body:'Sí, a tiempo',oid:'TR-24701',read:true},
+      W('09:40','2/3 📦','¿La mercadería llegó completa y en buen estado?','qm'),
+      {to:'wa-out',d:'18/09',t:'09:41',body:'Sí, todo bien',oid:'TR-24701',read:true},
+      W('09:41','3/3 🤝','¿Cómo fue la atención del chofer en la descarga?','qa'),
+      {to:'wa-out',d:'18/09',t:'09:41',body:'Muy buena',oid:'TR-24701',read:true},
+      W('09:41','¡Gracias! 🙌','Nos alegra que todo haya salido bien. ¡Hasta la próxima entrega!','gracias'),
       {to:'coord',d:'23/09',t:'08:02',title:'4 pedidos nuevos para coordinar',body:'Importados del sistema de facturación: Zona Sur 1, Zona Norte 1, Capital 1, La Plata 1.',read:false}
     ],orders:[
     /* ---- Zona Sur ---- */
@@ -533,13 +553,13 @@ function seed(){
     C('TR-24787','flp','Ferretería La Plata Centro','La Plata','Calle 12 N° 890, La Plata','Noelia Arce','221 555-6672',6,260,1.2,'Jue 25/09 · 08:00–10:00',{acceso:'Descarga sobre calle 12, antes de las 11'}),
     /* ---- historial del cliente demo ---- */
     o({id:'TR-24701',cli:'fds',cliente:'Ferretería Del Sur',zona:'Lanús',dir:'Av. Hipólito Yrigoyen 4520, Lanús',contacto:'Milena Rozo',tel:'11 5555-0192',bultos:6,kg:180,m3:.9,remito:'R 0003-00018502',horario:'Lun a vie 8:00–17:00',estado:'cerrado',turno:'Jue 18/09 · 08:00–10:00',recibe:'Milena Rozo',rango:'08:15 y 09:45',
-      entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Milena Rozo',foto:null,firma:null,chofer:'Eugenia'},respuesta:{tipo:'conforme',detalle:''},npsAsk:true,nps:{score:10,motivos:['Avisos y comunicación'],comentario:'',motDone:true},
+      entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Milena Rozo',foto:null,firma:null,chofer:'Eugenia'},respuesta:{tipo:'conforme',detalle:''},encAsk:true,enc:{p:'ok',m:'ok',a:'ok',done:true,comentario:''},
       tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 bultos',sub:'Eugenia'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
   ]};
 }
 let S, ui;
 function load(){
-  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===7){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
+  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===8){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
   S=seed();ui=freshUI();
 }
 function freshUI(){return {screen:'home',view:'panel',orderId:null,filter:'todos',zone:'todas',bell:false,draft:null,driver:null,stop:null,guideOff:false,kView:'lista',kOrder:null};}
@@ -625,10 +645,10 @@ function guideInfo(){
     en_ruta:['chofer','Chofer','En la próxima parada tocá “Voy para allá” para avisar “llego en 15 min” y registrá la entrega. Como cliente mirá el seguimiento.'],
     entregado:['cliente','Cliente','En WhatsApp respondé “Todo conforme” o “Tengo una observación”.'],
     con_obs:['coord','Coordinador','El cliente dejó observaciones. Resolvé el reclamo y cerrá el pedido.'],
-    cerrado:['coord','Coordinador','Circuito completo. Mirá el resultado en Calidad (NPS): puntaje, zonas, choferes y puntos de mejora.'],
-    npsPend:['cliente','Cliente','En WhatsApp respondé la encuesta: del 0 al 10, ¿recomendarías a Trento?']
+    cerrado:['coord','Coordinador','Circuito completo. Mirá Calidad: entrega perfecta, las 3 áreas, zonas, choferes y dónde hacer foco.'],
+    encPend:['cliente','Cliente','En WhatsApp respondé las 3 preguntas cortas: horario, mercadería y atención.']
   };
-  if(o.estado==='cerrado'&&o.npsAsk&&(!o.nps||!o.nps.motDone))return m.npsPend;
+  if(o.estado==='cerrado'&&o.encAsk&&!(o.enc&&o.enc.done))return m.encPend;
   return m[o.estado]||m.por_coordinar;
 }
 function guideHTML(){
@@ -639,104 +659,122 @@ function guideHTML(){
   return '<div class="guide"><span class="tag">Demo · siguiente paso</span><span class="txt"><b>'+esc(g[1])+':</b> '+esc(g[2])+'</span>'+btn+'<button type="button" class="x" data-a="guideHide" aria-label="Ocultar guía">✕</button></div>';
 }
 
-/* ---------- NPS ---------- */
-const NPS_MOT=['Puntualidad','Avisos y comunicación','Estado de la mercadería','Trato del chofer','Remitos y documentación','Descarga'];
-const NPSL={pro:'Promotor',pas:'Pasivo',det:'Detractor'};
-const NPS_WEEKS=['11/08','18/08','25/08','01/09','08/09','15/09','Esta semana'];
-const NPS_GOAL=50;
-const npsCat=s=>s>=9?'pro':s>=7?'pas':'det';
-function npsCalc(l){const n=l.length;const c={pro:0,pas:0,det:0};l.forEach(x=>c[npsCat(x.score)]++);return {n,pro:c.pro,pas:c.pas,det:c.det,nps:n?Math.round((c.pro-c.det)/n*100):0};}
-const sgn=v=>(v>0?'+':v<0?'−':'')+Math.abs(v);
-function npsBadge(s){const c=npsCat(s);return '<span class="nps-b '+c+'">'+s+'/10 · '+NPSL[c]+'</span>';}
-/* historial de respuestas de ejemplo, generado de forma determinística */
-function npsSeed(){
-  let x=11;const r=()=>{x=(x*1103515245+12345)%2147483648;return x/2147483648;};
+/* ---------- Encuesta de calidad: 3 preguntas puntuales ---------- */
+/* Cada pregunta mide un área que se puede mejorar y tiene un responsable. 3 opciones = 3 botones de respuesta rápida en WhatsApp. */
+const ENC=[
+  {k:'p',n:1,icon:'⏰',area:'Puntualidad',owner:'Planificación de rutas',q:'¿Llegamos dentro del horario que te avisamos?',opts:{ok:'Sí, a tiempo',mid:'Con demora',bad:'Muy tarde'},okTxt:'a tiempo',
+   act:'Ajustar el rango horario y la carga de paradas por ruta; revisar tiempos de descarga reales.'},
+  {k:'m',n:2,icon:'📦',area:'Mercadería',owner:'Depósito y carga',q:'¿La mercadería llegó completa y en buen estado?',opts:{ok:'Sí, todo bien',mid:'Faltó algo',bad:'Llegó dañada'},okTxt:'completa y sana',
+   act:'Control de carga contra remito antes de salir y mejor sujeción/embalaje de vidrios.'},
+  {k:'a',n:3,icon:'🤝',area:'Atención',owner:'Choferes',q:'¿Cómo fue la atención del chofer en la descarga?',opts:{ok:'Muy buena',mid:'Regular',bad:'Mala'},okTxt:'muy buena',
+   act:'Reforzar protocolo de descarga y trato con el cliente; feedback individual a choferes.'}
+];
+const ENC_WEEKS=['11/08','18/08','25/08','01/09','08/09','15/09','Esta semana'];
+const ENC_GOAL=85;
+const LV={ok:'Bien',mid:'Parcial',bad:'Mal'};
+const perfect=x=>x.p==='ok'&&x.m==='ok'&&x.a==='ok';
+const pc=(a,b)=>b?Math.round(a/b*100):0;
+function encCalc(l){const n=l.length;const r={n,perf:pc(l.filter(perfect).length,n)};ENC.forEach(e=>{const c={ok:0,mid:0,bad:0};l.forEach(x=>c[x[e.k]]++);r[e.k]=Object.assign(c,{pct:pc(c.ok,n)});});return r;}
+function lvPill(v){return v>=ENC_GOAL?'p-ok':v>=70?'p-warn':'p-bad';}
+function encChips(x){return ENC.map(e=>'<span class="ans '+x[e.k]+'" title="'+e.area+'">'+e.icon+' '+esc(e.opts[x[e.k]])+'</span>').join('');}
+/* respuestas de ejemplo, generadas de forma determinística */
+function encSeed(){
+  let s=13;const r=()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648;};
   const pick=a=>a[Math.floor(r()*a.length)];
-  const zp={cap:.08,sur:-.02,norte:.06,plata:-.14};
+  const zAdj={cap:{p:.04,m:0,a:0},sur:{p:-.04,m:-.06,a:0},norte:{p:.02,m:.02,a:0},plata:{p:-.16,m:-.02,a:0}};
+  const dAdj={'Milena Rozo':{p:0,a:.04},'Eugenia':{p:-.03,a:-.08}};
   const cli={cap:['Obra Torre Belgrano','Estudio Palermo','Local Caballito'],sur:['Sanitarios Quilmes','Pinturerías Banfield','Maderera Lomas','Aberturas Temperley','Vidriería Quilmes Oeste','Corralón El Puente'],norte:['Vidrios San Isidro','Obra Nordelta Tigre','Aluminios Vicente López','Distribuidora Norte SRL'],plata:['Vidriería City Bell','Aberturas Ensenada','Ferretería La Plata Centro','Construcciones Platenses']};
-  const motBad=['Puntualidad','Puntualidad','Puntualidad','Avisos y comunicación','Avisos y comunicación','Estado de la mercadería','Estado de la mercadería','Remitos y documentación','Trato del chofer','Descarga'];
-  const motGood=['Puntualidad','Trato del chofer','Trato del chofer','Avisos y comunicación','Avisos y comunicación','Estado de la mercadería'];
-  const com={'Puntualidad':['Llegaron casi 2 horas después del rango que nos avisaron.','Vinieron fuera de horario y no teníamos gente para descargar.'],'Avisos y comunicación':['No nos llegó el aviso de 15 minutos.','Se atrasaron y nadie nos avisó.'],'Estado de la mercadería':['Dos vidrios llegaron con las esquinas astilladas.','Algunas cajas llegaron mojadas.'],'Remitos y documentación':['El remito no coincidía con lo entregado.'],'Trato del chofer':['El chofer no quiso ayudar a bajar la carga.'],'Descarga':['Pedimos ayudante y no vino.']};
-  const good=['Llegó dentro del rango y muy bien embalado.','El aviso de 15 minutos nos organiza mucho.','Muy amable el chofer.','Todo perfecto, como siempre.','Excelente seguimiento por WhatsApp.'];
+  const com={p:{mid:['Llegaron una hora después del rango.','Se atrasaron pero avisaron.'],bad:['Vinieron fuera de horario y no teníamos gente para descargar.','Llegaron casi 3 horas tarde.']},
+             m:{mid:['Faltaba una caja, llegó al día siguiente.','El remito decía 12 bultos y llegaron 11.'],bad:['Dos vidrios llegaron con las esquinas astilladas.','Cajas mojadas y un paño rajado.']},
+             a:{mid:['El chofer apurado, no esperó a que controlemos.','No ayudó a acomodar la carga.'],bad:['El chofer no quiso ayudar a bajar la carga.','Trato poco amable con nuestro personal.']}};
+  const good=['Todo perfecto, como siempre.','El aviso de 15 minutos nos organiza mucho.','Muy amable el chofer.','Llegó dentro del rango y bien embalado.'];
   const days=[['11/08','12/08','13/08','14/08','15/08'],['18/08','19/08','20/08','21/08','22/08'],['25/08','26/08','27/08','28/08','29/08'],['01/09','02/09','03/09','04/09','05/09'],['08/09','09/09','10/09','11/09','12/09'],['15/09','16/09','17/09','18/09','19/09'],['22/09','23/09']];
   const out=[];let id=0;
-  NPS_WEEKS.forEach((w,wi)=>{
-    const k=wi===6?5:17+Math.floor(r()*5);
+  ENC_WEEKS.forEach((w,wi)=>{
+    const k=wi===6?6:17+Math.floor(r()*5);
     for(let i=0;i<k;i++){
-      const z=pick(ZN_ORDER);const pPro=.44+wi*.035+zp[z];const u=r();
-      const cat=u<pPro?'pro':u<pPro+.3?'pas':'det';
-      const score=cat==='pro'?(r()<.55?10:9):cat==='pas'?(r()<.5?8:7):pick([2,3,4,5,5,6,6,6]);
-      let mot=cat==='pro'?[pick(motGood)]:[pick(motBad)];
-      if(cat==='det'&&r()<.35){const m2=pick(motBad);if(!mot.includes(m2))mot.push(m2);}
-      const comentario=cat==='det'?pick(com[mot[0]]):cat==='pas'?(r()<.5?pick(com[mot[0]]):''):(r()<.35?pick(good):'');
-      out.push({id:'N'+(++id),cliente:pick(cli[z]),zona:z,chofer:r()<.5?'Milena Rozo':'Eugenia',score,motivos:mot,comentario,d:pick(days[wi]),w:wi,followed:!(cat==='det'&&wi>=5)});
+      const z=pick(ZN_ORDER),ch=r()<.5?'Milena Rozo':'Eugenia';
+      const base={p:.72+wi*.025,m:.86,a:.88};
+      const lv=key=>{const pOk=base[key]+(zAdj[z][key]||0)+((dAdj[ch]||{})[key]||0);const u=r();return u<pOk?'ok':u<pOk+(1-pOk)*.65?'mid':'bad';};
+      const x={id:'E'+(++id),cliente:pick(cli[z]),zona:z,chofer:ch,p:lv('p'),m:lv('m'),a:lv('a'),comentario:'',d:pick(days[wi]),w:wi};
+      const worst=ENC.find(e=>x[e.k]==='bad')||ENC.find(e=>x[e.k]==='mid');
+      x.comentario=worst?(r()<.8?pick(com[worst.k][x[worst.k]]):''):(r()<.25?pick(good):'');
+      x.followed=!(ENC.some(e=>x[e.k]==='bad')&&wi>=5);
+      out.push(x);
     }
   });
   return out;
 }
-function askNps(o){o.npsAsk=true;notify('cliente','⭐ Una pregunta rápida','Del 0 al 10, ¿qué tan probable es que recomiendes a Trento a un colega o conocido?',o.id,'nps');}
-function npsCommit(o){
-  const c=npsCat(o.nps.score);
-  S.npsHist.push({id:'N'+(S.npsHist.length+1),oid:o.id,cliente:o.cliente,zona:zoneOf(o),chofer:o.entrega?o.entrega.chofer:'—',score:o.nps.score,motivos:o.nps.motivos.slice(),comentario:o.nps.comentario||'',d:now().d,w:6,followed:c!=='det'});
-  log(o,'Encuesta NPS: '+o.nps.score+'/10 ('+NPSL[c]+')',o.nps.motivos.length?(c==='pro'?'Destacó: ':'A mejorar: ')+o.nps.motivos.join(', '):'',c==='det'?'bad':c==='pas'?'warn':'');
-  if(c==='det')notify('coord','⚠️ Cliente detractor: '+o.cliente,'Puntuó '+o.nps.score+'/10'+(o.nps.motivos.length?' · '+o.nps.motivos.join(', '):'')+'. Contactalo desde Calidad (NPS).',o.id);
+function askSurvey(o){o.encAsk=true;o.enc={};encNext(o);}
+function encNext(o){
+  const e=ENC.find(q=>!o.enc[q.k]);
+  if(e){notify('cliente',(e.n===1?'Nos ayudás a mejorar? 3 preguntas cortas · ':'')+e.n+'/3 '+e.icon,e.q,o.id,'q'+e.k);return;}
+  o.enc.done=true;encCommit(o);
+  if(ENC.some(q=>o.enc[q.k]!=='ok')){o.encAwait=true;notify('cliente','Gracias por contarnos 🙏','¿Qué deberíamos cambiar para la próxima? Escribilo en un mensaje: lo lee directamente coordinación.',o.id,'qcom');}
+  else notify('cliente','¡Gracias! 🙌','Nos alegra que todo haya salido bien. ¡Hasta la próxima entrega!',o.id,'gracias');
 }
-function npsUpdateComment(o){const h=S.npsHist.find(x=>x.oid===o.id);if(h)h.comentario=o.nps.comentario;}
+function encCommit(o){
+  const x={id:'E'+(S.encHist.length+1),oid:o.id,cliente:o.cliente,zona:zoneOf(o),chofer:o.entrega?o.entrega.chofer:'—',p:o.enc.p,m:o.enc.m,a:o.enc.a,comentario:o.enc.comentario||'',d:now().d,w:6};
+  const bad=ENC.filter(e=>x[e.k]==='bad');x.followed=!bad.length;
+  S.encHist.push(x);
+  const probs=ENC.filter(e=>x[e.k]!=='ok');
+  log(o,'Encuesta de calidad: '+(probs.length?probs.length+' punto'+(probs.length>1?'s':'')+' a mejorar':'entrega perfecta'),ENC.map(e=>e.area+': '+e.opts[x[e.k]]).join(' · '),bad.length?'bad':probs.length?'warn':'');
+  if(bad.length)notify('coord','⚠️ Problema en entrega: '+o.cliente,bad.map(e=>e.area+' — '+e.opts[x[e.k]]).join(' · ')+'. Contactalo desde Calidad.',o.id);
+}
+function encUpdateComment(o){const h=S.encHist.find(x=>x.oid===o.id);if(h)h.comentario=o.enc.comentario;}
 
-/* ---------- Calidad (NPS) dashboard ---------- */
+/* ---------- tablero de Calidad ---------- */
 function cCalidad(){
-  const all=S.npsHist;const f=ui.qz&&ui.qz!=='todas'?all.filter(x=>x.zona===ui.qz):all;
-  const k=npsCalc(f);
-  const pct=v=>k.n?Math.round(v/k.n*100):0;
+  const all=S.encHist;const zsel=ui.qz&&ui.qz!=='todas'?ui.qz:null;const f=zsel?all.filter(x=>x.zona===zsel):all;
+  const k=encCalc(f);
   const zchips='<div class="chips">'+[['todas','Todas las zonas']].concat(ZN_ORDER.map(z=>[z,ZN[z]])).map(z=>'<button type="button" class="chip" data-a="setQz" data-z="'+z[0]+'" aria-pressed="'+((ui.qz||'todas')===z[0])+'">'+z[1]+'</button>').join('')+'</div>';
-  /* hero */
-  const hero='<div class="panel nps-hero"><span class="lbl">NPS · últimas 7 semanas'+(ui.qz&&ui.qz!=='todas'?' · '+ZN[ui.qz]:'')+'</span>'+
-    '<div class="nps-top"><div class="nps-num'+(k.nps<0?' neg':'')+'">'+sgn(k.nps)+'</div><div class="small">'+k.n+' respuestas<br>Meta: '+sgn(NPS_GOAL)+' · '+(k.nps>=NPS_GOAL?'<b style="color:var(--ok)">✓ cumplida</b>':'<b style="color:var(--warn)">faltan '+(NPS_GOAL-k.nps)+' pts</b>')+'</div></div>'+
-    '<div class="nps-stack" role="img" aria-label="Detractores '+pct(k.det)+'%, pasivos '+pct(k.pas)+'%, promotores '+pct(k.pro)+'%">'+
-      [['det',k.det,'Detractores (0–6)'],['pas',k.pas,'Pasivos (7–8)'],['pro',k.pro,'Promotores (9–10)']].filter(x=>x[1]).map(x=>'<i class="'+x[0]+'" style="flex:'+x[1]+'" tabindex="0" data-tip="'+x[2]+': '+x[1]+' · '+pct(x[1])+'%"></i>').join('')+'</div>'+
-    '<div class="nps-leg"><span><i class="sw det"></i>Detractores <b>'+pct(k.det)+'%</b> ('+k.det+')</span><span><i class="sw pas"></i>Pasivos <b>'+pct(k.pas)+'%</b> ('+k.pas+')</span><span><i class="sw pro"></i>Promotores <b>'+pct(k.pro)+'%</b> ('+k.pro+')</span></div>'+
-    '<p class="small">NPS = % promotores − % detractores. Va de −100 a +100. Se pregunta después de cada entrega: “Del 0 al 10, ¿qué tan probable es que recomiendes a Trento?”</p></div>';
-  /* distribution 0-10 */
-  const cnt=Array.from({length:11},(_,i)=>f.filter(x=>x.score===i).length);const mx=Math.max(1,...cnt);
-  const dist='<div class="panel"><span class="lbl">Distribución de puntajes</span><div class="dist">'+cnt.map((c,i)=>'<div class="dcol"><span class="dv">'+(c||'')+'</span><i class="'+npsCat(i)+'" style="height:'+Math.max(c?4:0,Math.round(c/mx*100))+'%" tabindex="0" data-tip="Puntaje '+i+': '+c+' respuesta'+(c===1?'':'s')+' ('+NPSL[npsCat(i)].toLowerCase()+')"></i><span class="dx">'+i+'</span></div>').join('')+'</div>'+
-    '<div class="dist-l"><span>Detractores</span><span>Pasivos</span><span>Promotores</span></div></div>';
-  /* weekly trend */
-  const wk=NPS_WEEKS.map((w,i)=>{const l=f.filter(x=>x.w===i);return {w,n:l.length,v:npsCalc(l).nps};});
-  const W=900,H=240,pl=40,pr=20,pt=16,pb=28;
-  const vals=wk.filter(p=>p.n).map(p=>p.v);const lo=Math.min(0,Math.floor(Math.min(...vals,NPS_GOAL)/25)*25),hi=100;
+  const hero='<div class="panel"><span class="lbl">Entrega perfecta · últimas 7 semanas'+(zsel?' · '+ZN[zsel]:'')+'</span>'+
+    '<div class="nps-top"><div class="nps-num">'+k.perf+'%</div><div class="small">de las entregas salieron bien en las 3 preguntas<br>'+k.n+' respuestas · Meta: '+ENC_GOAL+'% · '+(k.perf>=ENC_GOAL?'<b style="color:var(--ok)">✓ cumplida</b>':'<b style="color:var(--warn)">faltan '+(ENC_GOAL-k.perf)+' pts</b>')+'</div></div>'+
+    '<p class="small">Entrega perfecta = llegó a tiempo, completa y en buen estado, y con muy buena atención. Es el indicador que resume la calidad y el que conviene seguir semana a semana.</p></div>';
+  const tile=e=>{const c=k[e.k];return '<div class="panel qtile"><div class="row sb"><span class="lbl">'+e.icon+' '+e.n+'. '+e.area+'</span><span class="small">Resp.: '+e.owner+'</span></div>'+
+    '<p class="small" style="margin-top:-4px">“'+e.q+'”</p>'+
+    '<div class="meter-big"><b>'+c.pct+'%</b><span class="small">'+e.okTxt+'</span><span class="pill '+lvPill(c.pct)+'" style="margin-left:auto">'+(c.pct>=ENC_GOAL?'En meta':c.pct>=70?'A mejorar':'Crítico')+'</span></div>'+
+    '<div class="nps-stack" role="img" aria-label="'+e.area+': '+['ok','mid','bad'].map(v=>e.opts[v]+' '+pc(c[v],k.n)+'%').join(', ')+'">'+['ok','mid','bad'].filter(v=>c[v]).map(v=>'<i class="'+{ok:'pro',mid:'pas',bad:'det'}[v]+'" style="flex:'+c[v]+'" tabindex="0" data-tip="'+esc(e.opts[v])+': '+c[v]+' ('+pc(c[v],k.n)+'%)"></i>').join('')+'</div>'+
+    '<div class="nps-leg">'+['ok','mid','bad'].map(v=>'<span><i class="sw '+{ok:'pro',mid:'pas',bad:'det'}[v]+'"></i>'+esc(e.opts[v])+' <b>'+pc(c[v],k.n)+'%</b></span>').join('')+'</div></div>';};
+  /* weekly trend of perfect deliveries */
+  const wk=ENC_WEEKS.map((w,i)=>{const l=f.filter(x=>x.w===i);return {w,n:l.length,v:encCalc(l).perf};});
+  const W=900,H=240,pl=40,pr=20,pt=16,pb=28,lo=Math.min(50,Math.floor(Math.min(...wk.filter(p=>p.n).map(p=>p.v))/10)*10),hi=100;
   const X=i=>pl+i*(W-pl-pr)/(wk.length-1),Y=v=>pt+(hi-v)/(hi-lo)*(H-pt-pb);
-  const ticks=[];for(let t=lo;t<=hi;t+=25)ticks.push(t);
-  const pts=wk.map((p,i)=>p.n?[X(i),Y(p.v),p,i]:null).filter(Boolean);
-  const line='<div class="panel"><span class="lbl">Evolución semanal del NPS</span><div class="chart-wrap"><svg viewBox="0 0 '+W+' '+H+'" class="trend" role="img" aria-label="NPS por semana">'+
-    ticks.map(t=>'<line class="gl'+(t===0?' zero':'')+'" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'"/><text class="ax" x="'+(pl-6)+'" y="'+(Y(t)+3)+'" text-anchor="end">'+sgn(t)+'</text>').join('')+
-    '<line class="goal" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(NPS_GOAL)+'" y2="'+Y(NPS_GOAL)+'"/><text class="goal-t" x="'+(pl+6)+'" y="'+(Y(NPS_GOAL)-6)+'">Meta '+sgn(NPS_GOAL)+'</text>'+
+  const ticks=[];for(let t=lo;t<=hi;t+=10)ticks.push(t);
+  const pts=wk.map((p,i)=>p.n?[X(i),Y(p.v),p]:null).filter(Boolean);
+  const line='<div class="panel"><span class="lbl">Entrega perfecta por semana</span><div class="chart-wrap"><svg viewBox="0 0 '+W+' '+H+'" class="trend" role="img" aria-label="Porcentaje de entregas perfectas por semana">'+
+    ticks.map(t=>'<line class="gl" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'"/><text class="ax" x="'+(pl-6)+'" y="'+(Y(t)+3)+'" text-anchor="end">'+t+'%</text>').join('')+
+    '<line class="goal" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(ENC_GOAL)+'" y2="'+Y(ENC_GOAL)+'"/><text class="goal-t" x="'+(pl+6)+'" y="'+(Y(ENC_GOAL)-6)+'">Meta '+ENC_GOAL+'%</text>'+
     wk.map((p,i)=>'<text class="ax" x="'+X(i)+'" y="'+(H-8)+'" text-anchor="'+(i===wk.length-1?'end':i===0?'start':'middle')+'">'+p.w+'</text>').join('')+
     (pts.length>1?'<path class="tl-area" d="M'+pts.map(q=>q[0]+' '+q[1]).join(' L')+' L'+pts[pts.length-1][0]+' '+Y(lo)+' L'+pts[0][0]+' '+Y(lo)+' Z"/><path class="tl-line" d="M'+pts.map(q=>q[0]+' '+q[1]).join(' L')+'"/>':'')+
-    pts.map((q,j)=>'<g tabindex="0" data-tip="Semana '+q[2].w+': NPS '+sgn(q[2].v)+' · '+q[2].n+' respuestas"><circle class="hit" cx="'+q[0]+'" cy="'+q[1]+'" r="14"/><circle class="pt'+(j===pts.length-1?' last':'')+'" cx="'+q[0]+'" cy="'+q[1]+'" r="'+(j===pts.length-1?5:4)+'"/></g>').join('')+
-    (pts.length?'<text class="lbl-last" x="'+(pts[pts.length-1][0]-8)+'" y="'+(pts[pts.length-1][1]-10)+'" text-anchor="end">'+sgn(pts[pts.length-1][2].v)+'</text>':'')+
-  '</svg></div><p class="small">Pasá el mouse por los puntos para ver cada semana. “Esta semana” es parcial (pocas respuestas) e incluye las que se hagan en la demo.</p></div>';
-  /* by zone / driver: diverging bars around 0 */
-  const divRows=(groups,sel)=>'<div class="dtab" role="table">'+groups.map(g=>{const c=npsCalc(g.l);const w=Math.min(50,Math.abs(c.nps)/2);return '<div class="drow'+(sel&&sel===g.key?' on':'')+'" role="row"'+(g.key?' data-a="setQz" data-z="'+g.key+'" tabindex="0"':'')+'><span class="dn" role="cell">'+esc(g.name)+'<small>'+c.n+' resp.</small></span><span class="dbar" role="cell" data-tip="'+esc(g.name)+': NPS '+sgn(c.nps)+' · '+c.pro+' promotores, '+c.pas+' pasivos, '+c.det+' detractores"><i class="axis0"></i><i class="b '+(c.nps<0?'neg':'pos')+'" style="width:'+w+'%;'+(c.nps<0?'right:50%':'left:50%')+'"></i></span><b class="dvv'+(c.nps<0?' neg':'')+'" role="cell">'+sgn(c.nps)+'</b></div>';}).join('')+'<div class="dscale"><span>−100</span><span>0</span><span>+100</span></div></div>';
-  const byZone='<div class="panel"><span class="lbl">NPS por zona</span>'+divRows(ZN_ORDER.map(z=>({key:z,name:ZN[z],l:all.filter(x=>x.zona===z)})),ui.qz)+'<p class="small">Tocá una zona para filtrar todo el tablero.</p></div>';
-  const byDrv='<div class="panel"><span class="lbl">NPS por chofer</span>'+divRows(DRIVERS.map(d=>({name:d.nombre,l:f.filter(x=>x.chofer===d.nombre)})))+'</div>';
-  /* improvement points */
-  const tally=(l)=>{const m={};l.forEach(x=>x.motivos.forEach(v=>m[v]=(m[v]||0)+1));return Object.entries(m).sort((a,b)=>b[1]-a[1]);};
-  const bad=tally(f.filter(x=>x.score<=8)),goodT=tally(f.filter(x=>x.score>=9));
-  const hbars=(t,cls)=>{const mx2=Math.max(1,...t.map(x=>x[1]));const tot=t.reduce((a,x)=>a+x[1],0);return t.length?'<div class="hb">'+t.map(x=>'<div class="hrow"><span>'+esc(x[0])+'</span><span class="htrack"><i class="'+cls+'" style="width:'+Math.round(x[1]/mx2*100)+'%" tabindex="0" data-tip="'+esc(x[0])+': '+x[1]+' menciones ('+Math.round(x[1]/tot*100)+'%)"></i></span><b>'+x[1]+'</b></div>').join('')+'</div>':'<div class="small">Sin datos.</div>';};
-  const mejoras='<div class="panel"><span class="lbl">Puntos de mejora</span><p class="small">Qué mencionan detractores y pasivos (0 a 8).</p>'+hbars(bad,'bad')+
-    (bad.length?'<div class="note warn"><b>Prioridad: '+esc(bad[0][0])+'</b>'+bad[0][1]+' menciones. '+({'Puntualidad':'Revisar el cálculo del rango horario y la carga de rutas en '+ZN[ui.qz&&ui.qz!=='todas'?ui.qz:ZN_ORDER.slice().sort((a,b)=>npsCalc(all.filter(x=>x.zona===a)).nps-npsCalc(all.filter(x=>x.zona===b)).nps)[0]]+'.','Avisos y comunicación':'Verificar que el aviso de 15 minutos salga en todas las paradas.','Estado de la mercadería':'Reforzar embalaje y sujeción de vidrios en el camión.'}[bad[0][0]]||'Armar un plan de acción con el equipo.')+'</div>':'')+'</div>';
-  const fuertes='<div class="panel"><span class="lbl">Lo más valorado</span><p class="small">Qué destacan los promotores (9 y 10).</p>'+hbars(goodT,'good')+'</div>';
-  /* follow-ups */
-  const pend=all.filter(x=>npsCat(x.score)==='det'&&!x.followed).sort((a,b)=>b.w-a.w);
-  const casos='<div class="panel"><div class="row sb"><span class="lbl">Detractores a contactar</span><span class="pill '+(pend.length?'p-bad':'p-ok')+'">'+(pend.length?pend.length+' pendientes':'Al día')+'</span></div>'+
-    (pend.length?pend.map(x=>'<div class="case"><div class="row sb"><b>'+esc(x.cliente)+'</b>'+npsBadge(x.score)+'</div><span class="small">'+x.d+' · '+ZN[x.zona]+' · chofer '+esc(x.chofer)+' · '+esc(x.motivos.join(', '))+'</span>'+(x.comentario?'<q>'+esc(x.comentario)+'</q>':'')+'<div class="row end"><button type="button" class="btn ghost sm" data-a="npsFollow" data-id="'+x.id+'">Marcar como contactado</button></div></div>').join(''):'<div class="small">No hay detractores sin contactar. 👏</div>')+
-    '<p class="small">Regla sugerida: llamar a todo detractor dentro de las 48 h y registrar la acción.</p></div>';
+    pts.map((q,j)=>'<g tabindex="0" data-tip="Semana '+q[2].w+': '+q[2].v+'% perfectas · '+q[2].n+' respuestas"><circle class="hit" cx="'+q[0]+'" cy="'+q[1]+'" r="14"/><circle class="pt'+(j===pts.length-1?' last':'')+'" cx="'+q[0]+'" cy="'+q[1]+'" r="'+(j===pts.length-1?5:4)+'"/></g>').join('')+
+    (pts.length?'<text class="lbl-last" x="'+(pts[pts.length-1][0]-10)+'" y="'+(pts[pts.length-1][1]-10)+'" text-anchor="end">'+pts[pts.length-1][2].v+'%</text>':'')+
+  '</svg></div><p class="small">Pasá el mouse por los puntos para ver cada semana. “Esta semana” es parcial e incluye las respuestas de la demo.</p></div>';
+  /* focus: where to improve */
+  const focus=ENC.map(e=>({e,prob:100-k[e.k].pct,mid:pc(k[e.k].mid,k.n),bad:pc(k[e.k].bad,k.n)})).sort((a,b)=>b.prob-a.prob);
+  const mx=Math.max(1,...focus.map(x=>x.prob));
+  const foco='<div class="panel"><span class="lbl">Dónde hacer foco</span><p class="small">% de entregas con problema en cada área'+(zsel?' en '+ZN[zsel]:'')+', de mayor a menor.</p><div class="hb">'+
+    focus.map(x=>'<div class="hrow"><span>'+x.e.icon+' '+x.e.area+'</span><span class="htrack"><i class="bad" style="width:'+Math.round(x.prob/mx*100)+'%" tabindex="0" data-tip="'+x.e.area+': '+x.prob+'% con problema ('+esc(x.e.opts.mid)+' '+x.mid+'% · '+esc(x.e.opts.bad)+' '+x.bad+'%)"></i></span><b>'+x.prob+'%</b></div>').join('')+'</div>'+
+    '<div class="note warn"><b>Prioridad 1: '+focus[0].e.area+' · responsable '+focus[0].e.owner+'</b>'+focus[0].prob+'% de las entregas con problema ('+esc(focus[0].e.opts.mid)+' '+focus[0].mid+'%, '+esc(focus[0].e.opts.bad)+' '+focus[0].bad+'%). Acción sugerida: '+focus[0].e.act+'</div>'+
+    '<div class="note info"><b>Prioridad 2: '+focus[1].e.area+' · '+focus[1].e.owner+'</b>'+focus[1].e.act+'</div></div>';
+  /* matrix by zone / driver */
+  const matrix=(rows,sel,title,foot)=>'<div class="panel"><span class="lbl">'+title+'</span><div class="tbl-wrap flat"><table class="qm"><thead><tr><th></th>'+ENC.map(e=>'<th>'+e.icon+' '+e.area+'</th>').join('')+'<th>Entrega perfecta</th></tr></thead><tbody>'+
+    rows.map(g=>{const c=encCalc(g.l);return '<tr'+(g.key?' data-a="setQz" data-z="'+g.key+'" tabindex="0"':'')+(sel&&sel===g.key?' class="on"':'')+'><td><b>'+esc(g.name)+'</b><small>'+c.n+' resp.</small></td>'+ENC.map(e=>'<td><span class="pill '+lvPill(c[e.k].pct)+'">'+c[e.k].pct+'%</span></td>').join('')+'<td><div class="pbar"><span class="htrack"><i class="good" style="width:'+c.perf+'%"></i></span><b>'+c.perf+'%</b></div></td></tr>';}).join('')+
+    '</tbody></table></div>'+(foot?'<p class="small">'+foot+'</p>':'')+'</div>';
+  const byZone=matrix(ZN_ORDER.map(z=>({key:z,name:ZN[z],l:all.filter(x=>x.zona===z)})),zsel,'Por zona','Verde: en meta (≥'+ENC_GOAL+'%) · Amarillo: 70–84% · Rojo: menos de 70%. Tocá una zona para filtrar.');
+  const byDrv=matrix(DRIVERS.map(d=>({name:d.nombre,l:f.filter(x=>x.chofer===d.nombre)})),null,'Por chofer','');
+  /* follow-ups & comments */
+  const pend=all.filter(x=>!x.followed).sort((a,b)=>b.w-a.w);
+  const casos='<div class="panel"><div class="row sb"><span class="lbl">Clientes a contactar</span><span class="pill '+(pend.length?'p-bad':'p-ok')+'">'+(pend.length?pend.length+' pendientes':'Al día')+'</span></div>'+
+    '<p class="small">Toda respuesta “Muy tarde”, “Llegó dañada” o “Mala” abre un caso.</p>'+
+    (pend.length?pend.map(x=>'<div class="case"><div class="row sb"><b>'+esc(x.cliente)+'</b><span class="small">'+x.d+' · '+ZN[x.zona]+'</span></div><div class="ansrow">'+encChips(x)+'</div><span class="small">Chofer '+esc(x.chofer)+'</span>'+(x.comentario?'<q>'+esc(x.comentario)+'</q>':'')+'<div class="row end"><button type="button" class="btn ghost sm" data-a="encFollow" data-id="'+x.id+'">Marcar como contactado</button></div></div>').join(''):'<div class="small">No hay casos pendientes. 👏</div>')+
+    '<p class="small">Regla sugerida: contactar dentro de las 48 h y registrar la acción.</p></div>';
   const coms=f.filter(x=>x.comentario).slice(-6).reverse();
-  const comentarios='<div class="panel"><span class="lbl">Últimos comentarios</span>'+coms.map(x=>'<div class="cm">'+npsBadge(x.score)+'<q>'+esc(x.comentario)+'</q><span class="small">'+esc(x.cliente)+' · '+ZN[x.zona]+' · '+x.d+'</span></div>').join('')+'</div>';
-  return '<div class="row sb"><div><div class="crumbs">Encuesta post-entrega</div><h1>Calidad (NPS)</h1></div>'+zchips+'</div>'+
-    '<div class="grid2">'+hero+dist+'</div>'+line+
-    '<div class="grid2">'+byZone+byDrv+'</div>'+
-    '<div class="grid2">'+mejoras+fuertes+'</div>'+
+  const comentarios='<div class="panel"><span class="lbl">Qué nos dicen los clientes</span>'+coms.map(x=>'<div class="cm"><div class="ansrow">'+encChips(x)+'</div><q>'+esc(x.comentario)+'</q><span class="small">'+esc(x.cliente)+' · '+ZN[x.zona]+' · '+x.d+'</span></div>').join('')+'</div>';
+  return '<div class="row sb"><div><div class="crumbs">Encuesta post-entrega · 3 preguntas</div><h1>Calidad de entrega</h1></div>'+zchips+'</div>'+
+    '<div class="grid2">'+hero+foco+'</div>'+
+    '<div class="qtiles">'+ENC.map(tile).join('')+'</div>'+line+
+    byZone+byDrv+
     '<div class="grid2">'+casos+comentarios+'</div>';
 }
 
@@ -820,13 +858,9 @@ function waBtns(n,live){
   else if(n.act==='salio'||n.act==='15')cta='Seguir mi envío';
   else if(n.act==='entregado'){if(o.estado==='entregado')q=[['waOk','✅ Todo conforme',''],['waObs','⚠️ Tengo una observación','']];cta='Ver comprobante';}
   else if(['conf','reclamo','fallo','msg'].includes(n.act))cta='Ver mi pedido';
-  else if(n.act==='nps'){
-    const on=live&&!o.nps;
-    return '<div class="wa-scale">'+Array.from({length:11},(_,i)=>on?'<button type="button" class="wa-n" data-a="waNps" data-id="'+o.id+'" data-v="'+i+'" aria-label="Puntaje '+i+'">'+i+'</button>':'<span class="wa-n ro">'+i+'</span>').join('')+'</div><div class="wa-scale-l"><span>0 = nada probable</span><span>10 = muy probable</span></div>';
-  }
-  else if(n.act==='npsMot'){
-    if(!(live&&o.nps&&!o.nps.motDone))return '';
-    return '<div class="wa-btns">'+NPS_MOT.concat(['']).map(m=>'<button type="button" class="wa-qr" data-a="waMot" data-id="'+o.id+'" data-v="'+esc(m)+'">'+(m?esc(m):'Prefiero no decir')+'</button>').join('')+'</div>';
+  else if(/^q[pma]$/.test(n.act)){
+    const e=ENC.find(x=>'q'+x.k===n.act);const on=live&&o.enc&&!o.enc[e.k];
+    return '<div class="wa-btns">'+['ok','mid','bad'].map(v=>on?'<button type="button" class="wa-qr" data-a="waQ" data-id="'+o.id+'" data-q="'+e.k+'" data-v="'+v+'">'+esc(e.opts[v])+'</button>':'<span class="wa-qr ro">'+esc(e.opts[v])+'</span>').join('')+'</div>';
   }
   if(!q.length&&!cta)return '';
   if(!live)return '<div class="wa-btns">'+q.map(x=>'<span class="wa-qr ro">'+esc(x[1])+'</span>').join('')+(cta?'<span class="wa-cta ro">🔗 '+cta+'</span>':'')+'</div>';
@@ -875,7 +909,7 @@ const GROUPS={
   cerrados:['cerrado']
 };
 function coordV(){
-  const nav=[['panel','Pedidos',S.orders.filter(o=>GROUPS.coordinar.includes(o.estado)).length],['rutas','Hojas de ruta',S.orders.filter(o=>o.estado==='confirmado').length],['reclamos','Reclamos',S.orders.filter(o=>o.estado==='con_obs').length],['calidad','Calidad (NPS)',S.npsHist.filter(x=>npsCat(x.score)==='det'&&!x.followed).length]];
+  const nav=[['panel','Pedidos',S.orders.filter(o=>GROUPS.coordinar.includes(o.estado)).length],['rutas','Hojas de ruta',S.orders.filter(o=>o.estado==='confirmado').length],['reclamos','Reclamos',S.orders.filter(o=>o.estado==='con_obs').length],['calidad','Calidad',S.encHist.filter(x=>!x.followed).length]];
   const cur=ui.view==='pedido'?'panel':ui.view;
   let main='';
   if(ui.view==='panel')main=cPanel();
@@ -918,9 +952,9 @@ function podHTML(o){
 function respHTML(o){
   const r=o.respuesta;if(!r)return '';
   const t={conforme:'Todo conforme',obs:'Con observaciones',rechazo:'Rechazo parcial'}[r.tipo];
-  const n=o.nps;const c=n&&npsCat(n.score);
+  const n=o.enc&&o.enc.done?o.enc:null;
   return '<dl class="kv"><dt>Respuesta</dt><dd>'+t+'</dd>'+(r.detalle?'<dt>Detalle</dt><dd style="font-weight:400">“'+esc(r.detalle)+'”</dd>':'')+
-    (n?'<dt>NPS</dt><dd>'+npsBadge(n.score)+'</dd>'+(n.motivos.length?'<dt>'+(c==='pro'?'Destacó':'A mejorar')+'</dt><dd>'+esc(n.motivos.join(', '))+'</dd>':'')+(n.comentario?'<dt>Comentario</dt><dd style="font-weight:400">“'+esc(n.comentario)+'”</dd>':''):(o.npsAsk?'<dt>NPS</dt><dd class="small">Encuesta enviada, sin respuesta aún</dd>':''))+
+    (n?ENC.map(e=>'<dt>'+e.icon+' '+e.area+'</dt><dd><span class="ans '+n[e.k]+'">'+esc(e.opts[n[e.k]])+'</span></dd>').join('')+(n.comentario?'<dt>Comentario</dt><dd style="font-weight:400">“'+esc(n.comentario)+'”</dd>':''):(o.encAsk?'<dt>Encuesta</dt><dd class="small">Enviada, sin completar aún</dd>':''))+
     (r.estrellas?'<dt>Calificación</dt><dd class="stars-ro">'+'★'.repeat(r.estrellas)+'</dd>':'')+'</dl>'+(r.foto?'<img src="'+r.foto+'" alt="Foto del cliente" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px">':'');
 }
 function tlHTML(o){
@@ -1221,11 +1255,9 @@ function kPedido(){
         '<button type="button" class="opt" data-t="single" data-v="rechazo" aria-pressed="false"><span class="dot"></span><span><b>Rechazo parcial</b><small>Devuelvo parte del pedido</small></span></button></div>'+
       '<label class="f">Comentario<textarea id="k-det" class="inp" rows="2" placeholder="Ej.: 1 caja con piezas rotas (bulto 7)"></textarea></label>'+
       '<div class="row"><span class="btn ghost file-btn">Adjuntar foto<input type="file" id="k-ph" accept="image/*" aria-label="Adjuntar foto"></span><span class="small" id="k-phn">'+(ui.kFoto?'Foto adjunta ✓':'Opcional')+'</span></div>'+
-      '<div class="card"><b>Del 0 al 10, ¿qué tan probable es que recomiendes a Trento a un colega?</b>'+
-        '<div class="npsw" data-group="npsw" role="group" aria-label="Puntaje de 0 a 10">'+Array.from({length:11},(_,i)=>'<button type="button" class="chip" data-t="single" data-v="'+i+'" aria-pressed="false">'+i+'</button>').join('')+'</div>'+
-        '<div class="npsw-l"><span>Nada probable</span><span>Muy probable</span></div>'+
-        '<span class="lbl">¿Qué deberíamos mejorar o qué valoraste?</span><div class="chips" data-group="npsm">'+NPS_MOT.map(m=>'<button type="button" class="chip" data-t="multi" data-v="'+m+'" aria-pressed="false">'+m+'</button>').join('')+'</div>'+
-        '<label class="f">Comentario (opcional)<textarea id="k-npsc" class="inp" rows="2"></textarea></label></div>'+
+      '<div class="card"><b>Ayudanos a mejorar: 3 preguntas cortas</b>'+
+        ENC.map(e=>'<div class="encq"><span class="small"><b style="color:var(--ink)">'+e.n+'. '+e.icon+' '+e.q+'</b></span><div class="opts3 chips" data-group="enc-'+e.k+'">'+['ok','mid','bad'].map(v=>'<button type="button" class="chip" data-t="single" data-v="'+v+'" aria-pressed="false">'+esc(e.opts[v])+'</button>').join('')+'</div></div>').join('')+
+        '<label class="f">¿Qué deberíamos cambiar para la próxima? (opcional)<textarea id="k-encc" class="inp" rows="2"></textarea></label></div>'+
       '<div id="k-err" class="err" hidden></div>';
     foot='<button type="button" class="btn block" data-a="kRespond" data-id="'+o.id+'">Enviar respuesta</button>';
   }else if(e==='con_obs'){
@@ -1359,7 +1391,7 @@ const A={
     log(o,'Cliente: todo conforme','Respondió por WhatsApp');log(o,'Pedido cerrado','');
     notify('coord','Recepción conforme: '+o.cliente,o.id+' · respondió por WhatsApp',o.id);
     notify('cliente','¡Gracias por tu respuesta!','Registramos tu conformidad para '+o.id+'.',o.id,'gracias');
-    askNps(o);
+    askSurvey(o);
     render();
   },
   waObs(el){waOut(el.dataset.id,'⚠️ Tengo una observación');A.waOpen(el);},
@@ -1385,31 +1417,21 @@ const A={
     const o=ord(el.dataset.id);const t=$('[data-group="resp"] [aria-pressed="true"]').dataset.v;const det=$('#k-det').value.trim();
     const e=$('#k-err');
     if(t!=='conforme'&&!det){e.textContent='Contanos qué pasó en el comentario.';e.hidden=false;return;}
-    const sc=$('[data-group="npsw"] [aria-pressed="true"]');
-    if(!sc){e.textContent='Elegí un puntaje del 0 al 10.';e.hidden=false;return;}
+    const ans={};ENC.forEach(q=>{const b=$('[data-group="enc-'+q.k+'"] [aria-pressed="true"]');if(b)ans[q.k]=b.dataset.v;});
+    if(Object.keys(ans).length<3){e.textContent='Respondé las 3 preguntas cortas.';e.hidden=false;return;}
     o.respuesta={tipo:t,detalle:det,foto:ui.kFoto||null};
-    o.npsAsk=true;o.nps={score:+sc.dataset.v,motivos:$$('[data-group="npsm"] [aria-pressed="true"]').map(b=>b.dataset.v),comentario:$('#k-npsc').value.trim(),motDone:true};
-    const st='NPS '+o.nps.score+'/10';
+    o.encAsk=true;o.enc=Object.assign(ans,{done:true,comentario:$('#k-encc').value.trim()});
+    const st=ENC.filter(q=>ans[q.k]!=='ok').map(q=>q.area).join(', ')||'entrega perfecta';
     if(t==='conforme'){o.estado='cerrado';log(o,'Cliente: todo conforme',st);log(o,'Pedido cerrado','');notify('coord','Recepción conforme: '+o.cliente,o.id+' · '+st,o.id);toast('¡Gracias por tu respuesta!');}
     else{S.seq.rec++;o.reclamo='R-'+S.seq.rec;o.estado='con_obs';log(o,'Cliente: '+(t==='obs'?'con observaciones':'rechazo parcial'),'“'+det+'” · '+st,'bad');log(o,'Reclamo '+o.reclamo+' abierto','Asignado a coordinación','bad');notify('coord','Reclamo '+o.reclamo+': '+o.cliente,'“'+det+'” · '+st,o.id);toast('Recibimos tu observación · reclamo '+o.reclamo);}
-    npsCommit(o);
+    encCommit(o);
     ui.kFoto=null;render();window.scrollTo(0,0);
   },
   setQz(el){ui.qz=el.dataset.z===ui.qz?'todas':el.dataset.z;render();},
-  npsFollow(el){const h=S.npsHist.find(x=>x.id===el.dataset.id);if(h){h.followed=true;if(h.oid){const o=ord(h.oid);if(o)log(o,'Detractor contactado por coordinación','Milena Rozo');}}render();toast('Marcado como contactado');},
-  waNps(el){
-    const o=ord(el.dataset.id);if(o.nps)return;const n=+el.dataset.v;
-    waOut(o.id,String(n));o.nps={score:n,motivos:[],comentario:'',motDone:false};
-    const c=npsCat(n);
-    notify('cliente',c==='pro'?'¡Gracias! 🙌':'Gracias por tu sinceridad',c==='pro'?'¿Qué fue lo que más valoraste de la entrega?':'¿En qué deberíamos mejorar?',o.id,'npsMot');
-    render();
-  },
-  waMot(el){
-    const o=ord(el.dataset.id);if(!o.nps||o.nps.motDone)return;const v=el.dataset.v;
-    o.nps.motivos=v?[v]:[];o.nps.motDone=true;waOut(o.id,v||'Prefiero no decir');
-    npsCommit(o);o.npsAwait=true;
-    notify('cliente','Última pregunta',npsCat(o.nps.score)==='pro'?'Si querés, dejanos un comentario en un mensaje. Si no, no hace falta responder.':'Si querés, contanos en un mensaje qué pasó. Lo lee directamente coordinación.',o.id,'npsCom');
-    render();
+  encFollow(el){const h=S.encHist.find(x=>x.id===el.dataset.id);if(h){h.followed=true;if(h.oid){const o=ord(h.oid);if(o)log(o,'Cliente contactado por calidad','Milena Rozo · Coordinación');}}render();toast('Marcado como contactado');},
+  waQ(el){
+    const o=ord(el.dataset.id);const q=el.dataset.q,v=el.dataset.v;if(!o.enc||o.enc[q])return;
+    const e=ENC.find(x=>x.k===q);o.enc[q]=v;waOut(o.id,e.opts[v]);encNext(o);render();
   }
 };
 function updBul(o){$('#bul').textContent=ui.stop.bultos;$('#bulbar').style.width=Math.round(ui.stop.bultos/o.bultos*100)+'%';save();}
@@ -1434,10 +1456,10 @@ const F={
   waSend(){
     const t=$('#wa-in').value.trim();if(!t)return;
     const o=ord(HERO);
-    const aw=S.orders.find(x=>x.cli==='fds'&&x.npsAwait);
-    if(aw){waOut(aw.id,t);aw.nps.comentario=t;aw.npsAwait=false;npsUpdateComment(aw);log(aw,'Comentario NPS','“'+t+'”');
+    const aw=S.orders.find(x=>x.cli==='fds'&&x.encAwait);
+    if(aw){waOut(aw.id,t);aw.enc.comentario=t;aw.encAwait=false;encUpdateComment(aw);log(aw,'Comentario de calidad','“'+t+'”');
       notify('cliente','¡Gracias por ayudarnos a mejorar! 🙏','Tu opinión llega directo al equipo de coordinación.',aw.id,'gracias');
-      if(npsCat(aw.nps.score)!=='pro')notify('coord','💬 Comentario de '+aw.cliente+' ('+aw.nps.score+'/10)','“'+t+'”',aw.id);
+      notify('coord','💬 Qué mejorar según '+aw.cliente,'“'+t+'” · '+ENC.filter(q=>aw.enc[q.k]!=='ok').map(q=>q.area).join(', '),aw.id);
       render();return;}
     waOut(null,t);
     notify('coord','💬 WhatsApp de '+o.cliente,'“'+t+'”',o.id);
