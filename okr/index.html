@@ -1,0 +1,473 @@
+<title>OKR Trento</title>
+<style>
+:root{
+  --red:#D71F2B; --red-deep:#A3131D; --red-tint:#FBE9EA; --red-line:#F2C6C9;
+  --ink:#231A1B; --muted:#6F6263; --line:#E7DEDE; --ground:#F4EFEF; --surface:#FFFFFF; --sunk:#FAF7F7;
+  --ok:#1D8A56; --ok-tint:#E4F4EC; --warn:#B86F00; --warn-tint:#FCF1DC; --info:#2B5DA8; --info-tint:#E6EEF9;
+  --bar:#E7DEDE;
+  --font:Arial,"Helvetica Neue",Helvetica,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F; --red-line:#5C2A2F;
+    --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
+    --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
+    --bar:#3A3031;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F; --red-line:#5C2A2F;
+  --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
+  --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
+  --bar:#3A3031;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45}
+button,input,select,textarea{font-family:var(--font);font-size:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2,h3,h4{margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--red);color:#fff}
+.top-in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo-chip{background:#fff;border-radius:6px;padding:5px 9px;display:flex}
+.logo-chip img{height:24px;display:block}
+.top h1{font-size:16px}
+.top .sub{font-size:12px;opacity:.88}
+.spacer{flex:1}
+.qclock{display:flex;align-items:center;gap:10px;font-size:12px}
+.qclock .track{width:140px;height:6px;border-radius:3px;background:rgba(255,255,255,.28);overflow:hidden}
+.qclock .fill{height:100%;background:#fff}
+.tabs{display:flex;gap:4px}
+.tab{background:transparent;border:0;color:#fff;opacity:.8;padding:7px 12px;border-radius:999px;font-weight:700}
+.tab[aria-selected="true"]{background:rgba(255,255,255,.2);opacity:1}
+
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 56px;display:grid;gap:18px}
+.intro{display:grid;gap:6px;max-width:72ch}
+.intro h2{font-size:22px}
+.intro p{color:var(--muted)}
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--info-tint);color:var(--info);padding:10px 12px;border-radius:8px;font-size:13px}
+.banner b{color:inherit}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--sunk)}
+tbody tr[aria-current="true"]{background:var(--red-tint)}
+tbody tr:last-child td{border-bottom:0}
+.area-name{font-weight:700}
+.lead-name{color:var(--muted)}
+.lead-name.empty{font-style:italic}
+
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.p-ok{background:var(--ok-tint);color:var(--ok)}
+.p-warn{background:var(--warn-tint);color:var(--warn)}
+.p-bad{background:var(--red-tint);color:var(--red)}
+.p-info{background:var(--info-tint);color:var(--info)}
+.p-mute{background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+
+.meter{display:flex;align-items:center;gap:8px;min-width:130px}
+.meter .track{flex:1;height:8px;border-radius:4px;background:var(--bar);position:relative;overflow:hidden}
+.meter .fill{position:absolute;inset:0 auto 0 0;background:var(--ink);border-radius:4px}
+.meter .fill.ok{background:var(--ok)} .meter .fill.warn{background:var(--warn)} .meter .fill.bad{background:var(--red)}
+.meter .pace{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--muted)}
+.meter .v{font-size:12px;width:36px;text-align:right;color:var(--muted)}
+
+/* detail */
+.detail{padding:20px;display:grid;gap:18px}
+.d-head{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.d-head h3{font-size:20px}
+.d-head .purpose{color:var(--muted);max-width:70ch;margin-top:4px}
+.d-meta{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.field{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.field input,.field select,.field textarea{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 9px;color:var(--ink)}
+.field textarea{resize:vertical;min-height:64px}
+.btn{border:0;border-radius:8px;padding:9px 14px;font-weight:700;background:var(--red);color:#fff}
+.btn:hover{background:var(--red-deep)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{background:var(--sunk)}
+.btn.small{padding:6px 10px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.obj{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:16px}
+.obj-h{display:flex;gap:10px;align-items:baseline}
+.obj-h .tag{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--red);text-transform:uppercase;white-space:nowrap}
+.obj-h h4{font-size:16px;flex:1}
+.krs{display:grid;gap:8px}
+.kr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:center;padding:10px 12px;background:var(--sunk);border-radius:8px}
+.kr .txt{font-weight:600}
+.kr .src{font-size:12px;color:var(--muted);margin-top:2px}
+.kr .nums{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.kr .nums .field input{width:86px;text-align:right}
+.kr .nums .unit{font-size:12px;color:var(--muted);padding-bottom:8px;width:92px}
+.kr .bottom{grid-column:1 / -1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.kr .bottom .meter{flex:1;min-width:180px}
+.kr.edit{grid-template-columns:1fr}
+.kr.edit .row{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+.kr.edit .row .field{flex:1;min-width:120px}
+.kr.edit .row .field.wide{flex:3;min-width:220px}
+.linkbtn{background:none;border:0;color:var(--red);font-weight:700;padding:4px 0}
+.qs{display:grid;gap:6px;padding:14px 16px;border-radius:8px;border:1px dashed var(--red-line)}
+.qs h4{font-size:13px;color:var(--red)}
+.qs ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.savebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+
+/* guide */
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.gcard{padding:18px;display:grid;gap:10px;align-content:start}
+.gcard h3{font-size:16px}
+.gcard ol,.gcard ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.gcard .mins{font-weight:700;color:var(--red)}
+.gcard p{color:var(--muted)}
+.cal{display:grid;gap:0}
+.cal div{display:grid;grid-template-columns:118px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.cal div:last-child{border-bottom:0}
+.cal b{font-variant-numeric:tabular-nums}
+.example{background:var(--sunk);border-radius:8px;padding:12px;display:grid;gap:6px;font-size:13px}
+.bad-ex{color:var(--red);text-decoration:line-through}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:8px;font-weight:700;z-index:10}
+@media (max-width:640px){
+  .kr{grid-template-columns:1fr}
+  .qclock .track{width:90px}
+  .detail{padding:16px}
+}
+@media (prefers-reduced-motion:no-preference){ .meter .fill{transition:width .3s ease} }
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <span class="logo-chip"><img src="logo-trento.jpg" alt="Trento"></span>
+    <div>
+      <h1>OKR por área</h1>
+      <div class="sub">4.º trimestre 2026 · 1 oct – 31 dic</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="qclock" id="qclock"></div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-areas" aria-selected="true" data-tab="areas">Áreas</button>
+      <button class="tab" role="tab" id="tab-guia" aria-selected="false" data-tab="guia">Guía de reuniones</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="view-areas">
+  <section class="intro">
+    <h2>Qué tiene que lograr cada área este trimestre</h2>
+    <p>Cada área arranca con una propuesta para discutir con su líder. En la reunión se ajustan objetivos y metas, se carga la línea base y el área queda como <b>Acordado</b>. Desde ahí, cada líder carga el valor actual una vez por semana.</p>
+  </section>
+  <div class="banner" id="dbnote" hidden></div>
+  <section class="panel">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Área</th><th>Líder</th><th>Reunión</th><th>Avance</th><th>Estado</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel detail" id="detail"></section>
+</main>
+
+<main class="wrap" id="view-guia" hidden>
+  <section class="intro">
+    <h2>Cómo plantear los OKR con cada líder</h2>
+    <p>Una reunión de una hora por área, entre el 24 y el 30 de septiembre, para salir con los OKR acordados antes de que empiece el trimestre.</p>
+  </section>
+  <div class="guide">
+    <article class="panel gcard">
+      <h3>Agenda de la reunión (60 min)</h3>
+      <ol>
+        <li><span class="mins">10 min</span> · Contexto: prioridades de Trento para el trimestre y por qué medimos por área.</li>
+        <li><span class="mins">15 min</span> · El líder cuenta qué le preocupa hoy de su área y qué le gustaría mejorar. Escuchar antes de mostrar la propuesta.</li>
+        <li><span class="mins">20 min</span> · Revisar la propuesta juntos: qué objetivo sobra, qué falta, si las metas son alcanzables pero exigentes.</li>
+        <li><span class="mins">10 min</span> · Para cada resultado clave: línea base, de dónde sale el dato y quién lo carga.</li>
+        <li><span class="mins">5 min</span> · Cerrar: marcar el área como <b>Acordado</b> y fijar el día del check-in semanal.</li>
+      </ol>
+    </article>
+    <article class="panel gcard">
+      <h3>Reglas para un buen OKR</h3>
+      <ul>
+        <li><b>2 o 3 objetivos</b> por área, no más. Un objetivo es cualitativo y dice hacia dónde vamos.</li>
+        <li><b>2 a 4 resultados clave</b> por objetivo, cada uno con un número, una línea base y una fecha.</li>
+        <li>Medir <b>resultados, no tareas</b>: “entregas a tiempo”, no “armar un Excel de entregas”.</li>
+        <li>Cada resultado clave tiene <b>un responsable</b> y una <b>fuente de datos</b> concreta.</li>
+        <li>Si no hay línea base, la primera semana de octubre se usa para medirla.</li>
+      </ul>
+      <div class="example">
+        <span class="bad-ex">Mejorar la logística</span>
+        <span><b>Objetivo:</b> Que cada cliente reciba su pedido en la ventana prometida.</span>
+        <span><b>Resultado clave:</b> Entregas a tiempo del 82 % al 95 % al 31/12.</span>
+      </div>
+    </article>
+    <article class="panel gcard">
+      <h3>Cómo se evalúa</h3>
+      <p>Cada resultado clave se puntúa de 0 a 1 según cuánto se movió desde la línea base hacia la meta. El avance del área es el promedio.</p>
+      <ul>
+        <li><span class="pill p-ok">En camino</span> el avance va al ritmo del trimestre o mejor.</li>
+        <li><span class="pill p-warn">En riesgo</span> va por detrás, pero es recuperable.</li>
+        <li><span class="pill p-bad">Atrasado</span> va a menos de 60 % del ritmo esperado.</li>
+      </ul>
+      <p>Al cierre, <b>0,7 se considera un buen trimestre</b>: si todo llega a 1,0, las metas eran poco ambiciosas. La línea gris en cada barra marca dónde debería estar el avance hoy.</p>
+    </article>
+    <article class="panel gcard">
+      <h3>Calendario de seguimiento</h3>
+      <div class="cal">
+        <div><b>24 – 30 sep</b><span>Reuniones 1 a 1 con cada líder</span></div>
+        <div><b>1 oct</b><span>Arranque: OKR acordados y visibles para todos</span></div>
+        <div><b>1 – 7 oct</b><span>Medir líneas base que falten</span></div>
+        <div><b>Cada lunes</b><span>Check-in de 15 min: el líder carga el valor actual</span></div>
+        <div><b>30 oct · 27 nov</b><span>Revisión mensual con todos los líderes</span></div>
+        <div><b>5 – 9 ene</b><span>Cierre, puntaje final y OKR del 1.º trimestre 2027</span></div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const Q_START=new Date(2026,9,1), Q_END=new Date(2026,11,31,23,59);
+// Propuesta inicial para discutir con cada líder. Lo que se guarda desde la página la reemplaza.
+const PROPUESTA=[
+ {id:"logistica",nombre:"Logística y distribución",proposito:"Entregar a tiempo y completo, usando bien cada camión.",
+  preguntas:["¿Cuál es hoy el porcentaje real de entregas a tiempo? ¿Cómo se mide la ventana prometida?","¿Qué zonas o clientes concentran los reclamos?","¿El tope de 5 clientes por camión se cumple? ¿Qué lo impide?"],
+  objetivos:[
+   {t:"Que cada cliente reciba su pedido en la ventana prometida",krs:[
+    {t:"Entregas dentro de la ventana acordada",u:"%",dir:"up",meta:95,f:"App Trento Entregas · paso “Entregado”"},
+    {t:"Entregas completas, sin faltantes",u:"%",dir:"up",meta:98,f:"Remitos conformados"},
+    {t:"Reclamos por cada 100 entregas",u:"reclamos",dir:"down",meta:1,f:"Registro de Atención al Cliente"}]},
+   {t:"Aprovechar mejor cada salida de camión",krs:[
+    {t:"Clientes promedio por salida (tope 5)",u:"clientes",dir:"up",meta:4.5,f:"Hojas de ruta"},
+    {t:"Hojas de ruta cerradas en la app con los 3 pasos",u:"%",dir:"up",meta:100,f:"App Trento Entregas"}]}]},
+ {id:"deposito",nombre:"Depósito",proposito:"Pedidos preparados sin errores y listos antes de que salga el camión.",
+  preguntas:["¿A qué hora tiene que estar lista la carga y cuántos días se llega tarde?","¿Qué errores de preparación se repiten más?","¿Cada cuánto se hacen conteos y cuánta diferencia aparece?"],
+  objetivos:[
+   {t:"Preparar cada pedido bien y a tiempo",krs:[
+    {t:"Pedidos listos antes del horario de carga",u:"%",dir:"up",meta:97,f:"Registro de carga"},
+    {t:"Errores de preparación por cada 1.000 líneas",u:"errores",dir:"down",meta:2,f:"Devoluciones y reclamos"}]},
+   {t:"Tener un inventario en el que se pueda confiar",krs:[
+    {t:"Exactitud en conteos cíclicos",u:"%",dir:"up",meta:98,f:"Conteos semanales"},
+    {t:"Quiebres de stock en los 100 artículos más vendidos",u:"%",dir:"down",meta:2,f:"Sistema de stock"}]}]},
+ {id:"comercial",nombre:"Comercial y ventas",proposito:"Crecer en ventas con clientes que vuelven a comprar.",
+  preguntas:["¿Qué segmento queremos empujar: ferreterías, corralones, sanitarios?","¿Cuántos clientes compraron una sola vez y no volvieron?","¿Cuál es el ticket promedio y qué líneas se podrían sumar?"],
+  objetivos:[
+   {t:"Crecer en facturación con clientes rentables",krs:[
+    {t:"Facturación vs. 4.º trimestre 2025",u:"% de crecimiento",dir:"up",meta:15,f:"Facturación"},
+    {t:"Clientes nuevos con 2 compras o más",u:"clientes",dir:"up",meta:30,f:"CRM / facturación"}]},
+   {t:"Que cada cliente compre más líneas",krs:[
+    {t:"Clientes activos que compran todos los meses",u:"%",dir:"up",meta:85,f:"Facturación"},
+    {t:"Líneas promedio por pedido",u:"líneas",dir:"up",meta:null,f:"Pedidos"}]}]},
+ {id:"compras",nombre:"Compras y abastecimiento",proposito:"Stock disponible sin inmovilizar plata de más.",
+  preguntas:["¿Qué proveedores fallan más en plazo o cantidad?","¿Cuántos días de inventario tenemos hoy?","¿Qué artículos no se mueven hace meses?"],
+  objetivos:[
+   {t:"Tener lo que se vende sin sobrecomprar",krs:[
+    {t:"Órdenes de proveedores recibidas completas y a tiempo",u:"%",dir:"up",meta:90,f:"Recepciones"},
+    {t:"Días de inventario",u:"días",dir:"down",meta:45,f:"Stock valorizado / costo de ventas"},
+    {t:"Artículos sin movimiento en 90 días",u:"%",dir:"down",meta:5,f:"Sistema de stock"}]}]},
+ {id:"finanzas",nombre:"Administración y finanzas",proposito:"Cobrar a tiempo y dar números para decidir.",
+  preguntas:["¿Cuánto tardamos en cobrar en promedio? ¿Qué clientes pesan más en la deuda vencida?","¿En cuántos días se cierra el mes hoy?","¿Qué información pide la dirección y hoy no tiene?"],
+  objetivos:[
+   {t:"Cobrar en tiempo y forma",krs:[
+    {t:"Días promedio de cobro",u:"días",dir:"down",meta:35,f:"Cuenta corriente de clientes"},
+    {t:"Deuda vencida a más de 30 días",u:"% de la cartera",dir:"down",meta:8,f:"Cuenta corriente de clientes"}]},
+   {t:"Dar números a tiempo para decidir",krs:[
+    {t:"Días hábiles para cerrar el mes",u:"días",dir:"down",meta:5,f:"Calendario de cierre"},
+    {t:"Informes de margen por cliente y línea publicados",u:"informes",dir:"up",meta:3,f:"Carpeta de gestión"}]}]},
+ {id:"clientes",nombre:"Atención al cliente",proposito:"Que el cliente tenga respuesta rápida y quede conforme.",
+  preguntas:["¿Por qué canales llegan los reclamos y cómo se registran?","¿Cuánto tarda hoy la primera respuesta?","¿Medimos de alguna forma la satisfacción?"],
+  objetivos:[
+   {t:"Resolver rápido y dejar al cliente conforme",krs:[
+    {t:"Tiempo de primera respuesta",u:"horas hábiles",dir:"down",meta:2,f:"Registro de reclamos"},
+    {t:"Reclamos resueltos en 48 h",u:"%",dir:"up",meta:90,f:"Registro de reclamos"},
+    {t:"Satisfacción después de la entrega (1 a 5)",u:"puntos",dir:"up",meta:4.5,f:"Encuesta en la app al recibir"}]}]},
+ {id:"personas",nombre:"Personas",proposito:"Un equipo estable, capacitado y que trabaja seguro.",
+  preguntas:["¿En qué puestos se va más gente? ¿Por qué?","¿Quiénes todavía no usan la app o no tienen la capacitación de seguridad?","¿Hubo accidentes este año?"],
+  objetivos:[
+   {t:"Retener y formar al equipo",krs:[
+    {t:"Rotación mensual",u:"%",dir:"down",meta:2,f:"Legajos"},
+    {t:"Choferes y operarios capacitados en la app y en seguridad",u:"%",dir:"up",meta:100,f:"Registro de capacitaciones"},
+    {t:"Accidentes con días perdidos",u:"accidentes",dir:"down",meta:0,f:"Registro de ART"}]}]},
+ {id:"sistemas",nombre:"Sistemas",proposito:"Que la operación diaria pase por la app Trento Entregas.",
+  preguntas:["¿Qué parte de la operación sigue en papel o por WhatsApp?","¿Qué frena que los clientes confirmen la recepción en la app?","¿Hubo caídas o lentitud en horario de reparto?"],
+  objetivos:[
+   {t:"Llevar la operación a la app Trento Entregas",krs:[
+    {t:"Entregas con recepción confirmada por el cliente en la app",u:"%",dir:"up",meta:80,f:"App Trento Entregas"},
+    {t:"Pedidos con remito digital, sin papel",u:"%",dir:"up",meta:70,f:"App Trento Entregas"},
+    {t:"Disponibilidad de la app en horario de reparto",u:"%",dir:"up",meta:99.5,f:"Monitoreo"}]}]}
+];
+const REUNION={pendiente:["Pendiente","p-mute"],agendada:["Agendada","p-info"],acordado:["Acordado","p-ok"]};
+
+function base(p){return {id:p.id,nombre:p.nombre,proposito:p.proposito,preguntas:p.preguntas,lider:"",reunion:"pendiente",fecha:"",notas:"",
+  objetivos:p.objetivos.map(o=>({t:o.t,krs:o.krs.map(k=>({t:k.t,u:k.u,dir:k.dir,base:null,meta:k.meta,actual:null,f:k.f}))}))};}
+const stored={};                 // id -> doc guardado
+let selected="logistica", editing=false, draft=null, db=null, canWrite=true;
+const clone=o=>JSON.parse(JSON.stringify(o));
+const area=id=>stored[id]||base(PROPUESTA.find(p=>p.id===id));
+const areas=()=>PROPUESTA.map(p=>area(p.id));
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=n=>n==null||n===""?"—":Number(n).toLocaleString("es-AR",{maximumFractionDigits:2});
+const isNum=v=>v!==null&&v!==""&&!isNaN(v);
+
+function elapsed(){const t=Date.now();return Math.max(0,Math.min(1,(t-Q_START)/(Q_END-Q_START)));}
+function krScore(k){
+  if(!isNum(k.base)||!isNum(k.meta)||!isNum(k.actual)) return null;
+  const b=+k.base,m=+k.meta,a=+k.actual; if(b===m) return a===m?1:0;
+  const s=k.dir==="down"?(b-a)/(b-m):(a-b)/(m-b); return Math.max(0,Math.min(1,s));
+}
+function areaScore(a){const s=a.objetivos.flatMap(o=>o.krs.map(krScore)).filter(v=>v!=null);return s.length?s.reduce((x,y)=>x+y,0)/s.length:null;}
+function status(score){
+  if(score==null) return ["Sin datos","p-mute",""];
+  const e=elapsed(); if(e===0) return ["Sin iniciar","p-mute",""];
+  const r=score/e; if(r>=.9) return ["En camino","p-ok","ok"]; if(r>=.6) return ["En riesgo","p-warn","warn"]; return ["Atrasado","p-bad","bad"];
+}
+function meter(score){
+  const st=status(score), e=elapsed();
+  return `<div class="meter"><div class="track">${score!=null?`<div class="fill ${st[2]}" style="width:${score*100}%"></div>`:""}${e>0?`<div class="pace" style="left:calc(${e*100}% - 1px)" title="Ritmo esperado hoy"></div>`:""}</div><span class="v num">${score==null?"—":Math.round(score*100)+"%"}</span></div>`;
+}
+
+function renderClock(){
+  const now=new Date(), e=elapsed(), day=Math.round(e*92);
+  let label = now<Q_START ? `Empieza en ${Math.ceil((Q_START-now)/864e5)} días` : e>=1 ? "Trimestre cerrado" : `Día ${day} de 92`;
+  document.getElementById("qclock").innerHTML=`<span class="num">${label}</span><div class="track"><div class="fill" style="width:${e*100}%"></div></div>`;
+}
+function renderRows(){
+  document.getElementById("rows").innerHTML=areas().map(a=>{
+    const sc=areaScore(a), st=status(sc), r=REUNION[a.reunion]||REUNION.pendiente;
+    return `<tr data-id="${a.id}" tabindex="0" aria-current="${a.id===selected}">
+      <td class="area-name">${esc(a.nombre)}</td>
+      <td class="lead-name ${a.lider?"":"empty"}">${esc(a.lider||"Sin asignar")}</td>
+      <td><span class="pill ${r[1]}">${r[0]}</span>${a.fecha?` <span class="num" style="color:var(--muted);font-size:12px">${esc(fechaCorta(a.fecha))}</span>`:""}</td>
+      <td>${meter(sc)}</td>
+      <td><span class="pill ${st[1]}">${st[0]}</span></td></tr>`;}).join("");
+}
+function fechaCorta(f){const d=new Date(f+"T00:00");return isNaN(d)?f:d.toLocaleDateString("es-AR",{day:"numeric",month:"short"});}
+
+function renderDetail(){
+  const a=editing?draft:area(selected), el=document.getElementById("detail");
+  const sc=areaScore(a), st=status(sc), dis=canWrite?"":"disabled";
+  let h=`<div class="d-head"><div style="flex:1;min-width:240px">`;
+  h+= editing ? `<label class="field">Propósito del área<input id="f-prop" value="${esc(a.proposito)}"></label>`
+              : `<h3>${esc(a.nombre)}</h3><p class="purpose">${esc(a.proposito)}</p>`;
+  h+=`</div><div style="display:flex;gap:8px;align-items:center">${editing?"":`<span class="pill ${st[1]}">${st[0]}</span>`}
+     ${editing?`<button class="btn ghost" id="b-cancel">Cancelar</button><button class="btn" id="b-save">Guardar área</button>`
+              :`<button class="btn ghost" id="b-edit" ${dis}>Editar OKR</button>`}</div></div>`;
+  h+=`<div class="d-meta">
+     <label class="field">Líder del área<input id="f-lider" value="${esc(a.lider)}" placeholder="Nombre y apellido" ${dis}></label>
+     <label class="field">Reunión<select id="f-reunion" ${dis}>${Object.entries(REUNION).map(([k,v])=>`<option value="${k}" ${a.reunion===k?"selected":""}>${v[0]}</option>`).join("")}</select></label>
+     <label class="field">Fecha<input type="date" id="f-fecha" value="${esc(a.fecha)}" ${dis}></label>
+     <div style="flex:1;min-width:160px">${meter(sc)}</div></div>`;
+  if(a.reunion!=="acordado" && !editing){
+    h+=`<div class="qs"><h4>Para preguntarle ${a.lider?"a "+esc(a.lider):"al líder"} en la reunión</h4><ul>${a.preguntas.map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>`;
+  }
+  a.objetivos.forEach((o,oi)=>{
+    h+=`<div class="obj"><div class="obj-h"><span class="tag">Objetivo ${oi+1}</span>`;
+    h+= editing?`<input class="field-in" style="flex:1;border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:var(--surface);font-weight:700" data-o="${oi}" data-k="-1" data-p="t" value="${esc(o.t)}" aria-label="Objetivo ${oi+1}">
+                 <button class="linkbtn" data-del-o="${oi}">Quitar</button>`:`<h4>${esc(o.t)}</h4>`;
+    h+=`</div><div class="krs">`;
+    o.krs.forEach((k,ki)=>{ h+= editing?krEdit(k,oi,ki):krView(k,oi,ki,dis); });
+    if(editing) h+=`<button class="linkbtn" data-add-k="${oi}">+ Agregar resultado clave</button>`;
+    h+=`</div></div>`;
+  });
+  if(editing) h+=`<button class="linkbtn" id="b-add-o">+ Agregar objetivo</button>`;
+  h+=`<label class="field">Notas y acuerdos de la reunión<textarea id="f-notas" ${dis} placeholder="Compromisos, dudas abiertas, datos que faltan…">${esc(a.notas)}</textarea></label>`;
+  h+=`<div class="savebar" id="savebar">${a.updated?`Última actualización: ${new Date(a.updated).toLocaleString("es-AR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}`:"Propuesta inicial, todavía sin cambios guardados."}</div>`;
+  el.innerHTML=h;
+}
+function krView(k,oi,ki,dis){
+  const sc=krScore(k), st=status(sc), arrow=k.dir==="down"?"bajar a":"llegar a";
+  return `<div class="kr"><div><div class="txt">${esc(k.t)}</div><div class="src">Meta: ${arrow} ${fmt(k.meta)} ${esc(k.u)} · Fuente: ${esc(k.f||"a definir")}</div></div>
+   <div class="nums num">
+    <label class="field">Línea base<input inputmode="decimal" data-o="${oi}" data-k="${ki}" data-p="base" value="${k.base??""}" placeholder="—" ${dis}></label>
+    <label class="field">Actual<input inputmode="decimal" data-o="${oi}" data-k="${ki}" data-p="actual" value="${k.actual??""}" placeholder="—" ${dis}></label>
+    <label class="field">Meta<input inputmode="decimal" data-o="${oi}" data-k="${ki}" data-p="meta" value="${k.meta??""}" placeholder="—" ${dis}></label>
+    <span class="unit">${esc(k.u)}</span></div>
+   <div class="bottom">${meter(sc)}<span class="pill ${st[1]}">${st[0]}</span></div></div>`;
+}
+function krEdit(k,oi,ki){
+  const f=(p,l,cls="")=>`<label class="field ${cls}">${l}<input data-o="${oi}" data-k="${ki}" data-p="${p}" value="${esc(k[p]??"")}"></label>`;
+  return `<div class="kr edit"><div class="row">${f("t","Resultado clave","wide")}${f("u","Unidad")}
+    <label class="field">Dirección<select data-o="${oi}" data-k="${ki}" data-p="dir"><option value="up" ${k.dir==="up"?"selected":""}>Subir</option><option value="down" ${k.dir==="down"?"selected":""}>Bajar</option></select></label></div>
+    <div class="row">${f("f","Fuente del dato","wide")}${f("base","Línea base")}${f("meta","Meta")}<button class="linkbtn" data-del-k="${oi}:${ki}">Quitar</button></div></div>`;
+}
+function render(){renderRows();renderDetail();}
+
+// ---------- guardado ----------
+const queue={};
+function persist(a){
+  a.updated=new Date().toISOString(); stored[a.id]=a; render();
+  if(!db){toast("Sin conexión a la base: el cambio se ve solo en esta pantalla");return;}
+  const body=clone(a);
+  queue[a.id]=(queue[a.id]||Promise.resolve()).then(()=>db.collection("areas").doc(a.id).set(body))
+   .then(()=>toast("Guardado"))
+   .catch(e=>{ if(e&&e.code==="invalid_argument"){canWrite=false;render();toast("No tenés permiso para editar este tablero");}
+               else toast("No se pudo guardar. Probá de nuevo en un momento."); });
+}
+const numOrNull=v=>{v=String(v).trim().replace(",",".");return v===""||isNaN(v)?null:+v;};
+
+document.addEventListener("click",e=>{
+  const tab=e.target.closest(".tab"); if(tab){showTab(tab.dataset.tab);return;}
+  const tr=e.target.closest("tbody tr"); if(tr){ if(editing) return toast("Guardá o cancelá la edición primero"); selected=tr.dataset.id; render(); document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"start"}); return;}
+  const t=e.target;
+  if(t.id==="b-edit"){editing=true;draft=clone(area(selected));renderDetail();return;}
+  if(t.id==="b-cancel"){editing=false;draft=null;renderDetail();return;}
+  if(t.id==="b-save"){syncDraftMeta();editing=false;const d=draft;draft=null;persist(d);return;}
+  if(t.id==="b-add-o"){draft.objetivos.push({t:"Nuevo objetivo",krs:[{t:"Nuevo resultado clave",u:"%",dir:"up",base:null,meta:null,actual:null,f:""}]});syncDraftMeta();renderDetail();return;}
+  if(t.dataset.addK!=null){draft.objetivos[+t.dataset.addK].krs.push({t:"Nuevo resultado clave",u:"%",dir:"up",base:null,meta:null,actual:null,f:""});syncDraftMeta();renderDetail();return;}
+  if(t.dataset.delO!=null){draft.objetivos.splice(+t.dataset.delO,1);syncDraftMeta();renderDetail();return;}
+  if(t.dataset.delK!=null){const [o,k]=t.dataset.delK.split(":").map(Number);draft.objetivos[o].krs.splice(k,1);syncDraftMeta();renderDetail();return;}
+});
+document.addEventListener("keydown",e=>{const tr=e.target.closest&&e.target.closest("tbody tr");if(tr&&(e.key==="Enter"||e.key===" ")){e.preventDefault();tr.click();}});
+function syncDraftMeta(){
+  const g=id=>document.getElementById(id);
+  if(g("f-prop")) draft.proposito=g("f-prop").value;
+  draft.lider=g("f-lider").value; draft.reunion=g("f-reunion").value; draft.fecha=g("f-fecha").value; draft.notas=g("f-notas").value;
+}
+document.addEventListener("input",e=>{
+  const t=e.target; if(!editing||t.dataset.o==null) return;
+  const o=draft.objetivos[+t.dataset.o], p=t.dataset.p;
+  if(+t.dataset.k<0){o.t=t.value;return;}
+  const k=o.krs[+t.dataset.k]; k[p]=(p==="base"||p==="meta")?numOrNull(t.value):t.value;
+});
+document.addEventListener("change",e=>{
+  const t=e.target; if(editing){ if(t.dataset.p==="dir"){draft.objetivos[+t.dataset.o].krs[+t.dataset.k].dir=t.value;} return; }
+  const a=clone(area(selected));
+  if(t.dataset.o!=null){ const k=a.objetivos[+t.dataset.o].krs[+t.dataset.k]; const v=numOrNull(t.value); if(k[t.dataset.p]===v) return; k[t.dataset.p]=v; }
+  else if(t.id==="f-lider") a.lider=t.value.trim();
+  else if(t.id==="f-reunion") a.reunion=t.value;
+  else if(t.id==="f-fecha") a.fecha=t.value;
+  else if(t.id==="f-notas") a.notas=t.value;
+  else return;
+  persist(a);
+});
+
+function showTab(name){
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));
+  document.getElementById("view-areas").hidden=name!=="areas";
+  document.getElementById("view-guia").hidden=name!=="guia";
+  try{localStorage.setItem("okr-tab",name);}catch(_){}
+}
+let toastT; function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2400);}
+
+renderClock(); render();
+try{ if(localStorage.getItem("okr-tab")==="guia") showTab("guia"); }catch(_){}
+
+(async()=>{
+  const note=document.getElementById("dbnote");
+  if(!window.claude||!window.claude.use){note.hidden=false;note.textContent="Vista de solo lectura: los cambios no se guardan fuera de esta pantalla.";return;}
+  db=await window.claude.use("db");
+  if(!db){note.hidden=false;note.textContent="Vista de solo lectura: los cambios no se guardan fuera de esta pantalla.";return;}
+  try{ const u=await window.claude.use("user"); const w=u&&await u.can("data.write"); if(w===false){canWrite=false;render();} }catch(_){}
+  db.collection("areas").onSnapshot(snap=>{
+    snap.docs.forEach(d=>{ if(d.exists) stored[d.id]=clone(d.data()); });
+    renderRows(); if(!editing) renderDetail();
+  },()=>{note.hidden=false;note.textContent="Se perdió la conexión con la base. Recargá la página para ver los últimos datos.";});
+})();
+})();
+</script>
