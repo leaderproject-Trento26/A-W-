@@ -1,0 +1,310 @@
+<title>Matriz de Riesgos Trento Entregas</title>
+<style>
+:root{
+  --red:#D71F2B; --red-deep:#A3131D; --red-tint:#FBE9EA;
+  --ink:#231A1B; --muted:#6F6263; --line:#E7DEDE; --ground:#F4EFEF; --surface:#FFFFFF; --sunk:#FAF7F7;
+  --lv1:#1D8A56; --lv1-t:#DDF1E6;
+  --lv2:#8A6A00; --lv2-t:#FBF0C9;
+  --lv3:#C25400; --lv3-t:#FDE3CC;
+  --lv4:#B0121D; --lv4-t:#F9D3D6;
+  --cell1:#E3F2E9; --cell2:#FAF1CF; --cell3:#FCE0C8; --cell4:#F6C9CC;
+  --font:Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --shadow:0 18px 40px -24px rgba(90,20,25,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F;
+    --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
+    --lv1:#4CC08A; --lv1-t:#15301F; --lv2:#E3C24A; --lv2-t:#332A0E; --lv3:#F59A4A; --lv3-t:#3A230F; --lv4:#FF6B74; --lv4-t:#3E1519;
+    --cell1:#1A3325; --cell2:#352D12; --cell3:#3D2613; --cell4:#45191D;
+    --shadow:0 18px 40px -24px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F;
+  --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
+  --lv1:#4CC08A; --lv1-t:#15301F; --lv2:#E3C24A; --lv2-t:#332A0E; --lv3:#F59A4A; --lv3-t:#3A230F; --lv4:#FF6B74; --lv4-t:#3E1519;
+  --cell1:#1A3325; --cell2:#352D12; --cell3:#3D2613; --cell4:#45191D;
+  --shadow:0 18px 40px -24px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+button{font-family:var(--font);font-size:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--red);font-weight:700}
+header{display:flex;flex-direction:column;gap:8px}
+header h1{font-size:30px;line-height:1.15}
+header .lede{color:var(--muted);max-width:68ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* summary */
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.sum{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;border-top:4px solid var(--c)}
+.sum .n{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c)}
+.sum .l{font-size:12.5px;color:var(--muted)}
+.sum .l b{color:var(--ink)}
+@media (max-width:640px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* controls */
+.bar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--red);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:600}
+.lbl{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+/* matrix */
+.grid2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.panel h2{font-size:17px;margin-bottom:4px}
+.panel .sub{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+.mx-scroll{overflow-x:auto}
+.mx{display:grid;grid-template-columns:26px 92px repeat(5,minmax(62px,1fr));grid-template-rows:repeat(5,minmax(74px,auto)) auto auto;gap:4px;min-width:470px}
+.mx .axis-y{grid-row:1 / span 5;grid-column:1;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.mx .rh{font-size:12px;color:var(--muted);display:flex;flex-direction:column;justify-content:center;padding-right:6px;text-align:right;line-height:1.25}
+.mx .rh b,.mx .ch b{color:var(--ink);font-size:13px}
+.mx .ch{font-size:12px;color:var(--muted);text-align:center;line-height:1.25;padding-top:6px}
+.mx .axis-x{grid-column:3 / span 5;text-align:center;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.cell{border-radius:6px;padding:6px 6px 18px;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;position:relative}
+.cell .sc{position:absolute;right:6px;bottom:4px;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.c1{background:var(--cell1)}.c2{background:var(--cell2)}.c3{background:var(--cell3)}.c4{background:var(--cell4)}
+.rid{border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);background:var(--surface);color:var(--ink);font-size:11.5px;font-weight:700;padding:2px 6px;border-radius:5px;font-variant-numeric:tabular-nums}
+.rid:hover,.rid.on{background:var(--ink);color:var(--surface)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:3px;display:inline-block}
+
+/* detail */
+.detail{display:flex;flex-direction:column;gap:12px}
+.detail .top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.detail h3{font-size:18px;line-height:1.25}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:8px 12px;font-size:13.5px}
+.kv dt{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding-top:2px}
+.kv dd{margin:0}
+@media (max-width:520px){.kv{grid-template-columns:1fr}.kv dt{padding-top:6px}}
+.scores{display:flex;gap:10px;flex-wrap:wrap}
+.score{flex:1 1 150px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--sunk)}
+.score .t{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.score .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px;margin-top:2px}
+.score .v small{font-size:12px;color:var(--muted);font-weight:400}
+
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.l1{background:var(--lv1-t);color:var(--lv1)}.l2{background:var(--lv2-t);color:var(--lv2)}.l3{background:var(--lv3-t);color:var(--lv3)}.l4{background:var(--lv4-t);color:var(--lv4)}
+.cat{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap}
+
+/* table */
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:1080px;font-size:13px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--sunk);position:sticky;top:0;cursor:pointer;user-select:none;white-space:nowrap}
+th[aria-sort="ascending"]::after{content:" ▲"}th[aria-sort="descending"]::after{content:" ▼"}
+td.num{font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--sunk)}
+tbody tr.on{background:var(--red-tint)}
+td .ttl{font-weight:600}
+td .cc{color:var(--muted);font-size:12.5px;margin-top:3px}
+.proto{font-size:12.5px}
+.proto em{font-style:normal;color:var(--muted)}
+.foot{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px;max-width:80ch}
+.scale{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:700px){.scale{grid-template-columns:1fr}}
+.scale table{min-width:0;font-size:12.5px}
+.scale th{cursor:default;position:static}
+@media (prefers-reduced-motion:no-preference){.rid,tbody tr{transition:background .12s,color .12s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Trento Logística · Entregas coordinadas</span>
+    <h1>Matriz de riesgos</h1>
+    <p class="lede">Riesgos del circuito de entrega (coordinación → hoja de ruta → chofer → conformidad del cliente) y del paso del prototipo a producción. Evaluados con probabilidad × impacto en escala 1–5, antes y después de las acciones propuestas.</p>
+    <div class="meta">
+      <span>Alcance: <b>Capital, Zona Sur, Zona Norte, La Plata</b></span>
+      <span>Flota: <b>2 camiones (3,5 t y 5 t) · 2 choferes</b></span>
+      <span>Regla: <b>máx. 5 clientes por hoja de ruta</b></span>
+      <span>Fecha: <b>23/09/2026</b></span>
+    </div>
+  </header>
+
+  <section class="summary" id="summary" aria-label="Resumen por nivel"></section>
+
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Tipo de evaluación">
+      <button id="v-in" aria-pressed="true">Riesgo inherente</button>
+      <button id="v-res" aria-pressed="false">Riesgo residual</button>
+    </div>
+    <span class="lbl">Categoría</span>
+    <div class="chips" id="cats"></div>
+  </div>
+
+  <div class="grid2">
+    <section class="panel" aria-labelledby="mx-h">
+      <h2 id="mx-h">Mapa de calor</h2>
+      <p class="sub" id="mx-sub">Tocá un riesgo para ver el detalle.</p>
+      <div class="mx-scroll"><div class="mx" id="mx"></div></div>
+      <div class="legend">
+        <span><i class="c1"></i>Bajo (1–4)</span>
+        <span><i class="c2"></i>Medio (5–9)</span>
+        <span><i class="c3"></i>Alto (10–14)</span>
+        <span><i class="c4"></i>Crítico (15–25)</span>
+      </div>
+    </section>
+    <section class="panel detail" id="detail" aria-live="polite"></section>
+  </div>
+
+  <section style="display:flex;flex-direction:column;gap:10px">
+    <h2 style="font-size:19px">Registro de riesgos</h2>
+    <div class="tbl-wrap">
+      <table id="tbl">
+        <thead><tr>
+          <th data-k="id">ID</th>
+          <th data-k="riesgo">Riesgo · causa → consecuencia</th>
+          <th data-k="cat">Categoría</th>
+          <th data-k="p">P</th>
+          <th data-k="i">I</th>
+          <th data-k="s">Inherente</th>
+          <th data-k="control">Control en el prototipo</th>
+          <th data-k="accion">Acción propuesta</th>
+          <th data-k="resp">Responsable</th>
+          <th data-k="rs">Residual</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="scale">
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Prob.</th><th>Criterio</th></tr></thead>
+      <tbody>
+        <tr><td class="num">5</td><td><b>Casi segura</b> · ocurre casi todas las semanas</td></tr>
+        <tr><td class="num">4</td><td><b>Probable</b> · varias veces por mes</td></tr>
+        <tr><td class="num">3</td><td><b>Posible</b> · alguna vez por mes</td></tr>
+        <tr><td class="num">2</td><td><b>Improbable</b> · pocas veces al año</td></tr>
+        <tr><td class="num">1</td><td><b>Rara</b> · excepcional</td></tr>
+      </tbody></table></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Impacto</th><th>Criterio</th></tr></thead>
+      <tbody>
+        <tr><td class="num">5</td><td><b>Crítico</b> · lesiones, pérdida total de carga, sanción legal</td></tr>
+        <tr><td class="num">4</td><td><b>Mayor</b> · entrega fallida, nota de crédito, pérdida de cliente</td></tr>
+        <tr><td class="num">3</td><td><b>Moderado</b> · reprogramación, re-entrega, reclamo</td></tr>
+        <tr><td class="num">2</td><td><b>Menor</b> · demora dentro del día, retrabajo interno</td></tr>
+        <tr><td class="num">1</td><td><b>Insignificante</b> · sin efecto en el cliente</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <div class="foot">
+    <p><b>Cómo se armó:</b> los riesgos salen del flujo del prototipo (estados del pedido, hoja de ruta con tope de 5 clientes, avisos al salir y a 15 minutos, foto y firma, reclamos) y de lo que falta para llevarlo a producción. La columna “Control en el prototipo” indica qué ya existe en las pantallas; el residual supone implementadas las acciones propuestas.</p>
+    <p>Las calificaciones son una primera propuesta para validar con coordinación, depósito y flota.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const R=[
+ {id:'R01',cat:'Cliente',riesgo:'El cliente no elige turno a tiempo',causa:'No responde el link de WhatsApp antes de la hora límite',cons:'El pedido queda en “Esperando cliente” y no entra en la hoja de ruta',p:4,i:3,control:'Hora límite de respuesta con alerta a coordinación; confirmación telefónica (“¿Te confirmó por teléfono?”)',accion:'Recordatorio automático a mitad de plazo; asignar la primera franja libre si no responde y avisarlo',resp:'Coordinación',pr:2,ir:3},
+ {id:'R02',cat:'Operación',riesgo:'Cliente ausente o local cerrado al llegar',causa:'Nadie para recibir o se cambió el horario del local',cons:'“No entregado”, re-entrega y camión que vuelve con carga',p:3,i:4,control:'Rango horario al salir, aviso “llega en ~15 min”, dato de quién recibe y horario del local',accion:'Pedir confirmación al aviso de 15 min; si no hay respuesta, el chofer llama antes de desviarse',resp:'Coordinación / Chofer',pr:2,ir:3},
+ {id:'R03',cat:'Flota y capacidad',riesgo:'Camión sobrecargado',causa:'Suma de kg o m³ por encima de la capacidad al completar el camión',cons:'Multa, riesgo de accidente y daño de mercadería',p:2,i:5,control:'Barra de ocupación kg/m³ y aviso “Supera la capacidad” al armar la hoja',accion:'Bloquear la publicación de la hoja si excede; verificación de peso en la carga',resp:'Coordinación / Depósito',pr:1,ir:5},
+ {id:'R04',cat:'Flota y capacidad',riesgo:'Acumulación de pedidos por el tope de 5 clientes',causa:'Más pedidos confirmados por zona que cupos diarios',cons:'Pedidos que pasan al próximo día hábil y turnos incumplidos',p:4,i:3,control:'Aviso “Cupo completo: 5 clientes”; los restantes pasan al día siguiente',accion:'Tablero de pendientes por zona; flete tercerizado en días pico; ofrecer al cliente solo franjas con cupo',resp:'Jefatura de logística',pr:3,ir:2},
+ {id:'R05',cat:'Depósito y administración',riesgo:'Faltante o producto equivocado en la carga',causa:'Error de preparación o de carga contra remito',cons:'Reclamo “faltante / producto equivocado”, segunda entrega',p:3,i:4,control:'Checklist “Controlé la carga contra los remitos”; opción “Escanear etiqueta”',accion:'Escaneo obligatorio de cada bulto; conteo de bultos al entregar',resp:'Depósito',pr:2,ir:3},
+ {id:'R06',cat:'Operación',riesgo:'Daño de mercadería frágil (vidrios, aberturas)',causa:'Embalaje, estiba o descarga inadecuados',cons:'Rechazo parcial, nota de crédito y reposición',p:3,i:4,control:'Foto de la entrega; requisitos de descarga (ayudante, autoelevador)',accion:'Norma de estiba para frágiles; foto obligatoria al cargar y al entregar; seguro de carga',resp:'Depósito / Flota',pr:2,ir:3},
+ {id:'R07',cat:'Operación',riesgo:'Requisitos de descarga no disponibles en destino',causa:'Falta rampa, autoelevador o turno en muelle',cons:'Demora en ruta o entrega fallida',p:3,i:3,control:'El cliente carga requisitos e indicaciones para el chofer',accion:'Validar requisitos al confirmar turno; asignar ayudante cuando se pide',resp:'Coordinación',pr:2,ir:2},
+ {id:'R08',cat:'Tecnología',riesgo:'Rango horario informado incumplido',causa:'ETA calculado con salida fija 7:30 y tiempos estimados; tránsito real',cons:'Cliente esperando fuera del rango; pérdida de confianza',p:4,i:3,control:'ETA por parada en la hoja de ruta',accion:'ETA con GPS y tránsito en tiempo real; reenvío automático del rango si se desvía más de 30 min',resp:'Desarrollo',pr:2,ir:3},
+ {id:'R09',cat:'Seguridad',riesgo:'Chofer usa el celular mientras maneja',causa:'Aviso de 15 min y registros manuales en la app',cons:'Accidente, lesiones',p:3,i:5,control:'Hoy el aviso de 15 min es un botón del chofer',accion:'Aviso automático por GPS (ya previsto); bloquear acciones con el vehículo en movimiento; política de uso',resp:'Flota / Desarrollo',pr:1,ir:5},
+ {id:'R10',cat:'Seguridad',riesgo:'Robo de mercadería o del camión en ruta',causa:'Recorridos previsibles y zonas de riesgo del conurbano',cons:'Pérdida total de carga y riesgo para el chofer',p:2,i:5,control:'—',accion:'Seguro de carga; rastreo satelital; no exponer el recorrido completo a terceros',resp:'Flota',pr:2,ir:4},
+ {id:'R11',cat:'Tecnología',riesgo:'Sin señal en ruta',causa:'Zonas sin cobertura o datos móviles agotados',cons:'No se registran llegada, foto ni firma; estado desactualizado',p:3,i:3,control:'—',accion:'Modo sin conexión con sincronización al recuperar señal',resp:'Desarrollo',pr:1,ir:3},
+ {id:'R12',cat:'Legal',riesgo:'Prueba de entrega insuficiente ante una disputa',causa:'Foto opcional; firma en pantalla sin DNI verificado; confirmación “por el cliente”',cons:'No se puede demostrar la entrega; se asume la pérdida',p:3,i:4,control:'Foto, firma con aclaración y DNI, bultos entregados, comprobante de entrega',accion:'Foto obligatoria con hora y ubicación; firma + DNI obligatorios salvo excepción autorizada',resp:'Coordinación / Legal',pr:1,ir:4},
+ {id:'R13',cat:'Cliente',riesgo:'El cliente no da conformidad',causa:'No responde “¿Cómo recibiste la mercadería?”',cons:'Pedidos abiertos en “Entregado · falta conformidad”; reclamos tardíos',p:4,i:2,control:'Pedido de conformidad por WhatsApp',accion:'Conformidad tácita a las 48 h con aviso previo; cierre automático',resp:'Atención al cliente',pr:2,ir:2},
+ {id:'R14',cat:'Cliente',riesgo:'Reclamos sin resolver a tiempo',causa:'Faltante, daño o rechazo parcial sin dueño ni plazo',cons:'Notas de crédito, pérdida del cliente',p:3,i:4,control:'Bandeja de reclamos, “Resolver y cerrar” con mensaje al cliente',accion:'Plazo de resolución (ej. 48 h) con alerta; responsable por reclamo; indicador semanal',resp:'Atención al cliente',pr:2,ir:3},
+ {id:'R15',cat:'Legal',riesgo:'Incumplimiento de protección de datos personales',causa:'Se guardan nombres, DNI, teléfonos, firmas y fotos',cons:'Sanción (Ley 25.326), daño reputacional',p:2,i:5,control:'—',accion:'Consentimiento informado; acceso por perfil; cifrado; plazo de conservación; registro de la base',resp:'Legal / Desarrollo',pr:1,ir:4},
+ {id:'R16',cat:'Seguridad informática',riesgo:'Link de seguimiento expone datos del envío',causa:'Link corto reenviable (ej. /c/8FK2Q) con dirección y horario',cons:'Terceros conocen cuándo llega mercadería a una dirección',p:2,i:4,control:'Código de 6 dígitos al teléfono del cliente para ingresar',accion:'Tokens largos con vencimiento; mostrar dirección y horario solo tras validar el código',resp:'Desarrollo',pr:1,ir:3},
+ {id:'R17',cat:'Seguridad informática',riesgo:'Suplantación de Trento por WhatsApp',causa:'Clientes acostumbrados a recibir links de entrega',cons:'Estafas, pagos falsos, pérdida de confianza',p:2,i:4,control:'—',accion:'Cuenta de WhatsApp Business verificada; único dominio; comunicar que nunca se piden pagos por link',resp:'Comercial / Desarrollo',pr:1,ir:4},
+ {id:'R18',cat:'Tecnología',riesgo:'Dependencia de WhatsApp como único canal',causa:'Bloqueo de número, cambio de costos o de plantillas',cons:'Clientes sin propuestas de turno ni avisos',p:2,i:4,control:'—',accion:'Canal alternativo (SMS o email) y reintento automático',resp:'Desarrollo',pr:1,ir:3},
+ {id:'R19',cat:'Tecnología',riesgo:'Falla en la importación desde facturación',causa:'Integración caída, pedidos duplicados o sin datos de contacto',cons:'Pedidos facturados que nunca se coordinan',p:3,i:4,control:'Importación de pedidos y notificación “pedidos nuevos para coordinar”',accion:'Conciliación diaria facturas vs. pedidos; alerta si hay diferencias',resp:'Desarrollo / Administración',pr:1,ir:4},
+ {id:'R20',cat:'Proyecto',riesgo:'Subestimar el paso de prototipo a producción',causa:'El prototipo guarda todo en el navegador, sin servidor ni usuarios reales',cons:'Retrasos, costos mayores, datos que no se comparten entre perfiles',p:4,i:4,control:'Prototipo navegable por perfil (coordinador, chofer, cliente)',accion:'Definir arquitectura (servidor, base de datos, notificaciones); piloto en una zona antes del despliegue',resp:'Dirección del proyecto',pr:2,ir:3},
+ {id:'R21',cat:'Proyecto',riesgo:'Baja adopción de choferes o clientes',causa:'Resistencia al cambio, poca familiaridad digital, preferencia por el teléfono',cons:'Datos incompletos y doble trabajo',p:3,i:4,control:'Opción “Confirmar por el cliente” y confirmación telefónica',accion:'Capacitación; piloto con clientes frecuentes; medir uso por perfil',resp:'Dirección del proyecto',pr:2,ir:3},
+ {id:'R22',cat:'Flota y capacidad',riesgo:'Ausencia de un chofer',causa:'Solo 2 choferes para 2 camiones',cons:'Se pierde la mitad de la capacidad del día',p:3,i:4,control:'—',accion:'Chofer suplente o flete tercerizado habilitado en la app',resp:'Jefatura de logística',pr:2,ir:3},
+ {id:'R23',cat:'Flota y capacidad',riesgo:'Falla mecánica del camión',causa:'Mantenimiento insuficiente',cons:'Hoja de ruta interrumpida; clientes sin entrega',p:2,i:4,control:'Checklist “Revisé el vehículo (luces, cubiertas, frenos)”',accion:'Plan de mantenimiento preventivo; protocolo de transbordo',resp:'Flota',pr:1,ir:4},
+ {id:'R24',cat:'Depósito y administración',riesgo:'Remitos en papel perdidos o rendidos tarde',causa:'El chofer vuelve al depósito a rendir los remitos',cons:'Diferencias en cuenta corriente y facturación',p:3,i:3,control:'Aviso “Volvé al depósito para rendir los remitos”',accion:'Remito digital con el comprobante de entrega de la app',resp:'Administración',pr:1,ir:2},
+ {id:'R25',cat:'Flota y capacidad',riesgo:'Recorridos largos en La Plata',causa:'Zona lejana con el mismo tope y horario que Capital',cons:'Rangos horarios incumplidos y horas extra',p:3,i:3,control:'Zona La Plata con hoja de ruta propia',accion:'Días fijos para La Plata y menor tope de clientes o camión dedicado',resp:'Coordinación',pr:2,ir:2},
+ {id:'R26',cat:'Seguridad informática',riesgo:'Acceso indebido en equipo compartido',causa:'“Recordarme en este equipo” en PC o celular de uso común',cons:'Cambios no autorizados en pedidos o datos de clientes',p:2,i:3,control:'Ingreso con usuario por perfil',accion:'Sesiones con vencimiento; registro de quién hizo cada cambio',resp:'Desarrollo',pr:1,ir:2}
+];
+R.forEach(r=>{r.s=r.p*r.i;r.rs=r.pr*r.ir;});
+const LV=s=>s>=15?4:s>=10?3:s>=5?2:1;
+const LVN=['','Bajo','Medio','Alto','Crítico'];
+const PN=['','Rara','Improbable','Posible','Probable','Casi segura'];
+const IN=['','Insignificante','Menor','Moderado','Mayor','Crítico'];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pill=s=>'<span class="pill l'+LV(s)+'">'+LVN[LV(s)]+' · '+s+'</span>';
+const $=s=>document.querySelector(s);
+
+let view='in', cat='Todas', sel='R20', sortK='s', sortDir=-1;
+try{const v=localStorage.getItem('mr-view');if(v==='in'||v==='res')view=v;}catch(e){}
+
+const cats=['Todas',...[...new Set(R.map(r=>r.cat))].sort((a,b)=>a.localeCompare(b,'es'))];
+const P=r=>view==='in'?r.p:r.pr, I=r=>view==='in'?r.i:r.ir;
+const vis=()=>R.filter(r=>cat==='Todas'||r.cat===cat);
+
+function summary(){
+  const l=vis(), c=[0,0,0,0,0];
+  l.forEach(r=>c[LV(P(r)*I(r))]++);
+  const col=['','var(--lv1)','var(--lv2)','var(--lv3)','var(--lv4)'];
+  $('#summary').innerHTML=[4,3,2,1].map(k=>'<div class="sum" style="--c:'+col[k]+'"><span class="n">'+c[k]+'</span><span class="l"><b>'+LVN[k]+'</b> · '+(view==='in'?'inherente':'residual')+'</span></div>').join('');
+}
+function matrix(){
+  const l=vis();
+  let h='<div class="axis-y">Probabilidad</div>';
+  for(let p=5;p>=1;p--){
+    h+='<div class="rh" style="grid-column:2"><b>'+p+'</b>'+PN[p]+'</div>';
+    for(let i=1;i<=5;i++){
+      const s=p*i, ids=l.filter(r=>P(r)===p&&I(r)===i);
+      h+='<div class="cell c'+LV(s)+'">'+ids.map(r=>'<button class="rid'+(r.id===sel?' on':'')+'" data-id="'+r.id+'" title="'+esc(r.riesgo)+'">'+r.id+'</button>').join('')+'<span class="sc">'+s+'</span></div>';
+    }
+  }
+  h+='<div></div><div></div>';
+  for(let i=1;i<=5;i++)h+='<div class="ch"><b>'+i+'</b><br>'+IN[i]+'</div>';
+  h+='<div></div><div></div><div class="axis-x">Impacto</div>';
+  $('#mx').innerHTML=h;
+  $('#mx-sub').textContent=(view==='in'?'Riesgo inherente: sin las acciones propuestas.':'Riesgo residual: con las acciones propuestas implementadas.')+' Tocá un riesgo para ver el detalle.';
+}
+function detail(){
+  const r=R.find(x=>x.id===sel);
+  if(!r){$('#detail').innerHTML='<p class="sub">Elegí un riesgo en el mapa o en la tabla.</p>';return;}
+  $('#detail').innerHTML='<div class="top"><div><span class="eyebrow">'+r.id+' · '+esc(r.cat)+'</span><h3>'+esc(r.riesgo)+'</h3></div></div>'+
+   '<div class="scores"><div class="score"><div class="t">Inherente</div><div class="v">'+r.s+' '+pill(r.s)+'</div><small style="color:var(--muted)">P '+r.p+' '+PN[r.p]+' × I '+r.i+' '+IN[r.i]+'</small></div>'+
+   '<div class="score"><div class="t">Residual</div><div class="v">'+r.rs+' '+pill(r.rs)+'</div><small style="color:var(--muted)">P '+r.pr+' '+PN[r.pr]+' × I '+r.ir+' '+IN[r.ir]+'</small></div></div>'+
+   '<dl class="kv"><dt>Causa</dt><dd>'+esc(r.causa)+'</dd><dt>Consecuencia</dt><dd>'+esc(r.cons)+'</dd><dt>Control actual</dt><dd>'+esc(r.control)+'</dd><dt>Acción</dt><dd>'+esc(r.accion)+'</dd><dt>Responsable</dt><dd>'+esc(r.resp)+'</dd></dl>';
+}
+function table(){
+  const l=vis().slice().sort((a,b)=>{const x=a[sortK],y=b[sortK];return (typeof x==='number'?x-y:String(x).localeCompare(String(y),'es'))*sortDir||a.id.localeCompare(b.id);});
+  $('#tbl tbody').innerHTML=l.map(r=>'<tr data-id="'+r.id+'"'+(r.id===sel?' class="on"':'')+'><td><b>'+r.id+'</b></td><td><div class="ttl">'+esc(r.riesgo)+'</div><div class="cc">'+esc(r.causa)+' → '+esc(r.cons)+'</div></td><td><span class="cat">'+esc(r.cat)+'</span></td><td class="num">'+r.p+'</td><td class="num">'+r.i+'</td><td class="num">'+pill(r.s)+'</td><td class="proto">'+(r.control==='—'?'<em>Sin control</em>':esc(r.control))+'</td><td>'+esc(r.accion)+'</td><td>'+esc(r.resp)+'</td><td class="num">'+pill(r.rs)+'</td></tr>').join('');
+  document.querySelectorAll('#tbl th').forEach(th=>{th.setAttribute('aria-sort',th.dataset.k===sortK?(sortDir>0?'ascending':'descending'):'none');});
+}
+function chips(){
+  $('#cats').innerHTML=cats.map(c=>'<button class="chip" aria-pressed="'+(c===cat)+'" data-c="'+esc(c)+'">'+esc(c)+'</button>').join('');
+}
+function render(){
+  $('#v-in').setAttribute('aria-pressed',view==='in');$('#v-res').setAttribute('aria-pressed',view==='res');
+  chips();summary();matrix();detail();table();
+}
+$('#v-in').onclick=()=>{view='in';try{localStorage.setItem('mr-view',view)}catch(e){}render();};
+$('#v-res').onclick=()=>{view='res';try{localStorage.setItem('mr-view',view)}catch(e){}render();};
+$('#cats').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;cat=b.dataset.c;if(!vis().some(r=>r.id===sel))sel=(vis()[0]||{}).id;render();};
+$('#mx').onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;sel=b.dataset.id;render();};
+$('#tbl tbody').onclick=e=>{const t=e.target.closest('tr[data-id]');if(!t)return;sel=t.dataset.id;render();$('#detail').scrollIntoView({block:'nearest',behavior:'smooth'});};
+document.querySelectorAll('#tbl th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortK===k)sortDir=-sortDir;else{sortK=k;sortDir=(k==='s'||k==='rs'||k==='p'||k==='i')?-1:1;}table();});
+render();
+})();
+</script>
