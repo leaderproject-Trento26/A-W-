@@ -448,6 +448,19 @@ table.qm tbody tr:not([data-a]){cursor:default}
 .encq{display:flex;flex-direction:column;gap:6px}
 .encq .opts3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .encq .chip{border-radius:8px;padding:9px 4px;text-align:center}
+table.items{min-width:560px}
+table.items th{white-space:nowrap}
+table.items td.code{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;white-space:nowrap}
+table.items .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.items tr.tot td{background:var(--sunk);font-weight:700}
+table.items tbody tr{cursor:default}
+table.inv tr.hot td{background:var(--red-tint)}
+table.inv{min-width:760px}
+.items-c{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px}
+.items-c li{padding:4px 0;border-bottom:1px solid var(--line)}
+.items-c li:last-child{border-bottom:0}
+.inv-k{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:760px){.inv-k{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:11px 16px;border-radius:8px;font-weight:700;font-size:13px;box-shadow:var(--shadow);z-index:50;max-width:calc(100% - 32px);text-align:center}
 @media (prefers-reduced-motion:no-preference){
   .enter{animation:in .22s ease-out}
@@ -463,9 +476,9 @@ table.qm tbody tr:not([data-a]){cursor:default}
 (function(){
 'use strict';
 const LOGO='logo-trento.jpg';
-const KEY='trento-demo-v8';
+const KEY='trento-demo-v9';
 const HERO='TR-24817';
-const TRUCKS=[{pat:'AB 123 CD',kg:3500,m3:16,desc:'Mediano 3,5 t'},{pat:'AC 456 EF',kg:5000,m3:24,desc:'Grande 5 t'}];
+const TRUCKS=[{pat:'AB 123 CD',kg:3500,desc:'Mediano 3,5 t'},{pat:'AC 456 EF',kg:5000,desc:'Grande 5 t'}];
 const DRIVERS=[{id:'dr',nombre:'Milena Rozo',dni:'30456789',ini:'MR',tel:'11 4402-7781'},{id:'sm',nombre:'Eugenia',dni:'32118404',ini:'EU',tel:'11 4402-7790'}];
 const SLOTS=[
   {v:'Jue 25/09 · 08:00–10:00'},{v:'Jue 25/09 · 10:00–12:00'},{v:'Jue 25/09 · 12:00–14:00'},{v:'Jue 25/09 · 14:00–16:00',full:true},
@@ -485,6 +498,16 @@ const LOC={
 };
 const zoneOf=o=>(LOC[o.zona]||{z:'cap'}).z;
 const PLAN_START=7*60+30;
+/* Catálogo real de láminas: "Lista inventario" A+W Business, JOSE TRENTO VIDRIOS, 27/01/2026.
+   [código, artículo, ancho mm, alto mm, espesor total mm, familia] */
+const CAT=[["11000002","FLOAT INC 02 mm",3600,2250,2,"Float"],["11000003","FLOAT INC 03 mm",3600,2500,3,"Float"],["11000004","FLOAT INC 04 mm",4000,2500,4,"Float"],["11000004","FLOAT INC 04 mm",1800,2500,4,"Float"],["11000004","FLOAT INC 04 mm",2500,1800,4,"Float"],["11000004","FLOAT INC 04 mm",3600,2500,4,"Float"],["11000004","FLOAT INC 04 mm",5500,3600,4,"Float"],["11000005","FLOAT INC 05 mm",2500,1800,5,"Float"],["11000005","FLOAT INC 05 mm",3600,2500,5,"Float"],["11000005","FLOAT INC 05 mm",5500,3600,5,"Float"],["11000006","FLOAT INC 06 mm",2500,1800,6,"Float"],["11000006","FLOAT INC 06 mm",3600,2500,6,"Float"],["11000006","FLOAT INC 06 mm",5500,3600,6,"Float"],["11000008","FLOAT INC 08 mm",3600,2500,8,"Float"],["11000008","FLOAT INC 08 mm",5500,3600,8,"Float"],["11000010","FLOAT INC 10 mm",3050,2050,10,"Float"],["11000010","FLOAT INC 10 mm",3700,2500,10,"Float"],["11000010","FLOAT INC 10 mm",5500,3600,10,"Float"],["11000010","FLOAT INC 10 mm",5500,3700,10,"Float"],["11500104","FLOAT BRONCE 04 mm",3600,2140,4,"Float"],["11500104","FLOAT BRONCE 04 mm",3600,2500,4,"Float"],["11500105","FLOAT BRONCE 05 mm",3600,2500,5,"Float"],["11500106","FLOAT BRONCE 06 mm",3600,2140,6,"Float"],["11500106","FLOAT BRONCE 06 mm",3600,2500,6,"Float"],["11500106","FLOAT BRONCE 06 mm",3300,2140,6,"Float"],["11500304","FLOAT GRIS 04 mm",3600,2500,4,"Float"],["11500305","FLOAT GRIS 05 mm",3600,2500,5,"Float"],["11500306","FLOAT GRIS 06 mm",3210,2500,6,"Float"],["11500306","FLOAT GRIS 06 mm",3600,2500,6,"Float"],["11500308","FLOAT GRIS 08 mm",3600,2500,8,"Float"],["11500405","FLOAT VERDE 05 mm",3600,2500,5,"Float"],["12001004","FLOAT GRIS 04 MM",3600,2140,4,"Float"],["12001005","FLOAT GRIS 05 mm",3600,2130,5,"Float"],["12001005","FLOAT GRIS 05 mm",3600,2500,5,"Float"],["12001006","FLOAT GRIS 06 mm",3600,2500,6,"Float"],["12001008","FLOAT GRIS 08 mm",3600,2140,8,"Float"],["12001008","FLOAT GRIS 08 mm",3600,2500,8,"Float"],["12001010","FLOAT GRIS 10 mm",3600,2140,10,"Float"],["12002004","FLOAT BRONCE 04 MM",3600,2140,4,"Float"],["12002005","FLOAT BRONCE 05 MM",3600,2140,5,"Float"],["12002005","FLOAT BRONCE 05 MM",3600,2500,5,"Float"],["12002006","FLOAT BRONCE 06 MM",3600,2140,6,"Float"],["12002006","FLOAT BRONCE 06 MM",3600,2500,6,"Float"],["12002008","FLOAT BRONCE 08 mm",3600,2500,8,"Float"],["12002010","FLOAT BRONCE 10 mm",3700,2500,10,"Float"],["12003004","FLOAT VERDE 04 mm",3600,2140,4,"Float"],["12003005","FLOAT VERDE 05 mm",3210,2400,5,"Float"],["12003005","FLOAT VERDE 05 mm",3600,2500,5,"Float"],["12003006","FLOAT VERDE 06 mm",3600,2500,6,"Float"],["12500102","ESPEJO INC 2 mm",3600,2250,2,"Espejo"],["12500103","ESPEJO INC 3 mm",3600,2500,3,"Espejo"],["12500104","ESPEJO INC 4 mm",2500,1800,4,"Espejo"],["12500104","ESPEJO INC 4 mm",3600,2500,4,"Espejo"],["12500105","ESPEJO INC 5 mm",2500,1800,5,"Espejo"],["12500105","ESPEJO INC 5 mm",3600,2500,5,"Espejo"],["12500106","ESPEJO INC 6 mm",2500,1800,6,"Espejo"],["12500106","ESPEJO INC 6 mm",3600,2500,6,"Espejo"],["13000104","OPACID 04 MM",2500,1800,4,"Impreso / decorativo"],["13000104","OPACID 04 MM",3600,2500,4,"Impreso / decorativo"],["13000106","OPACID 06 MM",3600,2500,6,"Impreso / decorativo"],["13000706","OPTIGREEN 6 mm",3210,2400,6,"Control solar"],["13000906","SUPERGREY 6 mm",3300,2440,6,"Control solar"],["13001206","ECLIPSE ADVANTAGE ARTIC BLUE 6 mm",3300,2440,6,"Control solar"],["13001706","ECLIPSE ADVANTAGE GRIS 6 mm",3300,2440,6,"Control solar"],["13006106","STOPSOL CLASSIC VERDE 06 mm",3210,2250,6,"Control solar"],["13012006","COOL LITE ST 120 GRIS 6 mm",3210,2250,6,"Control solar"],["13013006","COOL LITE STB 120 6 mm",3210,2540,6,"Control solar"],["14000108","GRAPHITE GRIS 8MM",2500,1600,8,"Impreso / decorativo"],["14001004","MARTELE INC 4 mm",2500,1600,4,"Impreso / decorativo"],["14001204","MARTELE AMBAR 4 mm",2500,1600,4,"Impreso / decorativo"],["14001304","MARTELE AZUL 4 mm",2500,1600,4,"Impreso / decorativo"],["14001504","MARTELE VERDE 4 mm",2500,1600,4,"Impreso / decorativo"],["14003006","ARMADO INC 6 mm",2500,1600,6,"Impreso / decorativo"],["14003006","ARMADO INC 6 mm",3000,1600,6,"Impreso / decorativo"],["14006004","PACIFICO INC 04 mm",2500,1600,4,"Impreso / decorativo"],["14007004","STIPOLITE INC 4 mm",2500,1600,4,"Impreso / decorativo"],["14008004","SYCAMORE INC 4 mm",1600,2500,4,"Impreso / decorativo"],["19900002","CORTE CLIENTE INC F2 mm",3600,2250,2,"Corte / material del cliente"],["19900003","CORTE CLIENTE INC F3 mm",3600,2500,3,"Corte / material del cliente"],["19900004","CORTE CLIENTE INC F4 mm",2500,1800,4,"Corte / material del cliente"],["19900004","CORTE CLIENTE INC F4 mm",3600,2500,4,"Corte / material del cliente"],["19900004","CORTE CLIENTE INC F4 mm",4000,2500,4,"Corte / material del cliente"],["19900005","CORTE CLIENTE INC F5 mm",2500,1800,5,"Corte / material del cliente"],["19900005","CORTE CLIENTE INC F5 mm",3600,2500,5,"Corte / material del cliente"],["19900006","CORTE CLIENTE INC F06 mm",2500,1800,6,"Corte / material del cliente"],["19900006","CORTE CLIENTE INC F06 mm",3600,2500,6,"Corte / material del cliente"],["19900008","CORTE CLIENTE INC F08 mm",3600,2500,8,"Corte / material del cliente"],["19930004","CORTE TEXTURADO CLIENTE 4 mm",1600,2500,4,"Corte / material del cliente"],["19930004","CORTE TEXTURADO CLIENTE 4 mm",3600,2500,4,"Corte / material del cliente"],["19930006","CORTE TEXTURADO CLIENTE 06 mm",3000,1600,6,"Corte / material del cliente"],["19931004","CORTE TEXTURADO CLIENTE 4 mm MART INC",2500,1600,4,"Corte / material del cliente"],["19932004","CORTE TEXTURADO CLIENTE 4 mm MART AZ",2500,1600,4,"Corte / material del cliente"],["19933004","CORTE TEXTURADO CLIENTE 4 mm MART VER",2500,1600,4,"Corte / material del cliente"],["19952002","CORTE CAPA CLIENTE 2 mm",3600,2250,2,"Corte / material del cliente"],["19952003","CORTE CAPA CLIENTE 3 mm",3600,2500,3,"Corte / material del cliente"],["19952004","CORTE CAPA CLIENTE 4 mm",3600,2500,4,"Corte / material del cliente"],["19952005","CORTE CAPA CLIENTE 5 mm",3600,2500,5,"Corte / material del cliente"],["19952006","CORTE CAPA CLIENTE 06 mm",3600,2500,6,"Corte / material del cliente"],["23000906","TEMP SUPER GREY 06 mm",3300,2440,6,"Templado"],["23001706","TEMP ECLIPSE ADVANTAGE GREY 6 mm VTE VTE",3300,2440,6,"Templado"],["23006106","TEMP STOPSOL CLASSIC VERDE 6 mm VTE VTE",3210,2250,6,"Templado"],["51000106","LAM BLINDEX INC 3+3",2500,1800,6,"Laminado de seguridad"],["51000106","LAM BLINDEX INC 3+3",3600,2500,6,"Laminado de seguridad"],["51000106","LAM BLINDEX INC 3+3",4000,2500,6,"Laminado de seguridad"],["51000106","LAM BLINDEX INC 3+3",5100,3210,6,"Laminado de seguridad"],["51000108","LAM BLINDEX INC 4+4",2500,1800,8,"Laminado de seguridad"],["51000108","LAM BLINDEX INC 4+4",3600,2500,8,"Laminado de seguridad"],["51000108","LAM BLINDEX INC 4+4",4000,2500,8,"Laminado de seguridad"],["51000108","LAM BLINDEX INC 4+4",5500,3210,8,"Laminado de seguridad"],["51000110","LAM BLINDEX INC 5+5",2500,1800,10,"Laminado de seguridad"],["51000110","LAM BLINDEX INC 5+5",3600,2500,10,"Laminado de seguridad"],["51000110","LAM BLINDEX INC 5+5",4000,2500,10,"Laminado de seguridad"],["51000110","LAM BLINDEX INC 5+5",5500,3210,10,"Laminado de seguridad"],["51000206","LAM BLINDEX INC 3+3 PVB 0.76",3600,2500,6,"Laminado de seguridad"],["51200106","LAM BLINDEX JUMBO 3+3 INC",3600,2500,6,"Laminado de seguridad"],["51200106","LAM BLINDEX JUMBO 3+3 INC",5100,3210,6,"Laminado de seguridad"],["51500112","LAM BLINDEX INCOLORO 6+6",3600,2500,12,"Laminado de seguridad"],["52001108","LAM BLINDEX GRIS CLARO 4+4",3600,2500,8,"Laminado de seguridad"],["52002106","LAM BLINDEX GRIS OSCURO 3+3",3600,2500,6,"Laminado de seguridad"],["52002108","LAM BLINDEX GRIS OSCURO 4+4",3600,2500,8,"Laminado de seguridad"],["52003106","LAM BLINDEX ESMERILADO 3+3",2500,1800,6,"Laminado de seguridad"],["52003106","LAM BLINDEX ESMERILADO 3+3",3600,2500,6,"Laminado de seguridad"],["52003108","LAM BLINDEX ESMERILADO 4+4",3600,2500,8,"Laminado de seguridad"],["52004106","LAM BRONCE CLARO 3+3",3600,2140,6,"Laminado de seguridad"],["52301112","LAM GRIS CLARO 6+6",3600,2500,12,"Laminado de seguridad"],["55002108","BLINDEX SOLAR GRIS 4+4",3210,2400,8,"Laminado de seguridad"],["55002199","BLINDEX SOLAR GRIS 6-6",3210,2400,12,"Laminado de seguridad"],["55002199","BLINDEX SOLAR GRIS 6-6",5510,3210,12,"Laminado de seguridad"],["55003108","BLINDEX SOLAR NEUTRO 4+4",3210,2400,8,"Laminado de seguridad"],["55004108","BLINDEX SOLAR VERDE 4+4",3210,2400,8,"Laminado de seguridad"],["56503108","BLINDEX NEUTRO LIGHT 4+4",3210,2400,8,"Laminado de seguridad"],["56503108","BLINDEX NEUTRO LIGHT 4+4",3600,2500,8,"Laminado de seguridad"],["58500106","LAM ACUSTICO 3+5",3600,2500,8,"Laminado de seguridad"],["59800006","CORTE DEL CLIENTE 3+3 mm",2500,1800,6,"Corte / material del cliente"],["59800006","CORTE DEL CLIENTE 3+3 mm",3600,2500,6,"Corte / material del cliente"],["59800006","CORTE DEL CLIENTE 3+3 mm",4000,2500,6,"Corte / material del cliente"],["59800006","CORTE DEL CLIENTE 3+3 mm",5100,3210,6,"Corte / material del cliente"],["59800008","CORTE DEL CLIENTE 4+4 mm",1800,2500,8,"Corte / material del cliente"],["59800008","CORTE DEL CLIENTE 4+4 mm",3210,2400,8,"Corte / material del cliente"],["59800008","CORTE DEL CLIENTE 4+4 mm",3600,2500,8,"Corte / material del cliente"],["59800008","CORTE DEL CLIENTE 4+4 mm",4000,2500,8,"Corte / material del cliente"],["59800010","CORTE DEL CLIENTE 5+5 mm",1800,2500,10,"Corte / material del cliente"],["59800010","CORTE DEL CLIENTE 5+5 mm",3600,2500,10,"Corte / material del cliente"],["59800010","CORTE DEL CLIENTE 5+5 mm",5500,3210,10,"Corte / material del cliente"],["59810006","CORTE DEL CLIENTE 3+3 mm ESM",3600,2500,6,"Corte / material del cliente"],["59820008","CORTE DEL CLIENTE 4+4 mm SNL",3600,2500,8,"Corte / material del cliente"],["59900008","MATERIAL DEL CLIENTE 4+4 mm",5500,3210,8,"Corte / material del cliente"],["59900010","MATERIAL DEL CLIENTE 5+5 mm",5500,3210,10,"Corte / material del cliente"]];
+const FAMS=['Float','Laminado de seguridad','Espejo','Control solar','Impreso / decorativo','Templado','Corte / material del cliente'];
+const art=(c,w,h)=>CAT.find(x=>x[0]===c&&x[2]===w&&x[3]===h)||CAT.find(x=>x[0]===c);
+/* peso del vidrio ≈ 2,5 kg por m² y por mm de espesor */
+const sheetM2=a=>a[2]*a[3]/1e6;
+const sheetKg=a=>sheetM2(a)*a[4]*2.5;
+function loadOf(items){let b=0,kg=0,m2=0;items.forEach(i=>{const a=art(i.c,i.w,i.h);b+=i.q;kg+=i.q*sheetKg(a);m2+=i.q*sheetM2(a);});return {bultos:b,kg:Math.round(kg),m2:Math.round(m2*10)/10};}
+const OPEN_EST=['por_coordinar','reprogramar','esperando_cliente','confirmado','programado','en_ruta','no_entregado'];
 const EST={
   por_coordinar:{c:'Por coordinar',k:'Preparando tu pedido',cp:'p-warn',kp:'p-mute'},
   reprogramar:{c:'Cliente pidió otra fecha',k:'Reprogramando',cp:'p-warn',kp:'p-warn'},
@@ -504,7 +527,7 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const pad=n=>String(n).padStart(2,'0');
 function now(){const d=new Date();return {d:pad(d.getDate())+'/'+pad(d.getMonth()+1),t:pad(d.getHours())+':'+pad(d.getMinutes())};}
 const kgf=n=>n.toLocaleString('es-AR');
-const m3f=n=>n.toLocaleString('es-AR',{maximumFractionDigits:1});
+const m2f=n=>n.toLocaleString('es-AR',{maximumFractionDigits:1});
 
 /* ---------- state ---------- */
 function seed(){
@@ -513,7 +536,30 @@ function seed(){
   const conf=(d,t,turno,rec)=>fac(d,'10:05').concat([{d,t:'11:10',txt:'Propuesta enviada al cliente',sub:'WhatsApp · 2 franjas'},{d,t,txt:'Cliente confirmó '+turno,sub:'Recibe '+rec}]);
   const C=(id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,turno,extra)=>o(Object.assign({id,cli,cliente,zona,dir,contacto,tel,bultos,kg,m3,remito:'R 0003-000'+id.slice(3),horario:'Lun a vie 8:00–17:00',estado:'confirmado',turno,recibe:contacto,acceso:'',tl:conf('22/09','15:30',turno,contacto)},extra||{}));
   const W=(t,title,body,act)=>({to:'cliente',d:'18/09',t,title,body,oid:'TR-24701',act,read:true,seen:true});
-  return {v:8,seq:{hr:3,rec:1182},rutas:[],encHist:encSeed(),notifs:[
+  /* líneas de cada pedido: artículo del inventario, medida de la lámina y cantidad */
+  const L=(c,w,h,q)=>({c,w,h,q});
+  const IT={
+    'TR-24817':[L('11000004',3600,2500,4),L('12500104',2500,1800,4),L('14001004',2500,1600,4)],
+    'TR-24809':[L('11000004',3600,2500,6)],
+    'TR-24802':[L('12500105',2500,1800,3),L('12500104',3600,2500,2)],
+    'TR-24790':[L('51000108',3600,2500,6),L('11000004',3600,2500,2)],
+    'TR-24785':[L('51000106',3600,2500,6)],
+    'TR-24779':[L('11000004',2500,1800,8),L('51000106',2500,1800,4)],
+    'TR-24772':[L('11500104',3600,2500,4),L('11500304',3600,2500,4)],
+    'TR-24815':[L('51000110',3600,2500,4),L('11000010',3700,2500,2)],
+    'TR-24806':[L('13001706',3300,2440,4),L('13000906',3300,2440,2)],
+    'TR-24798':[L('51000108',5500,3210,6)],
+    'TR-24793':[L('11000005',3600,2500,4)],
+    'TR-24796':[L('12500104',2500,1800,2),L('14001304',2500,1600,2)],
+    'TR-24811':[L('51000110',3600,2500,8),L('23001706',3300,2440,4)],
+    'TR-24804':[L('52003106',2500,1800,4)],
+    'TR-24819':[L('11000006',3600,2500,8)],
+    'TR-24800':[L('14001004',2500,1600,6),L('14003006',2500,1600,2)],
+    'TR-24791':[L('51000106',3600,2500,4),L('11000004',3600,2500,4)],
+    'TR-24787':[L('11000003',3600,2500,4)],
+    'TR-24701':[L('11000004',2500,1800,6)]
+  };
+  const st={v:9,seq:{hr:3,rec:1182},rutas:[],encHist:encSeed(),notifs:[
       W('07:32','🚚 Tu pedido salió','Tu pedido TR-24701 ya salió del depósito. Llega hoy entre las 08:15 y 09:45. Estate atento para recibirlo.','salio'),
       W('08:57','⏱ Tu pedido llega en 15 minutos','Eugenia está a unos 15 minutos de Av. Hipólito Yrigoyen 4520, Lanús. Preparate para recibir 6 láminas.','15'),
       W('09:13','✅ Entregamos tu pedido','TR-24701 · recibió Milena Rozo a las 09:12. ¿Cómo recibiste la mercadería?','entregado'),
@@ -556,10 +602,12 @@ function seed(){
       entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Milena Rozo',foto:null,firma:null,chofer:'Eugenia'},respuesta:{tipo:'conforme',detalle:''},encAsk:true,enc:{p:'ok',m:'ok',a:'ok',done:true,comentario:''},
       tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 láminas',sub:'Eugenia'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
   ]};
+  st.orders.forEach(o=>{o.items=IT[o.id]||[];Object.assign(o,loadOf(o.items));});
+  return st;
 }
 let S, ui;
 function load(){
-  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===8){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
+  try{const raw=localStorage.getItem(KEY);if(raw){const p=JSON.parse(raw);if(p&&p.st&&p.st.v===9){S=p.st;ui=Object.assign(freshUI(),p.ui||{});return;}}}catch(e){}
   S=seed();ui=freshUI();
 }
 function freshUI(){return {screen:'home',view:'panel',orderId:null,filter:'todos',zone:'todas',bell:false,draft:null,driver:null,stop:null,guideOff:false,kView:'lista',kOrder:null};}
@@ -909,7 +957,7 @@ const GROUPS={
   cerrados:['cerrado']
 };
 function coordV(){
-  const nav=[['panel','Pedidos',S.orders.filter(o=>GROUPS.coordinar.includes(o.estado)).length],['rutas','Hojas de ruta',S.orders.filter(o=>o.estado==='confirmado').length],['reclamos','Reclamos',S.orders.filter(o=>o.estado==='con_obs').length],['calidad','Calidad',S.encHist.filter(x=>!x.followed).length]];
+  const nav=[['panel','Pedidos',S.orders.filter(o=>GROUPS.coordinar.includes(o.estado)).length],['rutas','Hojas de ruta',S.orders.filter(o=>o.estado==='confirmado').length],['reclamos','Reclamos',S.orders.filter(o=>o.estado==='con_obs').length],['calidad','Calidad',S.encHist.filter(x=>!x.followed).length],['inventario','Inventario',0]];
   const cur=ui.view==='pedido'?'panel':ui.view;
   let main='';
   if(ui.view==='panel')main=cPanel();
@@ -917,6 +965,7 @@ function coordV(){
   else if(ui.view==='rutas')main=cRutas();
   else if(ui.view==='reclamos')main=cReclamos();
   else if(ui.view==='calidad')main=cCalidad();
+  else if(ui.view==='inventario')main=cInventario();
   return '<div><header class="c-top"><span class="logo-chip"><img src="'+LOGO+'" alt="Trento"></span><span class="ttl">Entregas</span>'+
     '<div class="who"><span class="nm">Milena Rozo · Coordinación</span>'+bellHTML('coord')+'<span class="avatar">MR</span><button type="button" class="out" data-a="logout">Salir</button></div>'+bellPanel('coord')+'</header>'+
     guideHTML()+
@@ -1005,8 +1054,9 @@ function cPedido(){
   return '<div class="crumbs"><button type="button" data-a="cNav" data-v="panel">Pedidos</button> / '+o.id+'</div>'+
     '<div class="row sb"><h1>'+esc(o.cliente)+' '+zp(o)+'</h1><span class="pill '+EST[e].cp+'" style="font-size:12px">'+EST[e].c+'</span></div>'+
     '<div class="panel"><span class="lbl">Seguimiento</span>'+trackerHTML(o)+'</div>'+
+    '<div class="panel"><span class="lbl">Detalle de la carga · '+o.bultos+' láminas · '+kgf(o.kg)+' kg</span>'+itemsHTML(o)+'</div>'+
     '<div class="grid2"><div class="col"><div class="panel"><span class="lbl">Pedido y destino</span><dl class="kv">'+
-      '<dt>Pedido</dt><dd>'+o.id+'</dd><dt>Dirección</dt><dd>'+esc(o.dir)+'</dd><dt>Contacto</dt><dd>'+esc(o.contacto)+' · '+esc(o.tel)+'</dd><dt>Carga</dt><dd>'+o.bultos+' láminas · '+kgf(o.kg)+' kg · '+m3f(o.m3)+' m³</dd><dt>Remito</dt><dd>'+esc(o.remito)+'</dd><dt>Horario del local</dt><dd>'+esc(o.horario)+'</dd></dl>'+
+      '<dt>Pedido</dt><dd>'+o.id+'</dd><dt>Dirección</dt><dd>'+esc(o.dir)+'</dd><dt>Contacto</dt><dd>'+esc(o.contacto)+' · '+esc(o.tel)+'</dd><dt>Carga</dt><dd>'+o.bultos+' láminas · '+kgf(o.kg)+' kg · '+m2f(o.m2)+' m² de vidrio</dd><dt>Remito</dt><dd>'+esc(o.remito)+'</dd><dt>Horario del local</dt><dd>'+esc(o.horario)+'</dd></dl>'+
       '<span class="lbl">Requisitos de descarga</span><div class="chips" data-group="req">'+REQS.map(r=>'<button type="button" class="chip" data-t="multi" data-v="'+r+'" aria-pressed="'+o.requisitos.includes(r)+'">'+r+'</button>').join('')+'</div></div>'+
       '<div class="panel"><span class="lbl">Historial</span>'+tlHTML(o)+'</div>'+
       '<div class="panel"><div class="row sb"><span class="lbl">WhatsApp con el cliente</span><span class="small">'+esc(o.contacto)+' · '+esc(o.tel)+'</span></div>'+
@@ -1030,20 +1080,20 @@ function mapSVG(stops,doneFn,zone){
     stops.map((id,i)=>{const p=P(id);const dn=doneFn&&doneFn(id);return '<circle class="pin'+(dn?' done':'')+'" cx="'+p[0]+'" cy="'+p[1]+'" r="11"/><text class="pin-t" x="'+p[0]+'" y="'+(p[1]+4)+'" text-anchor="middle">'+(i+1)+'</text>';}).join('')+
   '</svg></div>';
 }
-function load_(stops){return {kg:stops.reduce((a,id)=>a+ord(id).kg,0),m3:stops.reduce((a,id)=>a+ord(id).m3,0)};}
-function fillPct(stops,tk){const t=TRUCKS[tk],l=load_(stops);return Math.max(Math.round(l.kg/t.kg*100),Math.round(l.m3/t.m3*100));}
+function load_(stops){return {kg:stops.reduce((a,id)=>a+ord(id).kg,0),m2:stops.reduce((a,id)=>a+ord(id).m2,0),lam:stops.reduce((a,id)=>a+ord(id).bultos,0)};}
+function fillPct(stops,tk){return Math.round(load_(stops).kg/TRUCKS[tk].kg*100);}
 function capHTML(stops,tk){
   const t=TRUCKS[tk];const l=load_(stops);
-  const pk=Math.round(l.kg/t.kg*100),pm=Math.round(l.m3/t.m3*100),top=Math.max(pk,pm);
+  const pk=Math.round(l.kg/t.kg*100),top=pk;
   let msg;
-  if(pk>100||pm>100)msg='<div class="note warn"><b>Supera la capacidad</b>Quitá un pedido o elegí un camión más grande.</div>';
+  if(pk>100)msg='<div class="note warn"><b>Supera la capacidad</b>Quitá un pedido o elegí un camión más grande.</div>';
   else if(stops.length>=MAX_STOPS)msg='<div class="note ok"><b>Cupo completo: 5 clientes</b>Es el máximo por día. Los pedidos restantes pasan al próximo día hábil.</div>';
   else if(top>=80)msg='<div class="note ok"><b>Camión bien aprovechado</b>Carga al '+top+'%.</div>';
   else msg='<div class="note info"><b>Queda espacio en el camión</b>Carga al '+top+'%. Sumá pedidos de la zona para salir a tope (quedan '+(MAX_STOPS-stops.length)+' clientes disponibles).</div>';
   return '<span class="lbl">Carga de '+t.pat+'</span>'+
     '<div class="meter-big"><b>'+top+'%</b><span class="small">de ocupación</span></div>'+
     '<div class="row sb"><span>Peso '+kgf(l.kg)+' / '+kgf(t.kg)+' kg</span><b>'+pk+'%</b></div><div class="progress'+(pk>100?' over':'')+'"><i style="width:'+Math.min(pk,100)+'%"></i></div>'+
-    '<div class="row sb"><span>Volumen '+m3f(l.m3)+' / '+t.m3+' m³</span><b>'+pm+'%</b></div><div class="progress'+(pm>100?' over':'')+'"><i style="width:'+Math.min(pm,100)+'%"></i></div>'+
+    '<div class="row sb small"><span>Vidrio a transportar</span><b style="color:var(--ink)">'+l.lam+' láminas · '+m2f(l.m2)+' m²</b></div>'+
     '<div class="row sb"><span>Clientes</span><b>'+stops.length+' / '+MAX_STOPS+'</b></div><div class="slots5">'+Array.from({length:MAX_STOPS},(_,i)=>'<i class="'+(i<stops.length?'on':'')+'"></i>').join('')+'</div>'+msg;
 }
 /* completa el camión: mantiene lo elegido y suma la combinación de pedidos de la zona que más carga aprovecha sin pasar capacidad ni 5 clientes */
@@ -1056,9 +1106,9 @@ function autoFill(d){
   for(let mask=0;mask<(1<<n);mask++){
     const pick=pool.filter((_,i)=>mask&(1<<i));
     if(pick.length>room)continue;
-    const kg=base.kg+pick.reduce((a,o)=>a+o.kg,0),m3=base.m3+pick.reduce((a,o)=>a+o.m3,0);
-    if(kg>t.kg||m3>t.m3)continue;
-    const score=Math.max(kg/t.kg,m3/t.m3)*1000+pick.length;
+    const kg=base.kg+pick.reduce((a,o)=>a+o.kg,0);
+    if(kg>t.kg)continue;
+    const score=kg/t.kg*1000+pick.length;
     if(score>bestScore){bestScore=score;best=pick;}
   }
   d.stops=d.stops.concat(best.map(o=>o.id));
@@ -1092,11 +1142,37 @@ function cRutas(){
         (d.stops.length?d.stops.map((id,i)=>{const o=ord(id);return '<div class="stop"><span class="n">'+(i+1)+'</span><div><b>'+esc(o.cliente)+' · '+o.id+'</b><small>'+esc(o.zona)+' · '+o.bultos+' láminas · '+kgf(o.kg)+' kg · franja '+esc(o.turno.split('· ')[1])+'</small></div><div class="row" style="gap:6px"><span class="eta">'+etaFor(i)+'</span><span class="ord"><button type="button" class="ib" data-a="drMove" data-i="'+i+'" data-d="-1" aria-label="Subir"'+(i===0?' disabled':'')+'>↑</button><button type="button" class="ib" data-a="drMove" data-i="'+i+'" data-d="1" aria-label="Bajar"'+(i===d.stops.length-1?' disabled':'')+'>↓</button><button type="button" class="ib" data-a="drDel" data-i="'+i+'" aria-label="Quitar">✕</button></span></div></div>';}).join(''):'<div class="empty">Tocá “Completar camión” o agregá pedidos de '+ZN[d.zona]+'.</div>')+
       '</div></div>'+
       '<div><span class="lbl">Confirmados de '+ZN[d.zona]+' sin asignar</span><div class="stops">'+
-        (pool.length?pool.map(o=>{const t=TRUCKS[d.camion],l=load_(d.stops.concat(o.id));const over=l.kg>t.kg||l.m3>t.m3;return '<div class="stop"><span class="n" style="background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)">+</span><div><b>'+esc(o.cliente)+' · '+o.id+'</b><small>'+esc(o.zona)+' · '+o.bultos+' láminas · '+kgf(o.kg)+' kg · '+m3f(o.m3)+' m³ · '+esc(o.turno)+(over?' · <span style="color:var(--warn)">no entra</span>':'')+'</small></div><button type="button" class="btn sm" data-a="drAdd" data-id="'+o.id+'"'+(full||over?' disabled':'')+'>Agregar</button></div>';}).join(''):'<div class="small" style="padding:8px 0">No hay más pedidos confirmados en '+ZN[d.zona]+'. Los que esperan respuesta del cliente aparecen acá cuando confirman.</div>')+
+        (pool.length?pool.map(o=>{const t=TRUCKS[d.camion],l=load_(d.stops.concat(o.id));const over=l.kg>t.kg;return '<div class="stop"><span class="n" style="background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)">+</span><div><b>'+esc(o.cliente)+' · '+o.id+'</b><small>'+esc(o.zona)+' · '+o.bultos+' láminas · '+kgf(o.kg)+' kg · '+esc(o.turno)+(over?' · <span style="color:var(--warn)">no entra</span>':'')+'</small></div><button type="button" class="btn sm" data-a="drAdd" data-id="'+o.id+'"'+(full||over?' disabled':'')+'>Agregar</button></div>';}).join(''):'<div class="small" style="padding:8px 0">No hay más pedidos confirmados en '+ZN[d.zona]+'. Los que esperan respuesta del cliente aparecen acá cuando confirman.</div>')+
         (full&&pool.length?'<div class="note warn" style="margin-top:8px"><b>'+pool.length+' pedido'+(pool.length>1?'s':'')+' para el viernes</b>Ya hay 5 clientes en esta hoja. Los que queden sin asignar se programan para el próximo día hábil.</div>':'')+
       '</div></div>'+
     '</div><div class="col">'+mapSVG(d.stops,null,d.zona)+'<div class="panel">'+capHTML(d.stops,d.camion)+'<div class="small">Salida '+hm(PLAN_START)+' · regreso estimado '+etaFor(d.stops.length)+'</div></div></div></div>'+
     '<div class="row end"><button type="button" class="btn ghost" data-a="drAuto"'+(full||!pool.length?' disabled':'')+'>Completar camión</button><button type="button" class="btn ghost" data-a="drOpt"'+(d.stops.length<2?' disabled':'')+'>Ordenar por franja</button><button type="button" class="btn" data-a="drPublish"'+(d.stops.length?'':' disabled')+'>Publicar hoja de ruta</button></div></div>';
+}
+/* ---------- carga por artículo e inventario ---------- */
+function itemsHTML(o,compact){
+  if(!o.items||!o.items.length)return '';
+  const rows=o.items.map(i=>{const a=art(i.c,i.w,i.h);return {i,a,kg:Math.round(i.q*sheetKg(a))};});
+  if(compact)return '<ul class="items-c">'+rows.map(r=>'<li><b>'+r.i.q+' ×</b> '+esc(r.a[1])+' <span class="small">'+r.i.w+' × '+r.i.h+'</span></li>').join('')+'</ul>';
+  return '<div class="tbl-wrap flat"><table class="items"><thead><tr><th>Código</th><th>Artículo</th><th>Medida (mm)</th><th class="num">Láminas</th><th class="num">kg</th></tr></thead><tbody>'+
+    rows.map(r=>'<tr><td class="code">'+r.i.c+'</td><td>'+esc(r.a[1])+'</td><td>'+r.i.w+' × '+r.i.h+'</td><td class="num"><b>'+r.i.q+'</b></td><td class="num">'+kgf(r.kg)+'</td></tr>').join('')+
+    '<tr class="tot"><td></td><td>Total</td><td>'+m2f(o.m2)+' m²</td><td class="num"><b>'+o.bultos+'</b></td><td class="num"><b>'+kgf(o.kg)+'</b></td></tr></tbody></table></div>';
+}
+function cInventario(){
+  const fam=ui.invFam||'todas';
+  const open=S.orders.filter(o=>OPEN_EST.includes(o.estado));
+  const comp={};open.forEach(o=>o.items.forEach(i=>{const k=i.c+'|'+i.w+'|'+i.h;comp[k]=(comp[k]||0)+i.q;}));
+  const totL=Object.values(comp).reduce((a,b)=>a+b,0);
+  const totKg=open.reduce((a,o)=>a+o.kg,0);
+  const list=CAT.filter(a=>fam==='todas'||a[5]===fam);
+  const used=CAT.filter(a=>comp[a[0]+'|'+a[2]+'|'+a[3]]).length;
+  return '<div class="row sb"><div><div class="crumbs">Lista inventario A+W Business · JOSE TRENTO VIDRIOS · 27/01/2026</div><h1>Inventario de láminas</h1></div></div>'+
+    '<div class="kpis inv-k"><div class="kpi"><b>'+CAT.length+'</b><span>artículos de vidrio (medida de lámina)</span></div><div class="kpi"><b>'+totL+'</b><span>láminas comprometidas en pedidos abiertos</span></div><div class="kpi"><b>'+kgf(totKg)+'</b><span>kg a despachar</span></div><div class="kpi"><b>'+used+'</b><span>artículos con pedidos</span></div></div>'+
+    '<div class="note warn"><b>El PDF no trae existencias</b>La lista del 27/01/2026 es la planilla de conteo: tiene código, artículo y medida, pero las columnas “Existencia” y “Cantidad contada” están vacías. Con el stock real (o conectando A+W), acá se ve cuántas láminas quedan de cada artículo y el sistema avisa antes de prometer una entrega sin material.</div>'+
+    '<div class="panel"><div class="row sb"><div class="chips">'+[['todas','Todas']].concat(FAMS.map(f=>[f,f])).map(f=>'<button type="button" class="chip" data-a="invFam" data-f="'+esc(f[0])+'" aria-pressed="'+(fam===f[0])+'">'+esc(f[1])+' <span class="small">'+(f[0]==='todas'?CAT.length:CAT.filter(a=>a[5]===f[0]).length)+'</span></button>').join('')+'</div>'+
+      '<input id="inv-q" class="inp" style="max-width:260px" placeholder="Buscar código o artículo" aria-label="Buscar en el inventario"></div>'+
+      '<div class="tbl-wrap flat"><table class="items inv"><thead><tr><th>Código</th><th>Artículo</th><th>Familia</th><th class="num">Espesor</th><th>Medida (mm)</th><th class="num">m²/lámina</th><th class="num">kg/lámina</th><th class="num">En pedidos</th></tr></thead><tbody>'+
+      list.map(a=>{const c=comp[a[0]+'|'+a[2]+'|'+a[3]]||0;return '<tr data-s="'+esc((a[0]+' '+a[1]).toLowerCase())+'"'+(c?' class="hot"':'')+'><td class="code">'+a[0]+'</td><td>'+esc(a[1])+'</td><td class="small">'+esc(a[5])+'</td><td class="num">'+a[4]+' mm</td><td>'+a[2]+' × '+a[3]+'</td><td class="num">'+m2f(Math.round(sheetM2(a)*100)/100)+'</td><td class="num">'+kgf(Math.round(sheetKg(a)))+'</td><td class="num">'+(c?'<b>'+c+'</b>':'<span class="small">—</span>')+'</td></tr>';}).join('')+
+      '</tbody></table></div><p class="small"><span id="inv-c">'+list.length+'</span> artículos. El peso se calcula con 2,5 kg por m² y por mm de espesor; es el que usa la hoja de ruta para no pasar la capacidad del camión.</p></div>';
 }
 function cReclamos(){
   const l=S.orders.filter(o=>o.estado==='con_obs'||(o.reclamo&&o.estado==='cerrado'));
@@ -1165,6 +1241,7 @@ function dParada(){
     '<div class="card" id="inc" hidden><span class="lbl">¿Por qué no se pudo entregar?</span><div class="chips" data-group="motivo">'+['Cliente ausente','Local cerrado','Dirección incorrecta','Rechazo total','Sin acceso para el camión'].map((m,k)=>'<button type="button" class="chip" data-t="single" data-v="'+m+'" aria-pressed="'+(k===0)+'">'+m+'</button>').join('')+'</div>'+
       '<button type="button" class="btn block" data-a="dFail" style="background:var(--ink);color:var(--surface)">Registrar no entrega</button></div>'+
     (o.acceso||o.recibe?'<div class="note info"><b>Indicaciones del cliente</b>'+esc(o.acceso)+(o.recibe?' · Recibe: '+esc(o.recibe):'')+'</div>':'')+
+    '<div class="card"><b>Qué entregar</b>'+itemsHTML(o,true)+'</div>'+
     '<div class="card"><div class="row sb"><b>Láminas entregadas</b><button type="button" class="btn ghost sm" data-a="dScan">Escanear etiqueta</button></div>'+
       '<div class="counter"><button type="button" class="ib" data-a="dBul" data-d="-1" aria-label="Uno menos">−</button><span class="val"><span id="bul">'+s.bultos+'</span> / '+o.bultos+'</span><button type="button" class="ib" data-a="dBul" data-d="1" aria-label="Uno más">+</button></div>'+
       '<div class="progress"><i id="bulbar" style="width:'+Math.round(s.bultos/o.bultos*100)+'%;background:var(--ok)"></i></div></div>'+
@@ -1235,7 +1312,7 @@ function kPedido(){
       '<label class="f">Indicaciones para el chofer<textarea id="k-acc" class="inp" rows="2">Portón gris lateral. Tocar timbre “Depósito”.</textarea></label>';
     foot='<button type="button" class="btn block" data-a="kConfirm" data-id="'+o.id+'">Confirmar entrega</button>';
   }else if(e==='confirmado'||e==='programado'){
-    body=head+'<div class="card hl"><span class="lbl">Tu entrega</span><div class="big">'+esc(o.turno.split(' · ')[1])+'</div><b>'+esc(o.turno.split(' · ')[0])+'</b><dl class="kv"><dt>Recibe</dt><dd>'+esc(o.recibe)+'</dd><dt>Indicaciones</dt><dd>'+esc(o.acceso||'—')+'</dd></dl></div>'+
+    body=head+'<div class="card"><span class="lbl">Tu pedido</span>'+itemsHTML(o,true)+'</div>'+'<div class="card hl"><span class="lbl">Tu entrega</span><div class="big">'+esc(o.turno.split(' · ')[1])+'</div><b>'+esc(o.turno.split(' · ')[0])+'</b><dl class="kv"><dt>Recibe</dt><dd>'+esc(o.recibe)+'</dd><dt>Indicaciones</dt><dd>'+esc(o.acceso||'—')+'</dd></dl></div>'+
       '<div class="note info"><b>Te avisamos cuando salga el camión</b>Ese día, al salir del depósito, te mandamos un rango horario para que estés atento a recibir. Y otro aviso cuando falten 15 minutos.</div>'+
       '<button type="button" class="linkbtn" data-a="kOther">Necesito cambiar la fecha</button>'+
       '<div class="card" id="kother" hidden><label class="f">¿Qué día y horario te sirve?<textarea id="k-nota" class="inp" rows="2" placeholder="Ej.: viernes a la tarde"></textarea></label><button type="button" class="btn ghost block" data-a="kAskOther" data-id="'+o.id+'">Pedir cambio</button></div>';
@@ -1317,8 +1394,8 @@ const A={
   drOpt(){sortByFranja(ui.draft.stops);render();toast('Paradas ordenadas por franja horaria');},
   drPublish(){
     const d=ui.draft;const t=TRUCKS[d.camion];
-    const kg=d.stops.reduce((a,id)=>a+ord(id).kg,0),m3=d.stops.reduce((a,id)=>a+ord(id).m3,0);
-    if(kg>t.kg||m3>t.m3){toast('Supera la capacidad del camión');return;}
+    const kg=d.stops.reduce((a,id)=>a+ord(id).kg,0);
+    if(kg>t.kg){toast('Supera la capacidad del camión');return;}
     S.seq.hr++;const id='HR-0925-0'+S.seq.hr;const dv=drv(d.chofer);
     if(d.stops.length>MAX_STOPS){toast('Máximo '+MAX_STOPS+' clientes por día');return;}
     S.rutas.push({id,fecha:'Jue 25/09',zona:d.zona,camion:d.camion,chofer:d.chofer,stops:d.stops.slice(),estado:'publicada',salida:null});
@@ -1431,6 +1508,7 @@ const A={
     encCommit(o);
     ui.kFoto=null;render();window.scrollTo(0,0);
   },
+  invFam(el){ui.invFam=el.dataset.f;render();},
   setQz(el){ui.qz=el.dataset.z===ui.qz?'todas':el.dataset.z;render();},
   encFollow(el){const h=S.encHist.find(x=>x.id===el.dataset.id);if(h){h.followed=true;if(h.oid){const o=ord(h.oid);if(o)log(o,'Cliente contactado por calidad','Milena Rozo · Coordinación');}}render();toast('Marcado como contactado');},
   waQ(el){
@@ -1492,6 +1570,9 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.matches('tr[data-a],.drow[data-a]')){A[e.target.dataset.a](e.target);}
 });
 document.addEventListener('submit',e=>{const f=e.target.dataset.form;if(f&&F[f]){e.preventDefault();F[f]();}});
+document.addEventListener('input',e=>{
+  if(e.target.id==='inv-q'){const q=e.target.value.trim().toLowerCase();let n=0;$$('table.inv tbody tr').forEach(tr=>{const ok=!q||tr.dataset.s.includes(q);tr.hidden=!ok;if(ok)n++;});$('#inv-c').textContent=n;}
+});
 document.addEventListener('change',e=>{
   const id=e.target.id;
   if(id==='dr-camion'){ui.draft.camion=+e.target.value;render();}
