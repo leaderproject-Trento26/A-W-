@@ -75,13 +75,16 @@ main{max-width:1440px;margin:0 auto;padding:10px 16px 32px}
 .foot-bar{max-width:1440px;margin:0 auto;padding:0 16px 32px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
 
 /* tablero */
-.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:12px;overflow-x:auto;padding-bottom:8px;align-items:start}
+.board{display:grid;grid-template-columns:repeat(5,minmax(210px,1fr)) minmax(160px,190px);gap:12px;overflow-x:auto;padding-bottom:8px;align-items:start}
 .col{background:var(--sunk);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:180px}
 .col.over{outline:2px dashed var(--red);outline-offset:-2px}
 .col-h{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px}
 .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;display:inline-block}
 .col-h .n{margin-left:auto;font-size:12px;color:var(--muted);font-weight:400}
 .col-b{padding:8px;display:flex;flex-direction:column;gap:8px;flex:1}
+.done-col{background:var(--ok-tint);border-style:dashed;min-height:180px}
+.done-drop{align-items:flex-start;gap:10px;font-size:13px;color:var(--ink)}
+.done-drop p{margin:0}
 .col-add{border:0;background:none;color:var(--muted);text-align:left;padding:8px 12px;font-size:13px;border-top:1px solid var(--line)}
 .col-add:hover{color:var(--red)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;cursor:pointer;text-align:left;width:100%;position:relative}
@@ -211,6 +214,7 @@ textarea.inp{resize:vertical;min-height:64px;line-height:1.4}
       <button type="button" data-view="exec">Dirección</button>
       <button type="button" data-view="board">Tablero</button>
       <button type="button" data-view="list">Lista</button>
+      <button type="button" data-view="done">Hecho</button>
       <button type="button" data-view="cfg">Configuración</button>
     </div>
     <button type="button" class="btn inv" data-a="new" id="btnNew">+ Nuevo</button>
@@ -246,16 +250,15 @@ textarea.inp{resize:vertical;min-height:64px;line-height:1.4}
 <script>
 /* ================= Catálogos fijos ================= */
 const ESTADOS=[
-  {v:'nuevo',t:'Nuevo',c:'var(--muted)'},
+  {v:'pendiente',t:'Pendiente por hacer',c:'var(--muted)'},
   {v:'analisis',t:'En análisis',c:'var(--violet)'},
   {v:'aprobacion',t:'Esperando aprobación',c:'var(--warn)'},
   {v:'planificado',t:'Planificado',c:'var(--info)'},
   {v:'curso',t:'En curso',c:'var(--red)'},
-  {v:'revision',t:'En revisión',c:'var(--violet)'},
-  {v:'hecho',t:'Hecho',c:'var(--ok)'},
-  {v:'cancelado',t:'Cancelado / rechazado',c:'var(--muted)'}
+  {v:'hecho',t:'Hecho',c:'var(--ok)'}
 ];
-const BOARD=ESTADOS.filter(e=>e.v!=='cancelado');
+const BOARD=ESTADOS.filter(e=>e.v!=='hecho');
+const OLD_EST={nuevo:'pendiente',revision:'curso',cancelado:'hecho'};
 const TIPOS=[
   {v:'proyecto',t:'Proyecto',p:'p-vio'},
   {v:'requerimiento',t:'Requerimiento',p:'p-info'},
@@ -288,7 +291,7 @@ const DEF_CFG={
 /*SEED-START*/
 function seedItems(){
   const d=n=>{const x=new Date();x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
-  const base={tipo:'requerimiento',estado:'nuevo',prioridad:'media',impacto:'Medio',esfuerzo:'',area:'',areasInv:[],padre:'',solicitante:'',responsable:'',sponsor:'',aprob:'no',aprobNivel:'Gerencia del área',aprobPor:'',aprobFecha:'',inicio:'',vence:'',avance:0,bloqueado:false,bloqueo:'',beneficio:'',costo:'',riesgos:'',desc:'',ac:[],etiquetas:['ejemplo']};
+  const base={tipo:'requerimiento',estado:'pendiente',prioridad:'media',impacto:'Medio',esfuerzo:'',area:'',areasInv:[],padre:'',solicitante:'',responsable:'',sponsor:'',aprob:'no',aprobNivel:'Gerencia del área',aprobPor:'',aprobFecha:'',inicio:'',vence:'',avance:0,bloqueado:false,bloqueo:'',beneficio:'',costo:'',riesgos:'',desc:'',ac:[],etiquetas:['ejemplo']};
   const L=[
     {titulo:'App Trento Entregas: coordinación de entregas de punta a punta',tipo:'proyecto',estado:'curso',prioridad:'alta',impacto:'Alto',esfuerzo:'XL',area:'Logística y Distribución',areasInv:['Sistemas / IT','Atención al cliente','Comercial y Ventas'],solicitante:'Gerente de Logística',responsable:'Milena Rozo',sponsor:'CEO',aprob:'aprobado',aprobNivel:'Dirección General (CEO)',aprobPor:'CEO',aprobFecha:d(-30),inicio:d(-30),vence:d(75),
       beneficio:'Menos entregas fallidas y menos llamadas: el cliente elige su turno y recibe aviso antes de la llegada del camión.',riesgos:'Depende de la integración con facturación y de la adopción por parte de los choferes.',
@@ -299,12 +302,12 @@ function seedItems(){
       beneficio:'Legajos completos en un solo lugar y un ingreso ordenado para cada nuevo empleado.'},
     {titulo:'Importar pedidos automáticamente desde el sistema de facturación',padre:'#1',estado:'curso',prioridad:'critica',impacto:'Alto',esfuerzo:'M',area:'Sistemas / IT',areasInv:['Administración y Finanzas'],solicitante:'Gerente de Logística',responsable:'Responsable de Sistemas',inicio:d(-10),vence:d(12),
       ac:[{t:'Se importan cliente, dirección, bultos y zona',ok:true},{t:'No se duplican pedidos ya importados',ok:false},{t:'Aviso de cuántos pedidos nuevos entraron',ok:true}]},
-    {titulo:'Proponer franjas horarias al cliente y confirmar el turno',padre:'#1',estado:'revision',prioridad:'alta',impacto:'Alto',esfuerzo:'M',area:'Logística y Distribución',areasInv:['Atención al cliente'],solicitante:'Gerente de Logística',responsable:'Milena Rozo',vence:d(5),
+    {titulo:'Proponer franjas horarias al cliente y confirmar el turno',padre:'#1',estado:'curso',prioridad:'alta',impacto:'Alto',esfuerzo:'M',area:'Logística y Distribución',areasInv:['Atención al cliente'],solicitante:'Gerente de Logística',responsable:'Milena Rozo',vence:d(5),
       ac:[{t:'Solo se ofrecen franjas con cupo',ok:true},{t:'El cliente recibe el link por SMS/WhatsApp',ok:true},{t:'El cliente puede pedir otra fecha',ok:false}]},
     {titulo:'Hoja de ruta por zona con tope de 5 clientes por camión',padre:'#1',estado:'planificado',prioridad:'alta',impacto:'Alto',esfuerzo:'M',area:'Logística y Distribución',areasInv:['Depósito'],solicitante:'Gerente de Logística',responsable:'Gerente de Logística',vence:d(25),
       ac:[{t:'No permite un sexto cliente en el camión',ok:false},{t:'Se asigna camión y chofer antes de publicar',ok:false}]},
-    {titulo:'Registrar entrega con foto, firma y DNI',padre:'#1',estado:'nuevo',prioridad:'media',esfuerzo:'M',area:'Logística y Distribución',solicitante:'Gerente de Logística',vence:d(40)},
-    {titulo:'Capacitar a los choferes en la app',tipo:'tarea',padre:'#1',estado:'nuevo',prioridad:'media',esfuerzo:'S',area:'Recursos Humanos',areasInv:['Logística y Distribución'],solicitante:'Gerente de Logística',responsable:'Gerente de RRHH',vence:d(60)},
+    {titulo:'Registrar entrega con foto, firma y DNI',padre:'#1',estado:'pendiente',prioridad:'media',esfuerzo:'M',area:'Logística y Distribución',solicitante:'Gerente de Logística',vence:d(40)},
+    {titulo:'Capacitar a los choferes en la app',tipo:'tarea',padre:'#1',estado:'pendiente',prioridad:'media',esfuerzo:'S',area:'Recursos Humanos',areasInv:['Logística y Distribución'],solicitante:'Gerente de Logística',responsable:'Gerente de RRHH',vence:d(60)},
     {titulo:'El aviso reenviado al cliente cambia la hora límite',tipo:'incidente',padre:'#1',estado:'analisis',prioridad:'alta',esfuerzo:'S',area:'Atención al cliente',areasInv:['Sistemas / IT'],solicitante:'Milena Rozo',responsable:'Responsable de Sistemas',vence:d(-2),
       desc:'Pasos: enviar propuesta → "Reenviar aviso" → el nuevo aviso muestra otra hora límite. Esperado: se mantiene la hora original.'},
     {titulo:'Definir indicadores con la gerencia comercial',tipo:'tarea',padre:'#2',estado:'hecho',prioridad:'alta',esfuerzo:'S',area:'Comercial y Ventas',solicitante:'Gerente Comercial',responsable:'Milena Rozo',vence:d(-5),avance:100},
@@ -341,7 +344,8 @@ const fmtT=s=>{try{return new Date(s).toLocaleString('es-AR',{day:'2-digit',mont
 const money=v=>v?'$ '+Number(v).toLocaleString('es-AR'):'—';
 const today=()=>new Date().toISOString().slice(0,10);
 const addDays=n=>{const x=new Date();x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
-const open_=x=>x.estado!=='hecho'&&x.estado!=='cancelado';
+const open_=x=>x.estado!=='hecho';
+const rej=x=>x.aprob==='rechazado';
 const isLate=x=>x.vence&&open_(x)&&x.vence<today();
 const byId=id=>S.items.find(i=>i.id===id);
 const kidsOf=id=>S.items.filter(i=>i.padre===id);
@@ -350,7 +354,7 @@ function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeou
 /* Avance: proyecto = promedio de sus hijos; con checklist = % tildado; si no, el manual */
 function av(x,depth=0){
   if(x.estado==='hecho')return 100;
-  const k=depth<3?kidsOf(x.id).filter(c=>c.estado!=='cancelado'):[];
+  const k=depth<3?kidsOf(x.id).filter(c=>!rej(c)):[];
   if(k.length)return Math.round(k.reduce((s,c)=>s+av(c,depth+1),0)/k.length);
   if(x.ac&&x.ac.length)return Math.round(x.ac.filter(a=>a.ok).length/x.ac.length*100);
   return +x.avance||0;
@@ -358,7 +362,7 @@ function av(x,depth=0){
 const avSrc=x=>kidsOf(x.id).length?'calculado de sus '+kidsOf(x.id).length+' ítems':(x.ac&&x.ac.length?'calculado de los entregables':'manual');
 
 /* ================= Persistencia (compartida o local) ================= */
-function normItem(x){return Object.assign({tipo:'requerimiento',estado:'nuevo',prioridad:'media',impacto:'Medio',esfuerzo:'',area:'',areasInv:[],padre:'',solicitante:'',responsable:'',sponsor:'',aprob:'no',aprobNivel:NIVELES[0],aprobPor:'',aprobFecha:'',inicio:'',vence:'',avance:0,bloqueado:false,bloqueo:'',beneficio:'',costo:'',riesgos:'',desc:'',ac:[],etiquetas:[],log:[],titulo:'',creado:'',act:'',creadoPor:''},x)}
+function normItem(x){return Object.assign({tipo:'requerimiento',estado:'pendiente',prioridad:'media',impacto:'Medio',esfuerzo:'',area:'',areasInv:[],padre:'',solicitante:'',responsable:'',sponsor:'',aprob:'no',aprobNivel:NIVELES[0],aprobPor:'',aprobFecha:'',inicio:'',vence:'',avance:0,bloqueado:false,bloqueo:'',beneficio:'',costo:'',riesgos:'',desc:'',ac:[],etiquetas:[],log:[],titulo:'',creado:'',act:'',creadoPor:'',cerrado:''},x,OLD_EST[x.estado]?{estado:OLD_EST[x.estado]}:{})}
 function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({items:S.items,cfg:S.cfg}))}catch(e){}}
 function startLocal(){
   S.mode='local';
@@ -368,6 +372,7 @@ function startLocal(){
 }
 async function putItem(x){
   x=JSON.parse(JSON.stringify(x));if(x.log.length>120)x.log=x.log.slice(-120);
+  if(x.estado==='hecho'){if(!x.cerrado)x.cerrado=today()}else x.cerrado='';
   const i=S.items.findIndex(o=>o.id===x.id);if(i>=0)S.items[i]=x;else S.items.push(x);
   if(S.mode==='shared'){try{await DB.doc('items/'+x.id).set(x)}catch(e){writeFail(e)}}else saveLocal();
 }
@@ -383,7 +388,7 @@ async function putCfg(c){
 function writeFail(e){
   const c=e&&e.code;
   if(c==='invalid_argument'){S.canWrite=false;applyPerms();toast('No tenés permiso para modificar. Pedile acceso a quien administra el tablero.')}
-  else if(c==='quota_exceeded')toast('Se llegó al máximo de registros. Borrá ítems viejos o cancelados para seguir cargando.');
+  else if(c==='quota_exceeded')toast('Se llegó al máximo de registros. Borrá ítems viejos ya hechos para seguir cargando.');
   else toast('No se pudo guardar. Revisá la conexión e intentá de nuevo.');
 }
 /* Número correlativo TRE-### sin choques entre usuarios */
@@ -482,8 +487,10 @@ function renderBoard(L){
     const c=L.filter(x=>x.estado===e.v);
     return '<section class="col" data-col="'+e.v+'"><div class="col-h"><span class="dot" style="background:'+e.c+'"></span>'+e.t+'<span class="n">'+c.length+'</span></div>'+
       '<div class="col-b">'+c.map(card).join('')+'</div>'+(S.canWrite?'<button type="button" class="col-add" data-a="new" data-st="'+e.v+'">+ Agregar</button>':'')+'</section>';
-  }).join('')+'</div>'+
-  (L.some(x=>x.estado==='cancelado')?'<p class="hint" style="margin-top:8px">'+L.filter(x=>x.estado==='cancelado').length+' cancelados o rechazados no se muestran en el tablero; están en la Lista.</p>':'');
+  }).join('')+
+  '<section class="col done-col" data-col="hecho"><div class="col-h"><span class="dot" style="background:var(--ok)"></span>Hecho<span class="n">'+L.filter(x=>x.estado==='hecho').length+'</span></div>'+
+  '<div class="col-b done-drop">'+(S.canWrite?'<p>Arrastrá una tarjeta acá para marcarla como hecha.</p>':'')+'<button type="button" class="btn ghost sm" data-view="done">Ver lo hecho</button></div></section>'+
+  '</div>';
 }
 const COLS=[['id','ID'],['titulo','Título'],['tipo','Tipo'],['estado','Estado'],['prioridad','Prioridad'],['area','Área'],['padre','Proyecto'],['responsable','Responsable'],['aprob','Aprobación'],['avance','Avance'],['vence','Vence']];
 function sortVal(x,k){
@@ -491,6 +498,14 @@ function sortVal(x,k){
   if(k==='estado')return ESTADOS.findIndex(p=>p.v===x.estado);
   if(k==='avance')return av(x);
   return (x[k]||'').toString().toLowerCase();
+}
+function renderDone(L){
+  L=L.slice().sort((a,b)=>(b.cerrado||b.act||'').localeCompare(a.cerrado||a.act||''));
+  if(!L.length)return '<div class="empty">Todavía no hay nada terminado.</div>';
+  return '<div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Título</th><th>Tipo</th><th>Resultado</th><th>Área</th><th>Proyecto</th><th>Responsable</th><th>Cerrado</th></tr></thead><tbody>'+
+    L.map(x=>'<tr data-open="'+x.id+'"><td>'+x.id+'</td><td class="tt">'+esc(x.titulo)+'</td><td>'+tyPill(x)+'</td><td>'+(rej(x)?'<span class="pill p-bad">Rechazado</span>':'<span class="pill p-ok">Hecho</span>')+'</td>'+
+      '<td>'+esc(x.area||'—')+'</td><td>'+esc(x.padre||'—')+'</td><td>'+esc(x.responsable||'—')+'</td><td>'+fmtD((x.cerrado||x.act||'').slice(0,10))+'</td></tr>').join('')+
+    '</tbody></table></div>';
 }
 function renderList(L){
   const {k,d}=UI.sort;
@@ -511,14 +526,14 @@ function groupTable(title,hint,rows){
 function stats(list){
   const o=list.filter(open_);
   return {act:o.length,cur:o.filter(x=>x.estado==='curso').length,blk:o.filter(x=>x.bloqueado).length,late:o.filter(isLate).length,
-    av:list.filter(x=>x.estado!=='cancelado').length?Math.round(list.filter(x=>x.estado!=='cancelado').reduce((s,x)=>s+av(x),0)/list.filter(x=>x.estado!=='cancelado').length):0};
+    av:(l=>l.length?Math.round(l.reduce((s,x)=>s+av(x),0)/l.length):0)(list.filter(x=>!rej(x)))};
 }
 function renderExec(L){
-  const o=L.filter(open_),ap=L.filter(x=>x.aprob==='pendiente'&&x.estado!=='cancelado');
-  const d30=addDays(-30),done30=L.filter(x=>x.estado==='hecho'&&(x.act||'').slice(0,10)>=d30).length;
+  const o=L.filter(open_),ap=L.filter(x=>x.aprob==='pendiente'&&open_(x));
+  const d30=addDays(-30),done30=L.filter(x=>x.estado==='hecho'&&!rej(x)&&(x.cerrado||(x.act||'').slice(0,10))>=d30).length;
   const risk=o.filter(x=>x.bloqueado||isLate(x)).sort((a,b)=>(a.vence||'9').localeCompare(b.vence||'9'));
   const prox=o.filter(x=>x.vence&&x.vence>=today()&&x.vence<=addDays(14)).sort((a,b)=>a.vence.localeCompare(b.vence));
-  const projs=L.filter(x=>x.tipo==='proyecto'&&x.estado!=='cancelado').map(p=>{const s=stats(kidsOf(p.id).concat([]));s.name='<span class="hint">'+p.id+'</span> '+esc(p.titulo)+' '+stDotSmall(p);s.open=p.id;s.av=av(p);return s});
+  const projs=L.filter(x=>x.tipo==='proyecto'&&open_(x)).map(p=>{const s=stats(kidsOf(p.id).concat([]));s.name='<span class="hint">'+p.id+'</span> '+esc(p.titulo)+' '+stDotSmall(p);s.open=p.id;s.av=av(p);return s});
   projs.head=['Proyecto'];
   const areas=S.cfg.areas.map(a=>{const l=L.filter(x=>x.area===a);if(!l.length)return null;const s=stats(l);s.name=esc(a);return s}).filter(Boolean);
   areas.head=['Área solicitante'];
@@ -563,9 +578,9 @@ function renderCfg(){
 function render(){
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===UI.view));
   $('#filters').hidden=UI.view==='cfg';
-  const L=filtered();
-  $('#count').textContent=L.length+' de '+S.items.length+' ítems';
-  $('#main').innerHTML=UI.view==='board'?renderBoard(L):UI.view==='list'?renderList(L):UI.view==='cfg'?renderCfg():renderExec(L);
+  const L=filtered(),act=L.filter(open_),done=L.filter(x=>!open_(x));
+  $('#count').textContent=UI.view==='done'?done.length+' terminados':act.length+' pendientes · '+done.length+' hechos';
+  $('#main').innerHTML=UI.view==='board'?renderBoard(L):UI.view==='list'?renderList(act):UI.view==='done'?renderDone(done):UI.view==='cfg'?renderCfg():renderExec(L);
 }
 function applyPerms(){
   $('#btnNew').hidden=!S.canWrite;$('#impLbl').hidden=!S.canWrite;$('#roNote').hidden=S.canWrite||S.mode==='loading';
@@ -578,7 +593,7 @@ function refreshAll(){
 }
 
 /* ================= Ficha ================= */
-function blank(st){const x=normItem({estado:st||'nuevo',solicitante:'',area:''});if(st==='aprobacion')x.aprob='pendiente';return x}
+function blank(st){const x=normItem({estado:st||'pendiente',solicitante:'',area:''});if(st==='aprobacion')x.aprob='pendiente';return x}
 function opts(arr,val,empty){return (empty?'<option value="">'+empty+'</option>':'')+arr.map(o=>{const v=typeof o==='string'?o:o.v,t=typeof o==='string'?o:o.t;return '<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+esc(t)+'</option>'}).join('')}
 function chips(name,arr,sel){return '<div class="chips">'+arr.map(v=>'<button type="button" class="chip" data-chip="'+name+'" data-v="'+esc(v)+'" aria-pressed="'+sel.includes(v)+'">'+esc(v)+'</button>').join('')+'</div>'}
 function openItem(id,st){
@@ -715,7 +730,7 @@ function armed(btn){
   return false;
 }
 document.addEventListener('click',async e=>{
-  const v=e.target.closest('[data-view]');if(v){UI.view=v.dataset.view;try{localStorage.setItem(LS+'-view',UI.view)}catch(_){}render();return}
+  const v=e.target.closest('[data-view]');if(v){if(UI.view==='done'||v.dataset.view==='done')$('#fAlert').value='';UI.view=v.dataset.view;try{localStorage.setItem(LS+'-view',UI.view)}catch(_){}render();return}
   const th=e.target.closest('[data-sort]');if(th){const k=th.dataset.sort;UI.sort=UI.sort.k===k?{k,d:-UI.sort.d}:{k,d:1};render();return}
   const al=e.target.closest('[data-alert]');if(al){$('#fAlert').value=al.dataset.alert;UI.view='list';render();return}
   const ch=e.target.closest('[data-chip]');
@@ -737,7 +752,7 @@ document.addEventListener('click',async e=>{
     case 'del':{const id=UI.open;await delItem(id);for(const k of kidsOf(id)){k.padre='';await putItem(k)}toast(id+' eliminado');closeDr();refreshAll();break}
     case 'dup':{readDraft();const c=JSON.parse(JSON.stringify(UI.draft));c.titulo+=' (copia)';c.log=[];c.ac.forEach(q=>q.ok=false);c.aprob=c.aprob==='no'?'no':'pendiente';c.aprobPor='';c.aprobFecha='';UI.open=null;c.id='';UI.draft=c;UI.dirty=true;drawDrawer();break}
     case 'approve':{const x=byId(a.dataset.id);await quickUpdate(a.dataset.id,{aprob:'aprobado',aprobPor:whoName(),aprobFecha:today(),estado:x.estado==='aprobacion'?'planificado':x.estado},'Aprobó ('+x.aprobNivel+')');toast(a.dataset.id+' aprobado');break}
-    case 'reject':await quickUpdate(a.dataset.id,{aprob:'rechazado',aprobPor:whoName(),aprobFecha:today(),estado:'cancelado'},'Rechazó el pedido');toast(a.dataset.id+' rechazado');break;
+    case 'reject':await quickUpdate(a.dataset.id,{aprob:'rechazado',aprobPor:whoName(),aprobFecha:today(),estado:'hecho'},'Rechazó el pedido');toast(a.dataset.id+' rechazado');break;
     case 'clearF':['#q','#fArea','#fProy','#fTipo','#fPri','#fResp','#fAlert'].forEach(s=>$(s).value='');render();break;
     case 'expJson':saveFile('trento-proyectos-'+today()+'.json',JSON.stringify({items:S.items,cfg:S.cfg},null,2),'application/json');break;
     case 'expCsv':saveFile('trento-proyectos-'+today()+'.csv',csv(),'text/csv');break;
