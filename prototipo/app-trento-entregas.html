@@ -521,7 +521,7 @@ function seed(){
   const W=(t,title,body,act)=>({to:'cliente',d:'18/09',t,title,body,oid:'TR-24701',act,read:true,seen:true});
   return {v:8,seq:{hr:3,rec:1182},rutas:[],encHist:encSeed(),notifs:[
       W('07:32','🚚 Tu pedido salió','Tu pedido TR-24701 ya salió del depósito. Llega hoy entre las 08:15 y 09:45. Estate atento para recibirlo.','salio'),
-      W('08:57','⏱ Tu pedido llega en 15 minutos','Eugenia está a unos 15 minutos de Av. Hipólito Yrigoyen 4520, Lanús. Preparate para recibir 6 bultos.','15'),
+      W('08:57','⏱ Tu pedido llega en 15 minutos','Eugenia está a unos 15 minutos de Av. Hipólito Yrigoyen 4520, Lanús. Preparate para recibir 6 láminas.','15'),
       W('09:13','✅ Entregamos tu pedido','TR-24701 · recibió Milena Rozo a las 09:12. ¿Cómo recibiste la mercadería?','entregado'),
       {to:'wa-out',d:'18/09',t:'09:40',body:'✅ Todo conforme',oid:'TR-24701',read:true},
       W('09:40','¡Gracias por tu respuesta!','Registramos tu conformidad para TR-24701. ¡Hasta la próxima!','gracias'),
@@ -560,7 +560,7 @@ function seed(){
     /* ---- historial del cliente demo ---- */
     o({id:'TR-24701',cli:'fds',cliente:'Ferretería Del Sur',zona:'Lanús',dir:'Av. Hipólito Yrigoyen 4520, Lanús',contacto:'Milena Rozo',tel:'11 5555-0192',bultos:6,kg:180,m3:.9,remito:'R 0003-00018502',horario:'Lun a vie 8:00–17:00',estado:'cerrado',turno:'Jue 18/09 · 08:00–10:00',recibe:'Milena Rozo',rango:'08:15 y 09:45',
       entrega:{d:'18/09',t:'09:12',bultos:6,total:6,recibio:'Milena Rozo',foto:null,firma:null,chofer:'Eugenia'},respuesta:{tipo:'conforme',detalle:''},encAsk:true,enc:{p:'ok',m:'ok',a:'ok',done:true,comentario:''},
-      tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 bultos',sub:'Eugenia'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
+      tl:[{d:'18/09',t:'07:32',txt:'Salió del depósito',sub:'Rango informado: entre 08:15 y 09:45'},{d:'18/09',t:'08:57',txt:'Aviso: llega en ~15 min',sub:'WhatsApp'},{d:'18/09',t:'09:12',txt:'Entregado 6/6 láminas',sub:'Eugenia'},{d:'18/09',t:'09:40',txt:'Cliente: todo conforme',sub:'★★★★★'}]})
   ]};
 }
 let S, ui;
@@ -691,7 +691,7 @@ function encSeed(){
   const dAdj={'Milena Rozo':{p:0,a:.04},'Eugenia':{p:-.03,a:-.08}};
   const cli={cap:['Obra Torre Belgrano','Estudio Palermo','Local Caballito'],sur:['Sanitarios Quilmes','Pinturerías Banfield','Maderera Lomas','Aberturas Temperley','Vidriería Quilmes Oeste','Corralón El Puente'],norte:['Vidrios San Isidro','Obra Nordelta Tigre','Aluminios Vicente López','Distribuidora Norte SRL'],plata:['Vidriería City Bell','Aberturas Ensenada','Ferretería La Plata Centro','Construcciones Platenses']};
   const com={p:{mid:['Llegaron una hora después del rango.','Se atrasaron pero avisaron.'],bad:['Vinieron fuera de horario y no teníamos gente para descargar.','Llegaron casi 3 horas tarde.']},
-             m:{mid:['Faltaba una caja, llegó al día siguiente.','El remito decía 12 bultos y llegaron 11.'],bad:['Dos vidrios llegaron con las esquinas astilladas.','Cajas mojadas y un paño rajado.']},
+             m:{mid:['Faltaba una lámina, llegó al día siguiente.','El remito decía 12 láminas y llegaron 11.'],bad:['Dos láminas llegaron con las esquinas astilladas.','Una lámina llegó rajada.']},
              a:{mid:['El chofer apurado, no esperó a que controlemos.','No ayudó a acomodar la carga.'],bad:['El chofer no quiso ayudar a bajar la carga.','Trato poco amable con nuestro personal.']}};
   const good=['Todo perfecto, como siempre.','El aviso de 15 minutos nos organiza mucho.','Muy amable el chofer.','Llegó dentro del rango y bien embalado.'];
   const days=[['11/08','12/08','13/08','14/08','15/08'],['18/08','19/08','20/08','21/08','22/08'],['25/08','26/08','27/08','28/08','29/08'],['01/09','02/09','03/09','04/09','05/09'],['08/09','09/09','10/09','11/09','12/09'],['15/09','16/09','17/09','18/09','19/09'],['22/09','23/09']];
@@ -815,7 +815,7 @@ function homeV(){
     '<p>Elegí con qué usuario querés entrar. Todo lo que hagas se refleja en los otros perfiles: si el coordinador propone un horario, el cliente lo ve; si el chofer entrega, el coordinador recibe el comprobante.</p></div>'+
     '<div class="roles">'+
       '<button type="button" class="role-card rc-coord" data-a="go" data-s="login-coord"><span class="ic">'+I.desk+'</span><h2>Coordinador</h2><p>Web de logística. Coordina turnos con clientes, arma y publica la hoja de ruta, gestiona reclamos.</p><span class="go">Ingresar →</span></button>'+
-      '<button type="button" class="role-card rc-chofer" data-a="go" data-s="login-chofer"><span class="ic">'+I.truck+'</span><h2>Chofer</h2><p>App en el celular. Ve su recorrido, registra llegada, bultos, foto y firma en cada parada.</p><span class="go">Ingresar →</span></button>'+
+      '<button type="button" class="role-card rc-chofer" data-a="go" data-s="login-chofer"><span class="ic">'+I.truck+'</span><h2>Chofer</h2><p>App en el celular. Ve su recorrido, registra llegada, láminas, foto y firma en cada parada.</p><span class="go">Ingresar →</span></button>'+
       '<button type="button" class="role-card rc-cliente" data-a="go" data-s="login-cliente"><span class="ic">'+I.box+'</span><h2>Cliente</h2><p>Recibe todo por WhatsApp de Trento Logística: elige horario con un botón, sigue el camión y confirma la recepción.</p><span class="go">Ingresar →</span></button>'+
     '</div>'+
     '<div class="home-foot"><div class="status-strip"><span class="small">Estado de la demo:</span>'+
@@ -938,7 +938,7 @@ function cPanel(){
   const n=now();
   const zc=z=>S.orders.filter(o=>zoneOf(o)===z&&o.estado!=='cerrado');
   const ztab=(z,label)=>{const l=z==='todas'?S.orders.filter(o=>o.estado!=='cerrado'):zc(z);const pend=l.filter(o=>GROUPS.coordinar.includes(o.estado)).length;return '<button type="button" class="ztab" data-a="setZone" data-z="'+z+'" aria-pressed="'+(ui.zone===z)+'"><b>'+label+'</b><small>'+l.length+' pedidos'+(pend?' · '+pend+' por coordinar':'')+'</small></button>';};
-  const rows=o=>'<tr data-a="openOrder" data-id="'+o.id+'" tabindex="0"><td><b>'+o.id+'</b>'+(o.id===HERO?' <span class="pill p-bad" style="font-size:10px">demo</span>':'')+'</td><td>'+esc(o.cliente)+'</td><td>'+zp(o)+' <span class="small">'+esc(o.zona)+'</span></td><td>'+o.bultos+' bultos · '+kgf(o.kg)+' kg</td><td>'+(o.turno?esc(o.turno):'<span class="small">—</span>')+'</td><td><span class="pill '+EST[o.estado].cp+'">'+EST[o.estado].c+'</span></td></tr>';
+  const rows=o=>'<tr data-a="openOrder" data-id="'+o.id+'" tabindex="0"><td><b>'+o.id+'</b>'+(o.id===HERO?' <span class="pill p-bad" style="font-size:10px">demo</span>':'')+'</td><td>'+esc(o.cliente)+'</td><td>'+zp(o)+' <span class="small">'+esc(o.zona)+'</span></td><td>'+o.bultos+' láminas · '+kgf(o.kg)+' kg</td><td>'+(o.turno?esc(o.turno):'<span class="small">—</span>')+'</td><td><span class="pill '+EST[o.estado].cp+'">'+EST[o.estado].c+'</span></td></tr>';
   let body='';
   if(!list.length)body='<tr><td colspan="6"><div class="empty">No hay pedidos con este filtro.</div></td></tr>';
   else if(ui.zone==='todas')body=ZN_ORDER.map(z=>{const l=list.filter(o=>zoneOf(o)===z);return l.length?'<tr class="grp"><td colspan="6">'+ZN[z]+' · '+l.length+'</td></tr>'+l.map(rows).join(''):'';}).join('');
@@ -953,7 +953,7 @@ function podHTML(o){
   const e=o.entrega;if(!e)return '';
   return '<div class="pod"><figure>'+(e.foto?'<img src="'+e.foto+'" alt="Foto de la entrega">':'<div class="ph">Foto de la entrega</div>')+'<figcaption>Foto · '+e.d+' '+e.t+'</figcaption></figure>'+
     '<figure>'+(e.firma?'<img class="sigimg" src="'+e.firma+'" alt="Firma">':'<div class="ph">Firma</div>')+'<figcaption>Firma · '+esc(e.recibio)+'</figcaption></figure></div>'+
-    '<dl class="kv"><dt>Entregado</dt><dd>'+e.d+' · '+e.t+'</dd><dt>Bultos</dt><dd'+(e.bultos<e.total?' style="color:var(--warn)"':'')+'>'+e.bultos+' de '+e.total+(e.bultos<e.total?' (parcial)':'')+'</dd><dt>Recibió</dt><dd>'+esc(e.recibio)+'</dd><dt>Chofer</dt><dd>'+esc(e.chofer)+'</dd></dl>';
+    '<dl class="kv"><dt>Entregado</dt><dd>'+e.d+' · '+e.t+'</dd><dt>Láminas</dt><dd'+(e.bultos<e.total?' style="color:var(--warn)"':'')+'>'+e.bultos+' de '+e.total+(e.bultos<e.total?' (parcial)':'')+'</dd><dt>Recibió</dt><dd>'+esc(e.recibio)+'</dd><dt>Chofer</dt><dd>'+esc(e.chofer)+'</dd></dl>';
 }
 function respHTML(o){
   const r=o.respuesta;if(!r)return '';
@@ -1012,7 +1012,7 @@ function cPedido(){
     '<div class="row sb"><h1>'+esc(o.cliente)+' '+zp(o)+'</h1><span class="pill '+EST[e].cp+'" style="font-size:12px">'+EST[e].c+'</span></div>'+
     '<div class="panel"><span class="lbl">Seguimiento</span>'+trackerHTML(o)+'</div>'+
     '<div class="grid2"><div class="col"><div class="panel"><span class="lbl">Pedido y destino</span><dl class="kv">'+
-      '<dt>Pedido</dt><dd>'+o.id+'</dd><dt>Dirección</dt><dd>'+esc(o.dir)+'</dd><dt>Contacto</dt><dd>'+esc(o.contacto)+' · '+esc(o.tel)+'</dd><dt>Carga</dt><dd>'+o.bultos+' bultos · '+kgf(o.kg)+' kg · '+m3f(o.m3)+' m³</dd><dt>Remito</dt><dd>'+esc(o.remito)+'</dd><dt>Horario del local</dt><dd>'+esc(o.horario)+'</dd></dl>'+
+      '<dt>Pedido</dt><dd>'+o.id+'</dd><dt>Dirección</dt><dd>'+esc(o.dir)+'</dd><dt>Contacto</dt><dd>'+esc(o.contacto)+' · '+esc(o.tel)+'</dd><dt>Carga</dt><dd>'+o.bultos+' láminas · '+kgf(o.kg)+' kg · '+m3f(o.m3)+' m³</dd><dt>Remito</dt><dd>'+esc(o.remito)+'</dd><dt>Horario del local</dt><dd>'+esc(o.horario)+'</dd></dl>'+
       '<span class="lbl">Requisitos de descarga</span><div class="chips" data-group="req">'+REQS.map(r=>'<button type="button" class="chip" data-t="multi" data-v="'+r+'" aria-pressed="'+o.requisitos.includes(r)+'">'+r+'</button>').join('')+'</div></div>'+
       '<div class="panel"><span class="lbl">Historial</span>'+tlHTML(o)+'</div>'+
       '<div class="panel"><div class="row sb"><span class="lbl">WhatsApp con el cliente</span><span class="small">'+esc(o.contacto)+' · '+esc(o.tel)+'</span></div>'+
@@ -1095,10 +1095,10 @@ function cRutas(){
     '<div class="grid2 w"><div class="col">'+
       '<div><span class="lbl">Recorrido</span><div class="stops">'+
         '<div class="stop"><span class="n depot">D</span><div><b>Depósito Trento · Barracas</b><small>Salida programada</small></div><span class="eta">'+hm(PLAN_START)+'</span></div>'+
-        (d.stops.length?d.stops.map((id,i)=>{const o=ord(id);return '<div class="stop"><span class="n">'+(i+1)+'</span><div><b>'+esc(o.cliente)+' · '+o.id+'</b><small>'+esc(o.zona)+' · '+o.bultos+' bultos · '+kgf(o.kg)+' kg · franja '+esc(o.turno.split('· ')[1])+'</small></div><div class="row" style="gap:6px"><span class="eta">'+etaFor(i)+'</span><span class="ord"><button type="button" class="ib" data-a="drMove" data-i="'+i+'" data-d="-1" aria-label="Subir"'+(i===0?' disabled':'')+'>↑</button><button type="button" class="ib" data-a="drMove" data-i="'+i+'" data-d="1" aria-label="Bajar"'+(i===d.stops.length-1?' disabled':'')+'>↓</button><button type="button" class="ib" data-a="drDel" data-i="'+i+'" aria-label="Quitar">✕</button></span></div></div>';}).join(''):'<div class="empty">Tocá “Completar camión” o agregá pedidos de '+ZN[d.zona]+'.</div>')+
+        (d.stops.length?d.stops.map((id,i)=>{const o=ord(id);return '<div class="stop"><span class="n">'+(i+1)+'</span><div><b>'+esc(o.cliente)+' · '+o.id+'</b><small>'+esc(o.zona)+' · '+o.bultos+' láminas · '+kgf(o.kg)+' kg · franja '+esc(o.turno.split('· ')[1])+'</small></div><div class="row" style="gap:6px"><span class="eta">'+etaFor(i)+'</span><span class="ord"><button type="button" class="ib" data-a="drMove" data-i="'+i+'" data-d="-1" aria-label="Subir"'+(i===0?' disabled':'')+'>↑</button><button type="button" class="ib" data-a="drMove" data-i="'+i+'" data-d="1" aria-label="Bajar"'+(i===d.stops.length-1?' disabled':'')+'>↓</button><button type="button" class="ib" data-a="drDel" data-i="'+i+'" aria-label="Quitar">✕</button></span></div></div>';}).join(''):'<div class="empty">Tocá “Completar camión” o agregá pedidos de '+ZN[d.zona]+'.</div>')+
       '</div></div>'+
       '<div><span class="lbl">Confirmados de '+ZN[d.zona]+' sin asignar</span><div class="stops">'+
-        (pool.length?pool.map(o=>{const t=TRUCKS[d.camion],l=load_(d.stops.concat(o.id));const over=l.kg>t.kg||l.m3>t.m3;return '<div class="stop"><span class="n" style="background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)">+</span><div><b>'+esc(o.cliente)+' · '+o.id+'</b><small>'+esc(o.zona)+' · '+o.bultos+' bultos · '+kgf(o.kg)+' kg · '+m3f(o.m3)+' m³ · '+esc(o.turno)+(over?' · <span style="color:var(--warn)">no entra</span>':'')+'</small></div><button type="button" class="btn sm" data-a="drAdd" data-id="'+o.id+'"'+(full||over?' disabled':'')+'>Agregar</button></div>';}).join(''):'<div class="small" style="padding:8px 0">No hay más pedidos confirmados en '+ZN[d.zona]+'. Los que esperan respuesta del cliente aparecen acá cuando confirman.</div>')+
+        (pool.length?pool.map(o=>{const t=TRUCKS[d.camion],l=load_(d.stops.concat(o.id));const over=l.kg>t.kg||l.m3>t.m3;return '<div class="stop"><span class="n" style="background:var(--sunk);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)">+</span><div><b>'+esc(o.cliente)+' · '+o.id+'</b><small>'+esc(o.zona)+' · '+o.bultos+' láminas · '+kgf(o.kg)+' kg · '+m3f(o.m3)+' m³ · '+esc(o.turno)+(over?' · <span style="color:var(--warn)">no entra</span>':'')+'</small></div><button type="button" class="btn sm" data-a="drAdd" data-id="'+o.id+'"'+(full||over?' disabled':'')+'>Agregar</button></div>';}).join(''):'<div class="small" style="padding:8px 0">No hay más pedidos confirmados en '+ZN[d.zona]+'. Los que esperan respuesta del cliente aparecen acá cuando confirman.</div>')+
         (full&&pool.length?'<div class="note warn" style="margin-top:8px"><b>'+pool.length+' pedido'+(pool.length>1?'s':'')+' para el viernes</b>Ya hay 5 clientes en esta hoja. Los que queden sin asignar se programan para el próximo día hábil.</div>':'')+
       '</div></div>'+
     '</div><div class="col">'+mapSVG(d.stops,null,d.zona)+'<div class="panel">'+capHTML(d.stops,d.camion)+'<div class="small">Salida '+hm(PLAN_START)+' · regreso estimado '+etaFor(d.stops.length)+'</div></div></div></div>'+
@@ -1135,7 +1135,7 @@ function choferV(){
         '<label class="check"><input type="checkbox" id="ck1"> Revisé el vehículo (luces, cubiertas, frenos)</label>'+
         '<label class="check"><input type="checkbox" id="ck2"> Controlé la carga contra los remitos</label>'+
         '<label class="check"><input type="checkbox" id="ck3"> Llevo documentación y remitos</label></div>'+
-      '<div class="card"><span class="lbl">Paradas</span><div class="stops">'+r.stops.map((id,i)=>{const o=ord(id);return '<div class="stop"><span class="n">'+(i+1)+'</span><div><b>'+esc(o.cliente)+'</b><small>'+esc(o.zona)+' · '+o.bultos+' bultos · '+esc(o.turno.split('· ')[1])+'</small></div><span class="eta">'+etaFor(i,r)+'</span></div>';}).join('')+'</div></div>'+
+      '<div class="card"><span class="lbl">Paradas</span><div class="stops">'+r.stops.map((id,i)=>{const o=ord(id);return '<div class="stop"><span class="n">'+(i+1)+'</span><div><b>'+esc(o.cliente)+'</b><small>'+esc(o.zona)+' · '+o.bultos+' láminas · '+esc(o.turno.split('· ')[1])+'</small></div><span class="eta">'+etaFor(i,r)+'</span></div>';}).join('')+'</div></div>'+
       '<div class="note info"><b>Al iniciar el recorrido</b>Avisamos a coordinación y a cada cliente con su rango horario de llegada.</div>'+
       mapSVG(r.stops);
     return mShell('Mi recorrido',body,'<div id="ck-err" class="err" hidden></div><button type="button" class="btn block" data-a="dStart">Iniciar recorrido</button>',false,d);
@@ -1144,14 +1144,14 @@ function choferV(){
     const done=r.stops.filter(id=>ord(id).estado!=='en_ruta').length;
     const o=next&&ord(next);const ni=r.stops.indexOf(next);
     body='<div class="card"><div class="row sb"><b>'+r.id+' · '+TRUCKS[r.camion].pat+'</b><span class="pill p-info">En ruta</span></div><div class="row sb small"><span>'+done+' de '+r.stops.length+' paradas</span><span>Salida '+hm(r.salida)+' · regreso '+etaFor(r.stops.length,r)+'</span></div><div class="progress"><i style="width:'+Math.round(done/r.stops.length*100)+'%"></i></div></div>'+
-      (o?'<div class="card hl"><div class="row sb"><span class="pill p-bad">Próxima parada</span><b style="font-variant-numeric:tabular-nums">ETA '+etaFor(ni,r)+'</b></div><b style="font-size:17px">'+(ni+1)+' · '+esc(o.cliente)+'</b><div class="small">'+esc(o.dir)+' · '+o.bultos+' bultos</div>'+(o.acceso?'<div class="small">📍 '+esc(o.acceso)+'</div>':'')+(o.requisitos.length?'<div class="small">Requiere: '+esc(o.requisitos.join(', '))+'</div>':'')+
+      (o?'<div class="card hl"><div class="row sb"><span class="pill p-bad">Próxima parada</span><b style="font-variant-numeric:tabular-nums">ETA '+etaFor(ni,r)+'</b></div><b style="font-size:17px">'+(ni+1)+' · '+esc(o.cliente)+'</b><div class="small">'+esc(o.dir)+' · '+o.bultos+' láminas</div>'+(o.acceso?'<div class="small">📍 '+esc(o.acceso)+'</div>':'')+(o.requisitos.length?'<div class="small">Requiere: '+esc(o.requisitos.join(', '))+'</div>':'')+
         '<div class="small">Rango informado al cliente: entre las '+esc(o.rango)+'</div>'+
         (o.aviso15?'<div class="note warn"><b>Cliente avisado: llegás en ~15 min</b>Te está esperando para recibir.</div>'+
           '<div class="row"><a class="btn ghost" style="flex:1" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(o.dir)+'" target="_blank" rel="noopener">Navegar</a><button type="button" class="btn" style="flex:1" data-a="dOpen" data-id="'+o.id+'">Llegué / Entregar</button></div>'
          :'<button type="button" class="btn block" data-a="d15" data-id="'+o.id+'">Voy para allá · avisar “llego en 15 min”</button>'+
           '<div class="row"><a class="btn ghost" style="flex:1" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(o.dir)+'" target="_blank" rel="noopener">Navegar</a><button type="button" class="btn ghost" style="flex:1" data-a="dOpen" data-id="'+o.id+'">Llegué / Entregar</button></div>'+
           '<p class="small">En la versión real, el aviso sale solo por GPS cuando el camión está a 15 minutos.</p>')+'</div>':'')+
-      '<div class="card"><span class="lbl">Recorrido</span><div class="stops">'+r.stops.map((id,i)=>{const x=ord(id);const st=x.estado==='en_ruta'?'':(x.estado==='no_entregado'?' fail':' done');return '<div class="stop"><span class="n'+st+'">'+(st===' done'?'✓':st===' fail'?'✕':i+1)+'</span><div><b>'+esc(x.cliente)+'</b><small>'+(x.entrega?'Entregado '+x.entrega.t:x.estado==='no_entregado'?'No entregado · '+esc(x.motivo):esc(x.zona)+' · '+x.bultos+' bultos')+'</small></div><span class="eta">'+(x.entrega?'':etaFor(i,r))+'</span></div>';}).join('')+'</div></div>'+
+      '<div class="card"><span class="lbl">Recorrido</span><div class="stops">'+r.stops.map((id,i)=>{const x=ord(id);const st=x.estado==='en_ruta'?'':(x.estado==='no_entregado'?' fail':' done');return '<div class="stop"><span class="n'+st+'">'+(st===' done'?'✓':st===' fail'?'✕':i+1)+'</span><div><b>'+esc(x.cliente)+'</b><small>'+(x.entrega?'Entregado '+x.entrega.t:x.estado==='no_entregado'?'No entregado · '+esc(x.motivo):esc(x.zona)+' · '+x.bultos+' láminas')+'</small></div><span class="eta">'+(x.entrega?'':etaFor(i,r))+'</span></div>';}).join('')+'</div></div>'+
       mapSVG(r.stops,id=>ord(id).estado!=='en_ruta');
   }
   return mShell('Mi recorrido',body,'',false,d);
@@ -1171,7 +1171,7 @@ function dParada(){
     '<div class="card" id="inc" hidden><span class="lbl">¿Por qué no se pudo entregar?</span><div class="chips" data-group="motivo">'+['Cliente ausente','Local cerrado','Dirección incorrecta','Rechazo total','Sin acceso para el camión'].map((m,k)=>'<button type="button" class="chip" data-t="single" data-v="'+m+'" aria-pressed="'+(k===0)+'">'+m+'</button>').join('')+'</div>'+
       '<button type="button" class="btn block" data-a="dFail" style="background:var(--ink);color:var(--surface)">Registrar no entrega</button></div>'+
     (o.acceso||o.recibe?'<div class="note info"><b>Indicaciones del cliente</b>'+esc(o.acceso)+(o.recibe?' · Recibe: '+esc(o.recibe):'')+'</div>':'')+
-    '<div class="card"><div class="row sb"><b>Bultos entregados</b><button type="button" class="btn ghost sm" data-a="dScan">Escanear etiqueta</button></div>'+
+    '<div class="card"><div class="row sb"><b>Láminas entregadas</b><button type="button" class="btn ghost sm" data-a="dScan">Escanear etiqueta</button></div>'+
       '<div class="counter"><button type="button" class="ib" data-a="dBul" data-d="-1" aria-label="Uno menos">−</button><span class="val"><span id="bul">'+s.bultos+'</span> / '+o.bultos+'</span><button type="button" class="ib" data-a="dBul" data-d="1" aria-label="Uno más">+</button></div>'+
       '<div class="progress"><i id="bulbar" style="width:'+Math.round(s.bultos/o.bultos*100)+'%;background:var(--ok)"></i></div></div>'+
     '<div class="card"><b>Foto de la mercadería entregada</b><div class="photo-box" id="phbox">'+(s.foto?'<img src="'+s.foto+'" alt="Foto">':'<span class="small">Sin foto todavía</span>')+'</div>'+
@@ -1197,12 +1197,16 @@ function initSig(){
   c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);c.addEventListener('pointerleave',up);
 }
 function samplePhoto(o){
+  /* foto de ejemplo: láminas de vidrio apoyadas en un caballete */
   const c=document.createElement('canvas');c.width=480;c.height=320;const x=c.getContext('2d');
-  x.fillStyle='#d9d2cc';x.fillRect(0,0,480,320);x.fillStyle='#bfb6ae';x.fillRect(0,210,480,110);
-  x.fillStyle='#a8a097';for(let i=0;i<480;i+=40)x.fillRect(i,210,2,110);
-  const boxes=[[60,120,120,90],[190,100,130,110],[330,130,100,80],[110,40,110,80],[240,20,90,80]];
-  boxes.forEach((b,i)=>{x.fillStyle=i%2?'#c79a62':'#b8864f';x.fillRect(b[0],b[1],b[2],b[3]);x.fillStyle='#fff';x.fillRect(b[0]+10,b[1]+10,48,22);x.fillStyle='#D71F2B';x.fillRect(b[0]+12,b[1]+12,10,18);x.fillStyle='#231A1B';x.font='bold 9px Arial';x.fillText('TRENTO',b[0]+25,b[1]+25);});
-  x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,290,480,30);x.fillStyle='#fff';x.font='bold 13px Arial';const n=now();x.fillText(o.id+' · '+o.cliente+' · '+n.d+' '+n.t,10,310);
+  x.fillStyle='#d9d2cc';x.fillRect(0,0,480,320);x.fillStyle='#bfb6ae';x.fillRect(0,230,480,90);
+  x.fillStyle='#a8a097';for(let i=0;i<480;i+=40)x.fillRect(i,230,2,90);
+  x.fillStyle='#5a5552';x.fillRect(70,236,340,10);x.fillRect(90,70,8,170);x.fillRect(382,70,8,170);
+  for(let i=0;i<7;i++){const dx=i*9;x.fillStyle='rgba(150,200,210,'+(0.35+i*0.05)+')';x.strokeStyle='rgba(60,110,120,.8)';x.lineWidth=2;
+    x.beginPath();x.moveTo(110+dx,232);x.lineTo(130+dx,60);x.lineTo(360+dx,60);x.lineTo(340+dx,232);x.closePath();x.fill();x.stroke();}
+  x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=3;x.beginPath();x.moveTo(190,90);x.lineTo(170,200);x.stroke();
+  x.fillStyle='#fff';x.fillRect(300,180,62,24);x.fillStyle='#D71F2B';x.fillRect(303,183,10,18);x.fillStyle='#231A1B';x.font='bold 10px Arial';x.fillText('TRENTO',316,196);
+  x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,290,480,30);x.fillStyle='#fff';x.font='bold 13px Arial';const n=now();x.fillText(o.id+' · '+o.bultos+' láminas · '+o.cliente+' · '+n.d+' '+n.t,10,310);
   return c.toDataURL('image/jpeg',.75);
 }
 function readPhoto(file,cb){
@@ -1214,13 +1218,13 @@ function clienteV(){
   if(ui.kView==='pedido'&&ord(ui.kOrder))return kPedido();
   const l=S.orders.filter(o=>o.cli==='fds');
   const body='<div><div class="small">Ferretería Del Sur</div><div class="m-title">Hola, Milena Rozo</div></div>'+
-    l.map(o=>'<button type="button" class="card tap'+(['esperando_cliente','entregado'].includes(o.estado)?' hl':'')+'" data-a="kOpen" data-id="'+o.id+'"><div class="row sb"><b>Pedido '+o.id+'</b><span class="pill '+EST[o.estado].kp+'">'+EST[o.estado].k+'</span></div><span class="small">'+o.bultos+' bultos · '+(o.turno?esc(o.turno):'Horario a coordinar')+'</span>'+trackerHTML(o,true)+'</button>').join('')+
+    l.map(o=>'<button type="button" class="card tap'+(['esperando_cliente','entregado'].includes(o.estado)?' hl':'')+'" data-a="kOpen" data-id="'+o.id+'"><div class="row sb"><b>Pedido '+o.id+'</b><span class="pill '+EST[o.estado].kp+'">'+EST[o.estado].k+'</span></div><span class="small">'+o.bultos+' láminas · '+(o.turno?esc(o.turno):'Horario a coordinar')+'</span>'+trackerHTML(o,true)+'</button>').join('')+
     '<p class="small">¿Dudas? Escribinos por WhatsApp al 11 4000-8736.</p>';
   return mShell('Mis entregas',body,'',false,null);
 }
 function kPedido(){
   const o=ord(ui.kOrder);const e=o.estado;let body='',foot='';
-  const head='<div><div class="small">Pedido '+o.id+' · '+o.bultos+' bultos</div><span class="pill '+EST[e].kp+'">'+EST[e].k+'</span></div>'+
+  const head='<div><div class="small">Pedido '+o.id+' · '+o.bultos+' láminas</div><span class="pill '+EST[e].kp+'">'+EST[e].k+'</span></div>'+
     (trackStep(o)?'<div class="card"><span class="lbl">Seguimiento de tu envío</span>'+trackerHTML(o)+'</div>':'');
   if(e==='por_coordinar'){
     body=head+'<div class="card"><div class="m-title">Estamos preparando tu pedido</div><p class="small">En breve te enviamos opciones de día y horario por WhatsApp para que elijas cuándo recibirlo.</p></div>';
@@ -1248,7 +1252,7 @@ function kPedido(){
     const arr=ui.stop&&ui.stop.id===o.id&&ui.stop.llegada;
     body=head+'<div class="card hl"><span class="lbl">'+(arr?'El camión llegó':o.aviso15?'Está llegando':'Tu pedido está en camino')+'</span>'+
       '<div class="big">'+(arr?'¡Llegó!':o.aviso15?'Llega en ~15 min':'Entre las '+esc(o.rango))+'</div>'+
-      '<div class="small">'+(o.aviso15?'Preparate para recibir '+o.bultos+' bultos.':'Estate atento para recibirlo. '+(before<=0?'Sos la próxima parada.':'Hay '+before+' entrega'+(before>1?'s':'')+' antes que la tuya.'))+'</div>'+
+      '<div class="small">'+(o.aviso15?'Preparate para recibir '+o.bultos+' láminas.':'Estate atento para recibirlo. '+(before<=0?'Sos la próxima parada.':'Hay '+before+' entrega'+(before>1?'s':'')+' antes que la tuya.'))+'</div>'+
       '<div class="track"><div class="track-bar">'+r.stops.map(id=>'<i class="'+(id===o.id?'me':(ord(id).estado!=='en_ruta'?'done':''))+'"></i>').join('')+'</div></div></div>'+
       '<div class="card"><dl class="kv"><dt>Chofer</dt><dd>'+esc(d.nombre)+'</dd><dt>Camión</dt><dd>'+TRUCKS[r.camion].pat+'</dd><dt>Teléfono</dt><dd>'+d.tel+'</dd></dl></div>'+
       mapSVG(r.stops,id=>ord(id).estado!=='en_ruta');
@@ -1259,7 +1263,7 @@ function kPedido(){
         '<button type="button" class="opt" data-t="single" data-v="conforme" aria-pressed="true"><span class="dot"></span><span><b>Todo conforme</b><small>Recibí todo en buen estado</small></span></button>'+
         '<button type="button" class="opt" data-t="single" data-v="obs" aria-pressed="false"><span class="dot"></span><span><b>Con observaciones</b><small>Faltante, daño o producto equivocado</small></span></button>'+
         '<button type="button" class="opt" data-t="single" data-v="rechazo" aria-pressed="false"><span class="dot"></span><span><b>Rechazo parcial</b><small>Devuelvo parte del pedido</small></span></button></div>'+
-      '<label class="f">Comentario<textarea id="k-det" class="inp" rows="2" placeholder="Ej.: 1 caja con piezas rotas (bulto 7)"></textarea></label>'+
+      '<label class="f">Comentario<textarea id="k-det" class="inp" rows="2" placeholder="Ej.: 1 lámina con el borde astillado (lámina 7)"></textarea></label>'+
       '<div class="row"><span class="btn ghost file-btn">Adjuntar foto<input type="file" id="k-ph" accept="image/*" aria-label="Adjuntar foto"></span><span class="small" id="k-phn">'+(ui.kFoto?'Foto adjunta ✓':'Opcional')+'</span></div>'+
       '<div class="card"><b>Ayudanos a mejorar: 3 preguntas cortas</b>'+
         ENC.map(e=>'<div class="encq"><span class="small"><b style="color:var(--ink)">'+e.n+'. '+e.icon+' '+e.q+'</b></span><div class="opts3 chips" data-group="enc-'+e.k+'">'+['ok','mid','bad'].map(v=>'<button type="button" class="chip" data-t="single" data-v="'+v+'" aria-pressed="false">'+esc(e.opts[v])+'</button>').join('')+'</div></div>').join('')+
@@ -1306,7 +1310,7 @@ const A={
     o.requisitos=$$('[data-group="req"] [aria-pressed="true"]').map(b=>b.dataset.v);
     o.turnos=slots;o.turno=null;o.ruta=null;o.estado='esperando_cliente';
     log(o,'Propuesta enviada al cliente',can.join(' + ')+' · '+slots.length+' franja'+(slots.length>1?'s':'')+' · responder antes de '+$('#cn-lim').value);
-    notify('cliente','Elegí el horario de tu entrega','Hola '+o.contacto+' 👋 Tu pedido '+o.id+' ('+o.bultos+' bultos) está listo. Elegí cuándo querés recibirlo:',o.id,'elegir');
+    notify('cliente','Elegí el horario de tu entrega','Hola '+o.contacto+' 👋 Tu pedido '+o.id+' ('+o.bultos+' láminas) está listo. Elegí cuándo querés recibirlo:',o.id,'elegir');
     render();toast('Propuesta enviada a '+o.cliente);
   },
   cWaSend(el){const o=ord(el.dataset.id);const t=$('#cw-in').value.trim();if(!t)return;notify('cliente','Milena Rozo · Coordinación',t,o.id,'msg');log(o,'Mensaje por WhatsApp al cliente','“'+t+'”');render();toast('Mensaje enviado por WhatsApp');},
@@ -1348,7 +1352,7 @@ const A={
   d15(el){
     const o=ord(el.dataset.id);o.aviso15=true;
     log(o,'Aviso: llega en ~15 min','WhatsApp al cliente');
-    notify('cliente','⏱ Tu pedido llega en 15 minutos',drv(ui.driver).nombre+' está a unos 15 minutos de '+o.dir+'. Preparate para recibir '+o.bultos+' bultos.',o.id,'15');
+    notify('cliente','⏱ Tu pedido llega en 15 minutos',drv(ui.driver).nombre+' está a unos 15 minutos de '+o.dir+'. Preparate para recibir '+o.bultos+' láminas.',o.id,'15');
     render();toast('Avisamos a '+o.cliente+': llegás en ~15 min');
   },
   dOpen(el){const o=ord(el.dataset.id);ui.view='parada';ui.stop={id:o.id,llegada:null,bultos:0,foto:null,firma:null,recibio:''};render();window.scrollTo(0,0);},
@@ -1364,19 +1368,19 @@ const A={
     finishCheck(o);ui.view='ruta';ui.stop=null;render();toast('No entrega registrada · coordinación fue avisada');
   },
   dBul(el){const o=ord(ui.stop.id);ui.stop.bultos=Math.max(0,Math.min(o.bultos,ui.stop.bultos+ +el.dataset.d));updBul(o);},
-  dScan(){const o=ord(ui.stop.id);if(ui.stop.bultos>=o.bultos){toast('Ya controlaste todos los bultos');return;}ui.stop.bultos++;updBul(o);toast('Bulto '+ui.stop.bultos+'/'+o.bultos+' escaneado');},
+  dScan(){const o=ord(ui.stop.id);if(ui.stop.bultos>=o.bultos){toast('Ya controlaste todas las láminas');return;}ui.stop.bultos++;updBul(o);toast('Lámina '+ui.stop.bultos+'/'+o.bultos+' escaneada');},
   dSample(){ui.stop.foto=samplePhoto(ord(ui.stop.id));$('#phbox').innerHTML='<img src="'+ui.stop.foto+'" alt="Foto">';},
   dClearSig(){ui.stop.firma=null;initSig();$('#sighint').hidden=false;},
   dConfirm(){
     const s=ui.stop;const o=ord(s.id);s.recibio=$('#st-rec').value.trim();
-    const miss=[];if(!s.llegada)miss.push('marcar “Llegué”');if(!s.bultos)miss.push('contar bultos');if(!s.foto)miss.push('foto');if(!sigDirty&&!s.firma)miss.push('firma');if(!s.recibio)miss.push('aclaración de quien recibe');
+    const miss=[];if(!s.llegada)miss.push('marcar “Llegué”');if(!s.bultos)miss.push('contar láminas');if(!s.foto)miss.push('foto');if(!sigDirty&&!s.firma)miss.push('firma');if(!s.recibio)miss.push('aclaración de quien recibe');
     const e=$('#st-err');if(miss.length){e.textContent='Falta: '+miss.join(', ')+'.';e.hidden=false;return;}
     const n=now();const d=drv(ui.driver);
     o.entrega={d:n.d,t:n.t,bultos:s.bultos,total:o.bultos,recibio:s.recibio,foto:s.foto,firma:s.firma,chofer:d.nombre,llegada:s.llegada};
     o.estado='entregado';
-    log(o,'Entregado '+s.bultos+'/'+o.bultos+' bultos'+(s.bultos<o.bultos?' (parcial)':''),'Recibió '+s.recibio+' · foto + firma',s.bultos<o.bultos?'warn':'');
+    log(o,'Entregado '+s.bultos+'/'+o.bultos+' láminas'+(s.bultos<o.bultos?' (parcial)':''),'Recibió '+s.recibio+' · foto + firma',s.bultos<o.bultos?'warn':'');
     log(o,'Pedido de conformidad enviado al cliente','WhatsApp');
-    notify('coord','Entregado: '+o.cliente,o.id+' · '+s.bultos+'/'+o.bultos+' bultos · recibió '+s.recibio+' a las '+n.t+'.',o.id);
+    notify('coord','Entregado: '+o.cliente,o.id+' · '+s.bultos+'/'+o.bultos+' láminas · recibió '+s.recibio+' a las '+n.t+'.',o.id);
     notify('cliente','✅ Entregamos tu pedido',o.id+' · recibió '+s.recibio+' a las '+n.t+'. ¿Cómo recibiste la mercadería?',o.id,'entregado');
     finishCheck(o);ui.view='ruta';ui.stop=null;render();window.scrollTo(0,0);toast('Entrega registrada · pedimos conformidad al cliente');
   },
