@@ -138,6 +138,9 @@ button.kpi:hover{border-color:var(--red-line)}
 @media (max-width:520px){.grid2{grid-template-columns:minmax(0,1fr)}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .panel h2{font-size:14px}
+.welcome{max-width:680px;gap:12px;font-size:14px}
+.welcome h2{font-size:18px}
+.welcome ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 .panel .hint{font-size:12px;color:var(--muted)}
 .panel .tbl-wrap{border:0;border-radius:0}
 .dec{display:flex;flex-direction:column;gap:0}
@@ -287,47 +290,6 @@ const DEF_CFG={
   ]
 };
 
-/* ================= Ejemplos (solo para el modo local) ================= */
-/*SEED-START*/
-function seedItems(){
-  const d=n=>{const x=new Date();x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
-  const base={tipo:'requerimiento',estado:'pendiente',prioridad:'media',impacto:'Medio',esfuerzo:'',area:'',areasInv:[],padre:'',solicitante:'',responsable:'',sponsor:'',aprob:'no',aprobNivel:'Gerencia del área',aprobPor:'',aprobFecha:'',inicio:'',vence:'',avance:0,bloqueado:false,bloqueo:'',beneficio:'',costo:'',riesgos:'',desc:'',ac:[],etiquetas:['ejemplo']};
-  const L=[
-    {titulo:'App Trento Entregas: coordinación de entregas de punta a punta',tipo:'proyecto',estado:'curso',prioridad:'alta',impacto:'Alto',esfuerzo:'XL',area:'Logística y Distribución',areasInv:['Sistemas / IT','Atención al cliente','Comercial y Ventas'],solicitante:'Gerente de Logística',responsable:'Milena Rozo',sponsor:'CEO',aprob:'aprobado',aprobNivel:'Dirección General (CEO)',aprobPor:'CEO',aprobFecha:d(-30),inicio:d(-30),vence:d(75),
-      beneficio:'Menos entregas fallidas y menos llamadas: el cliente elige su turno y recibe aviso antes de la llegada del camión.',riesgos:'Depende de la integración con facturación y de la adopción por parte de los choferes.',
-      desc:'Sistema para coordinar turnos de entrega con el cliente, armar hojas de ruta por zona y registrar la entrega con prueba (foto, firma y DNI).'},
-    {titulo:'Tablero comercial de ventas y cobranzas',tipo:'proyecto',estado:'aprobacion',prioridad:'alta',impacto:'Alto',esfuerzo:'L',area:'Comercial y Ventas',areasInv:['Administración y Finanzas','Sistemas / IT'],solicitante:'Gerente Comercial',responsable:'Milena Rozo',sponsor:'Gerente Comercial',aprob:'pendiente',aprobNivel:'Dirección General (CEO)',costo:'1800000',vence:d(90),
-      beneficio:'Ver ventas, margen y cobranzas por vendedor y zona sin armar planillas a mano.',desc:'Tablero semanal para la gerencia comercial y la dirección.'},
-    {titulo:'Digitalizar legajos y onboarding de personal',tipo:'proyecto',estado:'analisis',prioridad:'media',impacto:'Medio',esfuerzo:'L',area:'Recursos Humanos',areasInv:['Administración y Finanzas','Sistemas / IT'],solicitante:'Gerente de RRHH',responsable:'Gerente de RRHH',sponsor:'Gerente de RRHH',vence:d(120),
-      beneficio:'Legajos completos en un solo lugar y un ingreso ordenado para cada nuevo empleado.'},
-    {titulo:'Importar pedidos automáticamente desde el sistema de facturación',padre:'#1',estado:'curso',prioridad:'critica',impacto:'Alto',esfuerzo:'M',area:'Sistemas / IT',areasInv:['Administración y Finanzas'],solicitante:'Gerente de Logística',responsable:'Responsable de Sistemas',inicio:d(-10),vence:d(12),
-      ac:[{t:'Se importan cliente, dirección, bultos y zona',ok:true},{t:'No se duplican pedidos ya importados',ok:false},{t:'Aviso de cuántos pedidos nuevos entraron',ok:true}]},
-    {titulo:'Proponer franjas horarias al cliente y confirmar el turno',padre:'#1',estado:'curso',prioridad:'alta',impacto:'Alto',esfuerzo:'M',area:'Logística y Distribución',areasInv:['Atención al cliente'],solicitante:'Gerente de Logística',responsable:'Milena Rozo',vence:d(5),
-      ac:[{t:'Solo se ofrecen franjas con cupo',ok:true},{t:'El cliente recibe el link por SMS/WhatsApp',ok:true},{t:'El cliente puede pedir otra fecha',ok:false}]},
-    {titulo:'Hoja de ruta por zona con tope de 5 clientes por camión',padre:'#1',estado:'planificado',prioridad:'alta',impacto:'Alto',esfuerzo:'M',area:'Logística y Distribución',areasInv:['Depósito'],solicitante:'Gerente de Logística',responsable:'Gerente de Logística',vence:d(25),
-      ac:[{t:'No permite un sexto cliente en el camión',ok:false},{t:'Se asigna camión y chofer antes de publicar',ok:false}]},
-    {titulo:'Registrar entrega con foto, firma y DNI',padre:'#1',estado:'pendiente',prioridad:'media',esfuerzo:'M',area:'Logística y Distribución',solicitante:'Gerente de Logística',vence:d(40)},
-    {titulo:'Capacitar a los choferes en la app',tipo:'tarea',padre:'#1',estado:'pendiente',prioridad:'media',esfuerzo:'S',area:'Recursos Humanos',areasInv:['Logística y Distribución'],solicitante:'Gerente de Logística',responsable:'Gerente de RRHH',vence:d(60)},
-    {titulo:'El aviso reenviado al cliente cambia la hora límite',tipo:'incidente',padre:'#1',estado:'analisis',prioridad:'alta',esfuerzo:'S',area:'Atención al cliente',areasInv:['Sistemas / IT'],solicitante:'Milena Rozo',responsable:'Responsable de Sistemas',vence:d(-2),
-      desc:'Pasos: enviar propuesta → "Reenviar aviso" → el nuevo aviso muestra otra hora límite. Esperado: se mantiene la hora original.'},
-    {titulo:'Definir indicadores con la gerencia comercial',tipo:'tarea',padre:'#2',estado:'hecho',prioridad:'alta',esfuerzo:'S',area:'Comercial y Ventas',solicitante:'Gerente Comercial',responsable:'Milena Rozo',vence:d(-5),avance:100},
-    {titulo:'Acceso a la base de facturación para el tablero',tipo:'tarea',padre:'#2',estado:'planificado',prioridad:'alta',esfuerzo:'S',area:'Sistemas / IT',areasInv:['Administración y Finanzas'],solicitante:'Milena Rozo',responsable:'Responsable de Sistemas',vence:d(-1),bloqueado:true,bloqueo:'Falta la autorización de Administración y Finanzas para dar acceso de lectura.'},
-    {titulo:'Inventario cíclico mensual en depósito',tipo:'mejora',estado:'planificado',prioridad:'media',impacto:'Medio',esfuerzo:'M',area:'Depósito',areasInv:['Administración y Finanzas'],solicitante:'Jefe de Depósito',responsable:'Jefe de Depósito',inicio:d(7),vence:d(35),
-      beneficio:'Diferencias de stock detectadas cada mes y no solo en el cierre anual.'},
-    {titulo:'Renovar notebooks del área de administración',estado:'aprobacion',prioridad:'baja',impacto:'Bajo',esfuerzo:'S',area:'Administración y Finanzas',areasInv:['Compras','Sistemas / IT'],solicitante:'Gerente de Administración y Finanzas',responsable:'Responsable de Sistemas',aprob:'pendiente',aprobNivel:'Gerencia del área',costo:'2400000',vence:d(20)},
-    {titulo:'Política de viáticos para choferes',estado:'hecho',prioridad:'media',impacto:'Medio',esfuerzo:'S',area:'Recursos Humanos',areasInv:['Administración y Finanzas','Logística y Distribución'],solicitante:'Gerente de Logística',responsable:'Gerente de RRHH',aprob:'aprobado',aprobNivel:'Gerencia del área',aprobPor:'Gerente de Administración y Finanzas',aprobFecha:d(-12),vence:d(-10),avance:100}
-  ];
-  const now=new Date().toISOString();
-  return L.map((o,i)=>{
-    const x=Object.assign(JSON.parse(JSON.stringify(base)),o);
-    x.id='TRE-'+String(i+1).padStart(3,'0');
-    if(x.padre)x.padre='TRE-'+String(+x.padre.slice(1)).padStart(3,'0');
-    x.creado=now;x.act=now;x.creadoPor='';x.log=[{at:now,by:'',who:'Sistema',txt:'Cargado como ejemplo'}];
-    return x;
-  });
-}
-/*SEED-END*/
-
 /* ================= Estado ================= */
 const S={mode:'loading',items:[],cfg:JSON.parse(JSON.stringify(DEF_CFG)),canWrite:true,canAdmin:true,me:null,meName:''};
 let UI={view:'exec',sort:{k:'id',d:1},open:null,draft:null,dirty:false};
@@ -367,7 +329,7 @@ function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({items:S.items,c
 function startLocal(){
   S.mode='local';
   let d=null;try{d=JSON.parse(localStorage.getItem(LS)||'null')}catch(e){}
-  if(d&&Array.isArray(d.items)){S.items=d.items.map(normItem);if(d.cfg)S.cfg=d.cfg}else{S.items=seedItems();saveLocal()}
+  if(d&&Array.isArray(d.items)){S.items=d.items.map(normItem);if(d.cfg)S.cfg=d.cfg}
   refreshAll();
 }
 async function putItem(x){
@@ -529,6 +491,12 @@ function stats(list){
     av:(l=>l.length?Math.round(l.reduce((s,x)=>s+av(x),0)/l.length):0)(list.filter(x=>!rej(x)))};
 }
 function renderExec(L){
+  if(!S.items.length&&S.mode!=='loading')return '<section class="panel welcome"><h2>El tablero está listo para empezar</h2>'+
+    '<p>Todavía no hay nada cargado. Así se arranca:</p><ol>'+
+    '<li>En <b>Configuración</b>, revisá las áreas y cargá los nombres reales de gerentes y responsables.</li>'+
+    '<li>Cargá cada proyecto grande como tipo <b>Proyecto</b>; después sumale sus requerimientos y tareas eligiendo ese proyecto.</li>'+
+    '<li>Lo que necesite visto bueno de un gerente o del CEO, dejalo en <b>Esperando aprobación</b>: aparece acá, en Decisiones pendientes.</li></ol>'+
+    (S.canWrite?'<div><button type="button" class="btn" data-a="new">+ Cargar el primero</button></div>':'')+'</section>';
   const o=L.filter(open_),ap=L.filter(x=>x.aprob==='pendiente'&&open_(x));
   const d30=addDays(-30),done30=L.filter(x=>x.estado==='hecho'&&!rej(x)&&(x.cerrado||(x.act||'').slice(0,10))>=d30).length;
   const risk=o.filter(x=>x.bloqueado||isLate(x)).sort((a,b)=>(a.vence||'9').localeCompare(b.vence||'9'));
@@ -568,10 +536,9 @@ function renderCfg(){
   return '<div class="cfg">'+
     '<section class="panel"><h2>Áreas de la empresa</h2><p class="hint">Una por línea. Se usan como área solicitante y áreas involucradas.</p><textarea class="inp" id="cfgAreas"'+dis+'>'+esc(S.cfg.areas.join('\n'))+'</textarea></section>'+
     '<section class="panel"><h2>Personas</h2><p class="hint">Una por línea: <b>Nombre | Cargo | Área</b>. Reemplazá los cargos de ejemplo por los nombres reales de gerentes y responsables.</p><textarea class="inp" id="cfgPers"'+dis+'>'+esc(S.cfg.personas.map(p=>[p.n,p.cargo,p.area].join(' | ')).join('\n'))+'</textarea></section>'+
-    '<section class="panel"><h2>Guardar y ejemplos</h2>'+
+    '<section class="panel"><h2>Guardar</h2>'+
       (dis?'<p class="hint">Solo quien administra el tablero puede cambiar la configuración.</p>':'<div class="row" style="flex-wrap:wrap"><button type="button" class="btn" data-a="saveCfg">Guardar configuración</button></div>')+
-      '<p class="hint">Los ítems de ejemplo tienen la etiqueta “ejemplo”. Cuando empieces a cargar los reales, podés borrarlos todos juntos.</p>'+
-      (S.canWrite?'<div><button type="button" class="btn danger sm" data-a="delSamples" data-confirm="¿Borrar '+S.items.filter(x=>x.etiquetas.includes('ejemplo')).length+' ejemplos? Tocá de nuevo">Borrar ejemplos ('+S.items.filter(x=>x.etiquetas.includes('ejemplo')).length+')</button></div>':'')+
+      (S.canWrite&&S.items.some(x=>x.etiquetas.includes('ejemplo'))?'<div><button type="button" class="btn danger sm" data-a="delSamples" data-confirm="¿Borrar '+S.items.filter(x=>x.etiquetas.includes('ejemplo')).length+' ejemplos? Tocá de nuevo">Borrar ejemplos ('+S.items.filter(x=>x.etiquetas.includes('ejemplo')).length+')</button></div>':'')+
       '<p class="hint">'+(S.mode==='shared'?'Los datos se guardan en línea y los ve todo el que tenga acceso a esta página.':'Modo local: los datos quedan solo en este navegador. Usá “Exportar copia” para pasarlos a otra computadora.')+'</p>'+
     '</section></div>';
 }
