@@ -7,7 +7,7 @@
   --red:#D71F2B; --red-deep:#A3131D; --red-tint:#FBE9EA; --red-line:#F2C6C9;
   --ink:#231A1B; --muted:#6F6263; --line:#E7DEDE; --ground:#F4EFEF; --surface:#FFFFFF; --sunk:#FAF7F7;
   --ok:#1D8A56; --ok-tint:#E4F4EC; --warn:#B86F00; --warn-tint:#FCF1DC; --info:#2B5DA8; --info-tint:#E6EEF9;
-  --gray:#7D7274; --gray-tint:#EEE8E8; --wa:#1F8F5A;
+  --gray:#7D7274; --gray-tint:#EEE8E8; --wa:#1F8F5A; --wa-tint:#E3F4EA;
   --on-red:#FFFFFF; --overlay:rgba(35,26,27,.45);
   --shadow:0 18px 40px -20px rgba(90,20,25,.35);
   --font:"Open Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -18,7 +18,7 @@
     --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F; --red-line:#5C2A2F;
     --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
     --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
-    --gray:#A89C9D; --gray-tint:#2C2425; --wa:#4CC08A; --overlay:rgba(0,0,0,.6);
+    --gray:#A89C9D; --gray-tint:#2C2425; --wa:#4CC08A; --wa-tint:#15301F; --overlay:rgba(0,0,0,.6);
     --shadow:0 18px 40px -20px rgba(0,0,0,.7);
   }
 }
@@ -27,7 +27,7 @@
   --red:#E8434D; --red-deep:#FF7A82; --red-tint:#3A1C1F; --red-line:#5C2A2F;
   --ink:#F3ECEC; --muted:#B7A9AA; --line:#3A3031; --ground:#161112; --surface:#221B1C; --sunk:#1B1516;
   --ok:#4CC08A; --ok-tint:#15301F; --warn:#F0A83A; --warn-tint:#33260F; --info:#7FA8EA; --info-tint:#1A2536;
-  --gray:#A89C9D; --gray-tint:#2C2425; --wa:#4CC08A; --overlay:rgba(0,0,0,.6);
+  --gray:#A89C9D; --gray-tint:#2C2425; --wa:#4CC08A; --wa-tint:#15301F; --overlay:rgba(0,0,0,.6);
   --shadow:0 18px 40px -20px rgba(0,0,0,.7);
 }
 *{box-sizing:border-box}
@@ -35,11 +35,11 @@
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45}
 button,input,select,textarea{font-family:var(--font);font-size:inherit;color:inherit}
 button{cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
 :focus-visible{outline:2px solid var(--red);outline-offset:2px}
 h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.01em}
 p{margin:0}
 
-/* Barra roja de marca */
 .band{background:var(--red);color:var(--on-red);padding-inline:16px}
 .band-in{max-width:1120px;margin:0 auto;padding-block:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .logo-chip{background:#fff;border-radius:6px;padding:6px 10px;display:flex;align-items:center;box-shadow:0 2px 0 rgba(0,0,0,.12)}
@@ -50,36 +50,42 @@ p{margin:0}
 .band-actions{display:flex;gap:8px;flex-wrap:wrap}
 
 .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:9px 14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;line-height:1.1}
-.btn:hover{border-color:var(--red-line)}
+.btn:hover:not(:disabled){border-color:var(--red-line)}
 .btn.primary{background:var(--red);border-color:var(--red);color:var(--on-red)}
-.btn.primary:hover{background:var(--red-deep);border-color:var(--red-deep)}
+.btn.primary:hover:not(:disabled){background:var(--red-deep);border-color:var(--red-deep)}
 .btn.inv{background:#fff;border-color:#fff;color:#A3131D}
 .btn.inv:hover{background:#FBE9EA}
 .btn.ghost-inv{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
 .btn.ghost-inv:hover{background:rgba(255,255,255,.12)}
 .btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.btn.wa-inv{background:#fff;border-color:#fff;color:#1F8F5A}
 .btn.danger{color:var(--red);border-color:var(--red-line)}
 .btn.sm{padding:6px 10px;font-size:12.5px}
+.linkbtn{background:none;border:0;padding:0;color:var(--red);font-weight:700;text-decoration:underline;text-underline-offset:2px}
 
 .wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;gap:18px}
-
 .notice{background:var(--warn-tint);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px}
+.howto{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap;font-size:13px}
+.howto b{font-weight:800}
+.howto ol{margin:0;padding:0;list-style:none;display:flex;gap:6px 16px;flex-wrap:wrap;counter-reset:p;flex:1}
+.howto li{counter-increment:p;display:flex;gap:6px;align-items:baseline;color:var(--muted)}
+.howto li::before{content:counter(p);font-weight:800;color:var(--red)}
 
-/* Resumen */
 .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:2px;text-align:left}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:2px;text-align:left;align-content:start}
 button.stat{cursor:pointer}
 button.stat:hover{border-color:var(--red-line)}
 .stat .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .stat .num{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat .num small{font-size:14px;font-weight:700;color:var(--muted);margin-left:3px}
 .stat .hint{font-size:12px;color:var(--muted)}
 .stat.alert .num{color:var(--red)}
 @media (max-width:860px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat:last-child{grid-column:1/-1}}
 
-/* Filtros */
 .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .inp{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:9px 11px}
 .inp:focus{border-color:var(--red)}
+.inp:disabled{background:var(--sunk)}
 .filters .search{flex:1 1 240px;min-width:0}
 .filters select{flex:0 1 190px;min-width:0}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
@@ -87,15 +93,14 @@ button.stat:hover{border-color:var(--red-line)}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground)}
 .chip .c{font-variant-numeric:tabular-nums;opacity:.75;margin-left:4px}
 
-/* Lista */
 .list{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.list-head,.row{display:grid;grid-template-columns:96px minmax(0,1fr) 190px 88px 70px;gap:14px;align-items:center;padding:12px 16px}
+.list-head,.row{display:grid;grid-template-columns:96px minmax(0,1fr) 200px 88px 70px;gap:14px;align-items:center;padding:12px 16px}
 .list-head{background:var(--sunk);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--line)}
 .row{border:0;border-bottom:1px solid var(--line);background:transparent;width:100%;text-align:left;cursor:pointer}
 .row:last-child{border-bottom:0}
 .row:hover{background:var(--sunk)}
-.row .id{font-weight:800;font-variant-numeric:tabular-nums}
 .row .c-id{display:grid;gap:1px}
+.row .id{font-weight:800;font-variant-numeric:tabular-nums}
 .row .date{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .row .subj{font-weight:700;overflow-wrap:anywhere}
 .row .meta{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
@@ -115,9 +120,9 @@ button.stat:hover{border-color:var(--red-line)}
   .row .c-days{grid-area:days}
 }
 
-/* Pills */
 .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-porenviar{background:var(--gray-tint);color:var(--ink)}
 .st-enviado{background:var(--info-tint);color:var(--info)}
 .st-analisis{background:var(--warn-tint);color:var(--warn)}
 .st-nuestra{background:var(--red-tint);color:var(--red)}
@@ -130,38 +135,77 @@ button.stat:hover{border-color:var(--red-line)}
 .prio .bars i{width:4px;height:10px;border-radius:1px;background:var(--line)}
 .prio .bars i.on{background:currentColor}
 
-/* Panel lateral */
+/* Paneles */
 .overlay{position:fixed;inset:0;background:var(--overlay);z-index:20;display:flex;justify-content:flex-end}
-.panel{background:var(--ground);width:min(620px,100%);height:100%;overflow-y:auto;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.panel{background:var(--ground);width:min(660px,100%);height:100%;overflow-y:auto;box-shadow:var(--shadow);display:flex;flex-direction:column}
 .panel-top{position:sticky;top:0;z-index:2;background:var(--red);color:#fff;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px}
+.panel-top.wa-top{background:#1F5C4F}
 .panel-top h2{font-size:17px;font-weight:800;flex:1;min-width:0;overflow-wrap:anywhere}
 .panel-top .x{background:transparent;border:0;color:#fff;font-size:24px;line-height:1;padding:4px 8px}
 .panel-body{padding:16px;display:grid;gap:16px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
-.sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:12px}
-.sec h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:12px;min-width:0}
+.sec h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:flex;gap:8px;align-items:center}
+.sec h3 .step{background:var(--red);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-grid;place-items:center;font-size:11px;letter-spacing:0}
+.sec .help{font-size:13px;color:var(--muted)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:520px){.grid2{grid-template-columns:1fr}}
-.f{display:grid;gap:4px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.f{display:grid;gap:4px;font-size:12.5px;font-weight:700;color:var(--muted);align-content:start;min-width:0}
+.f .req{color:var(--red)}
 .f .inp{font-weight:400;color:var(--ink);font-size:14px}
-textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
+.f .tip{font-weight:400;font-size:11.5px;color:var(--muted)}
+textarea.inp{min-height:84px;resize:vertical;line-height:1.45}
 .f.full{grid-column:1/-1}
+.f.bad .inp{border-color:var(--red)}
 .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .actions .spacer{flex:1}
 .confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--red);font-weight:700}
+.ai-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--wa-tint);border-radius:8px;padding:10px 12px;font-size:13px}
+.ai-row .grow{flex:1;min-width:180px}
 
-/* Seguimiento */
 .log{display:grid;gap:0;list-style:none;margin:0;padding:0}
 .log li{display:grid;grid-template-columns:14px 1fr;gap:10px;padding-bottom:12px;position:relative}
 .log li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--red);margin-top:4px;grid-row:1/3}
 .log li:not(:last-child)::after{content:"";position:absolute;left:4.5px;top:16px;bottom:0;width:1px;background:var(--line)}
-.log li.sys::before{background:var(--line);border:2px solid var(--gray)}
+.log li.sys::before{background:var(--surface);border:2px solid var(--gray)}
+.log li.wa::before{background:var(--wa)}
 .log .when{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.log .when b{color:var(--wa);font-weight:700}
 .log .txt{white-space:pre-wrap;overflow-wrap:anywhere}
 .log li.sys .txt{color:var(--muted);font-size:13px}
 .addnote{display:grid;gap:8px}
 .addnote textarea{min-height:64px}
-
 .wa-preview{background:var(--sunk);border:1px dashed var(--line);border-radius:8px;padding:10px 12px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;user-select:all}
+
+/* Importar de WhatsApp */
+.msgs{border:1px solid var(--line);border-radius:8px;max-height:360px;overflow-y:auto;background:var(--sunk)}
+.msg{display:grid;grid-template-columns:20px 1fr;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);align-items:start;cursor:pointer}
+.msg:last-child{border-bottom:0}
+.msg input{margin-top:3px;accent-color:var(--red)}
+.msg .who{display:block;font-size:12px;font-weight:700}
+.msg.me .who{color:var(--info)}
+.msg.them .who{color:var(--wa)}
+.msg .who span{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums;margin-left:6px}
+.msg .body{display:block;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.detect{display:flex;gap:6px;flex-wrap:wrap}
+.detect span{background:var(--wa-tint);color:var(--ink);border-radius:999px;padding:3px 10px;font-size:12px}
+.detect span b{font-weight:700}
+.radio-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.radio-row label{display:flex;gap:6px;align-items:center;font-weight:600}
+.radio-row input{accent-color:var(--red)}
+.file-lbl{display:inline-flex}
+.file-lbl input{position:absolute;width:1px;height:1px;opacity:0}
+
+/* Guía */
+.guide p,.guide li{font-size:13.5px}
+.guide ol,.guide ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table.dict{border-collapse:collapse;width:100%;min-width:520px;font-size:12.5px}
+table.dict th,table.dict td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.dict th{background:var(--sunk);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+table.dict tr.grp td{background:var(--red-tint);color:var(--red-deep);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+table.dict td:first-child{font-weight:700;white-space:nowrap}
+table.dict td.ej{color:var(--muted)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:baseline;font-size:13px}
 
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:10px 16px;border-radius:8px;font-weight:600;z-index:40;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 @media (prefers-reduced-motion:no-preference){.panel{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(24px);opacity:.6}}}
@@ -175,7 +219,9 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
       <p class="sub">Control de los pedidos que hacemos al soporte de Tango Gestión por WhatsApp</p>
     </div>
     <div class="band-actions">
+      <button type="button" class="btn ghost-inv" id="btn-guide">Guía</button>
       <button type="button" class="btn ghost-inv" id="btn-csv" hidden>Exportar CSV</button>
+      <button type="button" class="btn wa-inv" id="btn-wa">Traer de WhatsApp</button>
       <button type="button" class="btn inv" id="btn-new">+ Nuevo soporte</button>
     </div>
   </div>
@@ -184,11 +230,23 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
 <main class="wrap">
   <p class="notice" id="notice" hidden></p>
 
+  <section class="howto" aria-label="Cómo trabajamos">
+    <b>Cómo trabajamos</b>
+    <ol>
+      <li>Cargá el soporte antes de escribirle a Tango</li>
+      <li>Mandá el mensaje estándar por WhatsApp</li>
+      <li>Traé las respuestas del chat al seguimiento</li>
+      <li>Cerralo con solución y causa</li>
+    </ol>
+    <button type="button" class="linkbtn" data-a="guide">Ver la guía completa</button>
+  </section>
+
   <section class="stats" id="stats" aria-label="Resumen"></section>
 
   <section class="filters" aria-label="Filtros">
-    <input class="inp search" id="q" type="search" placeholder="Buscar por asunto, N° de caso, técnico…" aria-label="Buscar">
+    <input class="inp search" id="q" type="search" placeholder="Buscar por asunto, N° de caso, técnico, error…" aria-label="Buscar">
     <select class="inp" id="f-mod" aria-label="Módulo"></select>
+    <select class="inp" id="f-tipo" aria-label="Tipo"></select>
     <div class="chips" id="chips" role="group" aria-label="Estado"></div>
   </section>
 
@@ -204,52 +262,67 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
 
 <script>
 (function(){
+  /* ================= Ficha estándar ================= */
   var ESTADOS=[
-    {k:'enviado',  l:'Enviado a Tango',        c:'st-enviado'},
-    {k:'analisis', l:'Tango lo está viendo',   c:'st-analisis'},
-    {k:'nuestra',  l:'Espera respuesta nuestra',c:'st-nuestra'},
-    {k:'resuelto', l:'Resuelto',               c:'st-resuelto'},
-    {k:'cancelado',l:'Cancelado',              c:'st-cancelado'}
+    {k:'porenviar',l:'Por enviar',              c:'st-porenviar',d:'Cargado en el tablero, todavía no se lo mandamos a Tango.'},
+    {k:'enviado',  l:'Enviado a Tango',         c:'st-enviado',  d:'Mandamos el mensaje y esperamos que lo tomen.'},
+    {k:'analisis', l:'Tango lo está viendo',    c:'st-analisis', d:'Un técnico lo tomó (idealmente ya tenemos N° de caso).'},
+    {k:'nuestra',  l:'Espera respuesta nuestra',c:'st-nuestra',  d:'Tango nos pidió algo: datos, una prueba, acceso remoto.'},
+    {k:'resuelto', l:'Resuelto',                c:'st-resuelto', d:'Funciona. Se completa solución, causa y fecha.'},
+    {k:'cancelado',l:'Cancelado',               c:'st-cancelado',d:'Ya no hace falta o lo resolvimos sin Tango.'}
   ];
-  var ABIERTOS=['enviado','analisis','nuestra'];
-  var PRIOS=[{k:'baja',l:'Baja',n:1},{k:'media',l:'Media',n:2},{k:'alta',l:'Alta',n:3},{k:'urgente',l:'Urgente',n:4}];
-  var MODULOS=['Ventas','Compras','Stock','Tesorería','Contabilidad','Sueldos','Facturación electrónica / ARCA','Cuentas corrientes','Central / Administración','Instalación y licencias','Reportes / Tango Live','Otro'];
+  var ABIERTOS=['porenviar','enviado','analisis','nuestra'];
+  var PRIOS=[
+    {k:'urgente',l:'Urgente',n:4,d:'Frena la operación: no se puede facturar, cobrar, despachar o liquidar sueldos.'},
+    {k:'alta',   l:'Alta',   n:3,d:'Afecta a varios usuarios o tiene fecha límite (vencimiento, cierre de mes).'},
+    {k:'media',  l:'Media',  n:2,d:'Molesta pero hay una forma alternativa de trabajar.'},
+    {k:'baja',   l:'Baja',   n:1,d:'Consulta, mejora o algo que puede esperar.'}
+  ];
+  var TIPOS=['Error del sistema','Consulta de uso','Configuración / parametrización','Instalación / licencias / accesos','Actualización de versión','Informe o desarrollo a medida'];
+  var MODULOS=['Ventas','Facturación electrónica / ARCA','Compras','Stock','Tesorería','Cuentas corrientes','Contabilidad','Sueldos','Central / Administración','Reportes / Tango Live','Instalación y licencias','Otro'];
+  var SECTORES=['Administración','Facturación','Cobranzas / Tesorería','Compras','Depósito / Stock','Logística','Ventas','Contabilidad','RR.HH. / Sueldos','Gerencia','Sistemas'];
+  var CAUSAS=['Error de uso / falta capacitación','Configuración de Tango','Datos mal cargados','Falla de Tango (bug)','Actualización / versión','Organismo externo (ARCA, bancos)','Infraestructura (PC, red, servidor)','Sin identificar'];
 
   var EJEMPLOS=[
-    {id:'ej1',num:3,fecha:hoyMas(-1),modulo:'Facturación electrónica / ARCA',asunto:'Error al solicitar CAE en factura A',detalle:'Rechazo 10016 al emitir desde el punto de venta 0004.',prioridad:'urgente',estado:'analisis',pedidoPor:'Milena',tecnico:'Técnico de Tango',casoTango:'—',log:[]},
-    {id:'ej2',num:2,fecha:hoyMas(-4),modulo:'Stock',asunto:'Diferencia de saldo en depósito 02',detalle:'El informe de saldos no coincide con el control de stock.',prioridad:'media',estado:'nuestra',pedidoPor:'Milena',tecnico:'Técnico de Tango',casoTango:'—',log:[]},
-    {id:'ej3',num:1,fecha:hoyMas(-9),modulo:'Instalación y licencias',asunto:'Activar licencia en puesto nuevo',detalle:'',prioridad:'baja',estado:'resuelto',resueltoEl:hoyMas(-7),pedidoPor:'Milena',tecnico:'Técnico de Tango',casoTango:'—',log:[]}
+    {id:'ej1',num:3,pedidoEl:hoyMas(-1)+'T09:40',fecha:hoyMas(-1),sector:'Facturación',pedidoPor:'Milena',tipo:'Error del sistema',modulo:'Facturación electrónica / ARCA',asunto:'Rechazo de CAE al facturar en PV 0004',prioridad:'urgente',estado:'analisis',tecnico:'Técnico de Tango',casoTango:'—',log:[]},
+    {id:'ej2',num:2,pedidoEl:hoyMas(-4)+'T15:10',fecha:hoyMas(-4),sector:'Depósito / Stock',pedidoPor:'Milena',tipo:'Consulta de uso',modulo:'Stock',asunto:'Saldo del depósito 02 no coincide con el control',prioridad:'media',estado:'nuestra',tecnico:'Técnico de Tango',casoTango:'—',log:[]},
+    {id:'ej3',num:1,pedidoEl:hoyMas(-9)+'T11:00',fecha:hoyMas(-9),sector:'Sistemas',pedidoPor:'Milena',tipo:'Instalación / licencias / accesos',modulo:'Instalación y licencias',asunto:'Activar licencia en puesto nuevo de Logística',prioridad:'baja',estado:'resuelto',resueltoEl:hoyMas(-7),tecnico:'Técnico de Tango',casoTango:'—',log:[]}
   ];
 
-  var items=[], db=null, col=null, mode='loading', downloads=null;
-  var filt={q:'',mod:'',est:'abiertos'};
-  var openId=null;
+  var items=[], db=null, col=null, mode='loading', downloads=null, sample=null;
+  var filt={q:'',mod:'',tipo:'',est:'abiertos'};
+  var openId=null, draft=null, imp=null;
   var LS='trento-soportes-tango-v1';
 
   function $(s){return document.querySelector(s)}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function pad(n){return n<10?'0'+n:''+n}
   function isoDate(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+  function localDT(d){return isoDate(d)+'T'+pad(d.getHours())+':'+pad(d.getMinutes())}
   function hoy(){return isoDate(new Date())}
   function hoyMas(n){var d=new Date();d.setDate(d.getDate()+n);return isoDate(d)}
-  function fmtD(s){if(!s)return '—';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0].slice(2)}
-  function fmtDT(iso){var d=new Date(iso);if(isNaN(d))return '';return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFullYear()).slice(2)+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
+  function fmtD(s){if(!s)return '—';var p=s.slice(0,10).split('-');return p[2]+'/'+p[1]+'/'+p[0].slice(2)}
+  function fmtDT(v){var d=new Date(v);if(isNaN(d))return '';return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFullYear()).slice(2)+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
+  function fecha(t){return (t.pedidoEl||t.fecha||hoy()).slice(0,10)}
   function dias(a,b){var x=new Date(a+'T12:00:00'),y=new Date((b||hoy())+'T12:00:00');return Math.max(0,Math.round((y-x)/864e5))}
+  function horasResp(t){if(!t.pedidoEl||!t.primeraRespuesta)return null;var h=(new Date(t.primeraRespuesta)-new Date(t.pedidoEl))/36e5;return h>=0?h:null}
+  function fmtH(h){if(h==null)return '—';if(h<24)return h.toFixed(1).replace('.',',')+' h';return (h/24).toFixed(1).replace('.',',')+' d'}
   function codigo(t){return 'S-'+String(t.num||0).padStart(4,'0')}
-  function est(k){for(var i=0;i<ESTADOS.length;i++)if(ESTADOS[i].k===k)return ESTADOS[i];return ESTADOS[0]}
-  function prio(k){for(var i=0;i<PRIOS.length;i++)if(PRIOS[i].k===k)return PRIOS[i];return PRIOS[1]}
-  function toast(msg){var t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(function(){t.hidden=true},2600)}
+  function est(k){for(var i=0;i<ESTADOS.length;i++)if(ESTADOS[i].k===k)return ESTADOS[i];return ESTADOS[1]}
+  function prio(k){for(var i=0;i<PRIOS.length;i++)if(PRIOS[i].k===k)return PRIOS[i];return PRIOS[2]}
+  function toast(msg){var t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(function(){t.hidden=true},2800)}
+  function isOpen(t){return ABIERTOS.indexOf(t.estado)>=0}
 
-  /* ---------- almacenamiento ---------- */
+  /* ================= Almacenamiento ================= */
   function lsLoad(){try{var r=localStorage.getItem(LS);return r?JSON.parse(r):[]}catch(e){return []}}
   function lsSave(){try{localStorage.setItem(LS,JSON.stringify(items))}catch(e){}}
-
   function save(t){
     t.actualizado=new Date().toISOString();
-    var data=JSON.parse(JSON.stringify(t));delete data.id;
+    t.fecha=fecha(t);
+    var data=JSON.parse(JSON.stringify(t));delete data.id;delete data._nuevo;
     if(mode==='db'){
       return col.doc(t.id).set(data).catch(function(e){
-        if(e&&e.code==='invalid_argument'){readOnly();toast('No tenés permiso para guardar cambios en este tablero.')}
+        if(e&&e.code==='invalid_argument')toast('No se pudo guardar: sin permiso o el soporte es demasiado largo.');
         else toast('No se pudo guardar. Probá de nuevo en unos segundos.');
         throw e;
       });
@@ -264,69 +337,68 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
   }
   function newId(){return (mode==='db'&&col)?col.doc().id:'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
   var ro=false;
-  function readOnly(){ro=true;$('#btn-new').hidden=true;render();}
+  function readOnly(){ro=true;$('#btn-new').hidden=true;$('#btn-wa').hidden=true;render()}
+  function findItem(id){for(var i=0;i<items.length;i++)if(items[i].id===id)return items[i];return null}
+  function nextNum(){return items.reduce(function(m,t){return Math.max(m,t.num||0)},0)+1}
 
-  /* ---------- render ---------- */
+  /* ================= Tablero ================= */
   function visibles(){
     var q=filt.q.trim().toLowerCase();
     return items.filter(function(t){
       if(filt.mod&&t.modulo!==filt.mod)return false;
-      if(filt.est==='abiertos'&&ABIERTOS.indexOf(t.estado)<0)return false;
+      if(filt.tipo&&t.tipo!==filt.tipo)return false;
+      if(filt.est==='abiertos'&&!isOpen(t))return false;
       if(filt.est==='tango'&&t.estado!=='enviado'&&t.estado!=='analisis')return false;
       if(['abiertos','todos','tango'].indexOf(filt.est)<0&&t.estado!==filt.est)return false;
-      if(q){var h=[codigo(t),t.asunto,t.detalle,t.modulo,t.tecnico,t.casoTango,t.pedidoPor].join(' ').toLowerCase();if(h.indexOf(q)<0)return false}
+      if(q){var h=[codigo(t),t.asunto,t.detalle,t.errorMsg,t.modulo,t.tipo,t.sector,t.tecnico,t.casoTango,t.pedidoPor,t.solucion].join(' ').toLowerCase();if(h.indexOf(q)<0)return false}
       return true;
     }).sort(function(a,b){
-      var ao=ABIERTOS.indexOf(a.estado)>=0?0:1,bo=ABIERTOS.indexOf(b.estado)>=0?0:1;
+      var ao=isOpen(a)?0:1,bo=isOpen(b)?0:1;
       if(ao!==bo)return ao-bo;
       if(ao===0&&prio(b.prioridad).n!==prio(a.prioridad).n)return prio(b.prioridad).n-prio(a.prioridad).n;
       return (b.num||0)-(a.num||0);
     });
   }
-
+  function stat(k,l,n,h,alert){return '<button type="button" class="stat'+(alert?' alert':'')+'" data-stat="'+k+'"><span class="lbl">'+esc(l)+'</span><span class="num">'+n+'</span><span class="hint">'+esc(h)+'</span></button>'}
   function renderStats(){
-    var src=items.length?items:[];
-    var ab=src.filter(function(t){return ABIERTOS.indexOf(t.estado)>=0});
-    var tango=src.filter(function(t){return t.estado==='enviado'||t.estado==='analisis'});
-    var nuestra=src.filter(function(t){return t.estado==='nuestra'});
+    var ab=items.filter(isOpen);
+    var tango=items.filter(function(t){return t.estado==='enviado'||t.estado==='analisis'});
+    var nuestra=items.filter(function(t){return t.estado==='nuestra'});
     var mes=hoy().slice(0,7);
-    var resMes=src.filter(function(t){return t.estado==='resuelto'&&(t.resueltoEl||'').slice(0,7)===mes});
-    var res=src.filter(function(t){return t.estado==='resuelto'&&t.resueltoEl});
-    var prom=res.length?(res.reduce(function(s,t){return s+dias(t.fecha,t.resueltoEl)},0)/res.length):null;
-    var viejo=ab.reduce(function(m,t){return Math.max(m,dias(t.fecha))},0);
+    var res=items.filter(function(t){return t.estado==='resuelto'&&t.resueltoEl});
+    var resMes=res.filter(function(t){return t.resueltoEl.slice(0,7)===mes}).length;
+    var prom=res.length?(res.reduce(function(s,t){return s+dias(fecha(t),t.resueltoEl)},0)/res.length):null;
+    var hs=items.map(horasResp).filter(function(h){return h!=null});
+    var promH=hs.length?hs.reduce(function(a,b){return a+b},0)/hs.length:null;
+    var viejo=ab.reduce(function(m,t){return Math.max(m,dias(fecha(t)))},0);
     $('#stats').innerHTML=
       stat('abiertos','Abiertos',ab.length,ab.length?('El más antiguo: '+viejo+' d'):'Nada pendiente',false)+
       stat('tango','Esperando a Tango',tango.length,'Enviados o en análisis',false)+
       stat('nuestra','Esperan respuesta nuestra',nuestra.length,nuestra.length?'Tango nos pidió algo':'Nada nos espera',nuestra.length>0)+
-      stat('resuelto','Resueltos este mes',resMes.length,'Mes '+mes.slice(5)+'/'+mes.slice(0,4),false)+
-      '<div class="stat"><span class="lbl">Resolución promedio</span><span class="num">'+(prom==null?'—':prom.toFixed(1).replace('.',','))+'</span><span class="hint">días desde el pedido</span></div>';
+      '<div class="stat"><span class="lbl">Primera respuesta de Tango</span><span class="num">'+fmtH(promH)+'</span><span class="hint">'+(hs.length?'promedio de '+hs.length+' soporte'+(hs.length>1?'s':''):'se mide al traer el chat')+'</span></div>'+
+      '<div class="stat"><span class="lbl">Resolución promedio</span><span class="num">'+(prom==null?'—':prom.toFixed(1).replace('.',',')+'<small>d</small>')+'</span><span class="hint">'+resMes+' resuelto'+(resMes===1?'':'s')+' este mes</span></div>';
   }
-  function stat(k,l,n,h,alert){
-    return '<button type="button" class="stat'+(alert?' alert':'')+'" data-stat="'+k+'"><span class="lbl">'+esc(l)+'</span><span class="num">'+n+'</span><span class="hint">'+esc(h)+'</span></button>';
-  }
-
   function renderChips(){
     var cnt=function(f){return items.filter(f).length};
-    var defs=[{k:'abiertos',l:'Abiertos',n:cnt(function(t){return ABIERTOS.indexOf(t.estado)>=0})}]
+    var defs=[{k:'abiertos',l:'Abiertos',n:cnt(isOpen)}]
       .concat(ESTADOS.map(function(e){return {k:e.k,l:e.l,n:cnt(function(t){return t.estado===e.k})}}))
       .concat([{k:'todos',l:'Todos',n:items.length}]);
     $('#chips').innerHTML=defs.map(function(d){return '<button type="button" class="chip" data-est="'+d.k+'" aria-pressed="'+(filt.est===d.k)+'">'+esc(d.l)+'<span class="c">'+d.n+'</span></button>'}).join('');
   }
-
   function rowHTML(t,ej){
-    var e=est(t.estado),p=prio(t.prioridad);
-    var cerrado=ABIERTOS.indexOf(t.estado)<0;
-    var d=dias(t.fecha,cerrado?(t.resueltoEl||t.fecha):null);
+    var e=est(t.estado),p=prio(t.prioridad),cerrado=!isOpen(t);
+    var d=dias(fecha(t),cerrado?(t.resueltoEl||fecha(t)):null);
     var bars='';for(var i=1;i<=4;i++)bars+='<i class="'+(i<=p.n?'on':'')+'"></i>';
+    var meta=[t.tipo,t.modulo,t.sector].filter(Boolean).join(' · ');
+    if(t.casoTango&&t.casoTango!=='—')meta+=' · Caso '+t.casoTango;
     return '<button type="button" class="row'+(ej?' example':'')+'" data-id="'+esc(t.id)+'"'+(ej?' data-ej="1"':'')+'>'+
-      '<div class="c-id"><span class="id">'+(ej?'<span class="tag-ej">EJEMPLO</span>':'')+codigo(t)+'</span><span class="date">'+fmtD(t.fecha)+'</span></div>'+
-      '<div class="c-main"><div class="subj">'+esc(t.asunto||'(sin asunto)')+'</div><div class="meta">'+esc(t.modulo||'Sin módulo')+(t.casoTango&&t.casoTango!=='—'?' · Caso Tango '+esc(t.casoTango):'')+(t.tecnico?' · '+esc(t.tecnico):'')+'</div></div>'+
+      '<div class="c-id">'+(ej?'<span class="tag-ej">EJEMPLO</span>':'')+'<span class="id">'+codigo(t)+'</span><span class="date">'+fmtD(fecha(t))+'</span></div>'+
+      '<div class="c-main"><div class="subj">'+esc(t.asunto||'(sin asunto)')+'</div><div class="meta">'+esc(meta)+'</div></div>'+
       '<div class="c-st"><span class="pill '+e.c+'">'+esc(e.l)+'</span></div>'+
       '<div class="c-pr"><span class="prio p-'+p.k+'"><span class="bars" aria-hidden="true">'+bars+'</span>'+p.l+'</span></div>'+
       '<div class="c-days days">'+d+'<small>'+(cerrado?'tardó':'abierto')+'</small></div>'+
     '</button>';
   }
-
   function render(){
     renderStats();renderChips();
     $('#btn-csv').hidden=!(downloads&&items.length);
@@ -334,7 +406,7 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
     if(mode==='loading'){rows.innerHTML='<div class="empty">Cargando soportes…</div>';foot.textContent='';return}
     if(!items.length){
       rows.innerHTML=EJEMPLOS.map(function(t){return rowHTML(t,true)}).join('');
-      foot.textContent=ro?'Todavía no hay soportes cargados.':'Estos son ejemplos para que veas cómo queda. Desaparecen cuando cargás tu primer soporte con “+ Nuevo soporte”.';
+      foot.textContent=ro?'Todavía no hay soportes cargados.':'Estos son ejemplos para que veas cómo queda. Desaparecen cuando cargás tu primer soporte.';
       return;
     }
     var v=visibles();
@@ -342,148 +414,470 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
     foot.textContent='Mostrando '+v.length+' de '+items.length+' soportes'+(mode==='local'?' · guardados solo en este navegador':'');
   }
 
-  /* ---------- panel ---------- */
-  function opts(list,sel,getK,getL){return list.map(function(x){var k=getK(x);return '<option value="'+esc(k)+'"'+(k===sel?' selected':'')+'>'+esc(getL(x))+'</option>'}).join('')}
-
-  function waText(t){
-    var e=est(t.estado);
-    if(!t._nuevo&&t.casoTango&&t.casoTango!=='—'){
-      return 'Hola, les escribo de Trento por el caso '+t.casoTango+' ('+(t.modulo||'Tango')+'): '+(t.asunto||'')+'.\n¿Tienen novedades? Nuestra referencia interna es '+codigo(t)+'. Gracias.';
+  /* ================= Lector de WhatsApp ================= */
+  // Formatos que reconoce:
+  //  Android exportado: 28/9/26 10:15 - Nombre: texto   (también "10:15 p. m.")
+  //  iPhone exportado:  [28/9/26, 10:15:32] Nombre: texto
+  //  Copiado del celu:  [28/9, 10:15] Nombre: texto
+  //  WhatsApp Web/PC:   [10:15, 28/9/2026] Nombre: texto
+  var AMPM='([ap]\\.?\\s?m\\.?)';
+  var RE_A=new RegExp('^\\[?(\\d{1,2})[\\/.-](\\d{1,2})(?:[\\/.-](\\d{2,4}))?,?\\s+(\\d{1,2}):(\\d{2})(?::\\d{2})?\\s*'+AMPM+'?\\]?\\s*(?:-\\s*)?(.*)$','i');
+  var RE_B=new RegExp('^\\[(\\d{1,2}):(\\d{2})(?::\\d{2})?\\s*'+AMPM+'?,\\s*(\\d{1,2})[\\/.-](\\d{1,2})(?:[\\/.-](\\d{2,4}))?\\]\\s*(.*)$','i');
+  function mkDate(d,m,y,h,mi,ap){
+    d=+d;m=+m;h=+h;mi=+mi;
+    var now=new Date();
+    if(!y){y=now.getFullYear();var tmp=new Date(y,m-1,d);if(tmp-now>864e5)y--}
+    else{y=+y;if(y<100)y+=2000}
+    if(ap){var pm=/p/i.test(ap);if(pm&&h<12)h+=12;if(!pm&&h===12)h=0}
+    var dt=new Date(y,m-1,d,h,mi);
+    return (isNaN(dt)||m>12||d>31)?null:dt;
+  }
+  function parseChat(text){
+    var out=[],cur=null;
+    text.replace(/\r/g,'').split('\n').forEach(function(raw){
+      var line=raw.replace(/^[\u200e\u200f\ufeff\s]+/,'').replace(/[\u200e\u200f]/g,'');
+      var m,dt=null,rest=null;
+      if((m=RE_B.exec(line))){dt=mkDate(m[4],m[5],m[6],m[1],m[2],m[3]);rest=m[7]}
+      else if((m=RE_A.exec(line))){dt=mkDate(m[1],m[2],m[3],m[4],m[5],m[6]);rest=m[7]}
+      if(dt){
+        var c=rest.indexOf(': ');
+        if(c>0&&c<60){cur={t:dt,autor:rest.slice(0,c).trim(),txt:rest.slice(c+2)};out.push(cur)}
+        else{cur=null} // mensaje del sistema (cifrado, cambió de número, etc.)
+        return;
+      }
+      if(cur)cur.txt+='\n'+raw;
+    });
+    out.forEach(function(x){
+      x.txt=x.txt.trim()
+        .replace(/<(Multimedia omitido|Media omitted)>/gi,'[archivo adjunto]')
+        .replace(/^(imagen|video|audio|documento|sticker) omitid[oa]$/i,'[$1 adjunto]');
+      if(x.txt.length>2000)x.txt=x.txt.slice(0,2000)+'…';
+    });
+    return out;
+  }
+  var RE_CASO=/(?:caso|ticket|incidente|incidencia|reclamo|gesti[oó]n)\s*(?:n(?:[°ºro.]|úmero|umero)*)?\s*[:#]?\s*([A-Z]{0,4}-?\d{3,}[\w-]*)/i;
+  var RE_REF=/\bS-(\d{4})\b/;
+  function detectar(msgs,me){
+    var r={caso:'',ref:'',tecnico:'',primera:null,inicio:null};
+    msgs.forEach(function(x){
+      var m;
+      if(!r.caso&&(m=RE_CASO.exec(x.txt)))r.caso=m[1];
+      if(!r.ref&&(m=RE_REF.exec(x.txt)))r.ref='S-'+m[1];
+    });
+    var mine=msgs.filter(function(x){return x.autor===me});
+    var them=msgs.filter(function(x){return x.autor!==me});
+    if(them.length){
+      var cnt={};them.forEach(function(x){cnt[x.autor]=(cnt[x.autor]||0)+1});
+      r.tecnico=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a]})[0];
     }
-    return 'Hola, les escribo de Trento'+(t.pedidoPor?' ('+t.pedidoPor+')':'')+'. Necesitamos soporte con Tango.\n'+
-      'Módulo: '+(t.modulo||'—')+'\n'+
-      'Asunto: '+(t.asunto||'—')+'\n'+
-      (t.detalle?'Detalle: '+t.detalle+'\n':'')+
-      'Prioridad: '+prio(t.prioridad).l+'\n'+
-      'Referencia interna: '+codigo(t);
+    r.inicio=(mine[0]||msgs[0]||{}).t||null;
+    if(r.inicio){var f=them.filter(function(x){return x.t>=r.inicio})[0];if(f)r.primera=f.t}
+    return r;
   }
 
-  function openPanel(t){
-    openId=t.id;
-    var nuevo=!!t._nuevo;
-    var e=est(t.estado);
-    var log=(t.log||[]).slice().reverse();
-    var dis=ro?' disabled':'';
-    var html='<div class="overlay" id="ov"><aside class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title">'+
+  /* ================= Mensaje estándar ================= */
+  function waText(t){
+    if(t.casoTango&&t.casoTango!=='—'&&t.estado!=='porenviar'){
+      return 'Hola, les escribo de Trento por el caso *'+t.casoTango+'* (Ref. Trento '+codigo(t)+').\n'+
+        '*Asunto:* '+(t.asunto||'—')+'\n¿Tienen novedades? Gracias.';
+    }
+    var p=prio(t.prioridad);
+    return 'Hola, les escribo de Trento. Necesitamos soporte con Tango.\n'+
+      '*Ref. Trento:* '+codigo(t)+'\n'+
+      '*Tipo:* '+(t.tipo||'—')+'\n'+
+      '*Módulo:* '+(t.modulo||'—')+'\n'+
+      '*Asunto:* '+(t.asunto||'—')+'\n'+
+      (t.detalle?'*Qué pasa:* '+t.detalle+'\n':'')+
+      (t.errorMsg?'*Mensaje de error:* '+t.errorMsg+'\n':'')+
+      '*Prioridad:* '+p.l+' ('+p.d.charAt(0).toLowerCase()+p.d.slice(1).replace(/\.$/,'')+')\n'+
+      '*Contacto:* '+(t.pedidoPor||'—')+(t.sector?' ('+t.sector+')':'')+'\n'+
+      'Por favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';
+  }
+
+  /* ================= Ficha ================= */
+  function opts(list,sel,getK,getL,placeholder){
+    return (placeholder?'<option value="">'+esc(placeholder)+'</option>':'')+
+      list.map(function(x){var k=getK(x);return '<option value="'+esc(k)+'"'+(k===sel?' selected':'')+'>'+esc(getL(x))+'</option>'}).join('');
+  }
+  function id_(x){return x}
+  function field(label,inner,opt){opt=opt||{};return '<label class="f'+(opt.full?' full':'')+'" data-f="'+(opt.key||'')+'">'+'<span>'+label+(opt.req?' <span class="req">*</span>':'')+'</span>'+inner+(opt.tip?'<span class="tip">'+opt.tip+'</span>':'')+'</label>'}
+
+  function openTicket(t){
+    closePanel(true);
+    openId=t.id;draft=t;
+    var nuevo=!!t._nuevo, dis=ro?' disabled':'';
+    var log=(t.log||[]).slice().sort(function(a,b){return new Date(b.t)-new Date(a.t)});
+    var hasWa=(t.log||[]).some(function(l){return l.tipo==='wa'});
+    var html='<div class="overlay" data-ov="1"><aside class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title">'+
       '<div class="panel-top"><h2 id="p-title">'+(nuevo?'Nuevo soporte · '+codigo(t):codigo(t)+' · '+esc(t.asunto||''))+'</h2><button type="button" class="x" data-a="close" aria-label="Cerrar">×</button></div>'+
-      '<div class="panel-body">'+
-      '<form class="sec" id="frm"><h3>Pedido</h3>'+
-        '<label class="f full">Asunto<input class="inp" id="p-asunto" name="asunto" required maxlength="140" value="'+esc(t.asunto)+'" placeholder="Ej.: No deja cerrar el período de IVA"'+dis+'></label>'+
-        '<div class="grid2">'+
-          '<label class="f">Módulo de Tango<select class="inp" id="p-modulo" name="modulo"'+dis+'>'+opts(MODULOS,t.modulo,function(x){return x},function(x){return x})+'</select></label>'+
-          '<label class="f">Prioridad<select class="inp" id="p-prioridad" name="prioridad"'+dis+'>'+opts(PRIOS,t.prioridad,function(x){return x.k},function(x){return x.l})+'</select></label>'+
-          '<label class="f">Fecha del pedido<input class="inp" id="p-fecha" name="fecha" type="date" value="'+esc(t.fecha)+'"'+dis+'></label>'+
-          '<label class="f">Estado<select class="inp" id="p-estado" name="estado"'+dis+'>'+opts(ESTADOS,t.estado,function(x){return x.k},function(x){return x.l})+'</select></label>'+
-          '<label class="f">Pedido por (Trento)<input class="inp" id="p-pedido" name="pedidoPor" value="'+esc(t.pedidoPor)+'" placeholder="Quién lo pidió"'+dis+'></label>'+
-          '<label class="f">Técnico de Tango<input class="inp" id="p-tecnico" name="tecnico" value="'+esc(t.tecnico)+'" placeholder="Nombre del que atiende"'+dis+'></label>'+
-          '<label class="f">N° de caso de Tango<input class="inp" id="p-caso" name="casoTango" value="'+esc(t.casoTango)+'" placeholder="Si te dieron uno"'+dis+'></label>'+
-          '<label class="f">Resuelto el<input class="inp" id="p-resuelto" name="resueltoEl" type="date" value="'+esc(t.resueltoEl)+'"'+dis+'></label>'+
-        '</div>'+
-        '<label class="f full">Detalle del problema<textarea class="inp" id="p-detalle" name="detalle" placeholder="Qué pasa, en qué pantalla, mensaje de error, desde cuándo…"'+dis+'>'+esc(t.detalle)+'</textarea></label>'+
-        (ro?'':'<div class="actions"><button type="submit" class="btn primary">'+(nuevo?'Guardar soporte':'Guardar cambios')+'</button>'+
-          '<span class="spacer"></span>'+(nuevo?'':'<span id="del-slot"><button type="button" class="btn danger sm" data-a="del">Borrar</button></span>')+'</div>')+
+      '<div class="panel-body"><form id="frm" class="panel-body" style="padding:0">'+
+      (hasWa&&sample&&!ro?'<div class="ai-row"><span class="grow">Hay mensajes del chat en este soporte. Claude puede leerlos y completar los campos vacíos por vos.</span><button type="button" class="btn wa sm" data-a="ai">Completar con Claude</button></div>':'')+
+      '<section class="sec"><h3><span class="step">1</span>Quién lo pide</h3><div class="grid2">'+
+        field('Fecha y hora del pedido','<input class="inp" id="p-pedidoEl" type="datetime-local" value="'+esc(t.pedidoEl)+'"'+dis+'>',{req:1,key:'pedidoEl',tip:'Cuando mandamos el primer mensaje.'})+
+        field('Pedido por','<input class="inp" id="p-pedidoPor" value="'+esc(t.pedidoPor)+'" placeholder="Nombre de quien lo necesita"'+dis+'>',{req:1,key:'pedidoPor'})+
+        field('Sector','<select class="inp" id="p-sector"'+dis+'>'+opts(SECTORES,t.sector,id_,id_,'Elegí…')+'</select>',{req:1,key:'sector'})+
+        field('Estado','<select class="inp" id="p-estado"'+dis+'>'+opts(ESTADOS,t.estado,function(x){return x.k},function(x){return x.l})+'</select>',{key:'estado',tip:'<span id="est-tip">'+esc(est(t.estado).d)+'</span>'})+
+      '</div></section>'+
+      '<section class="sec"><h3><span class="step">2</span>Qué pasa</h3><div class="grid2">'+
+        field('Asunto','<input class="inp" id="p-asunto" maxlength="120" value="'+esc(t.asunto)+'" placeholder="Ej.: Rechazo de CAE al facturar en PV 0004"'+dis+'>',{req:1,full:1,key:'asunto',tip:'Qué pasa + dónde, en una línea. Sin “ayuda” ni “urgente”.'})+
+        field('Tipo','<select class="inp" id="p-tipo"'+dis+'>'+opts(TIPOS,t.tipo,id_,id_,'Elegí…')+'</select>',{req:1,key:'tipo'})+
+        field('Módulo de Tango','<select class="inp" id="p-modulo"'+dis+'>'+opts(MODULOS,t.modulo,id_,id_,'Elegí…')+'</select>',{req:1,key:'modulo'})+
+        field('Prioridad','<select class="inp" id="p-prioridad"'+dis+'>'+opts(PRIOS,t.prioridad,function(x){return x.k},function(x){return x.l+' — '+x.d})+'</select>',{req:1,full:1,key:'prioridad'})+
+        field('Detalle','<textarea class="inp" id="p-detalle" placeholder="Qué estabas haciendo, en qué pantalla, desde cuándo pasa y a quién afecta."'+dis+'>'+esc(t.detalle)+'</textarea>',{full:1,key:'detalle'})+
+        field('Mensaje de error (textual)','<input class="inp" id="p-errorMsg" value="'+esc(t.errorMsg)+'" placeholder="Copiá el texto exacto del error, si hay"'+dis+'>',{full:1,key:'errorMsg'})+
+      '</div></section>'+
+      '<section class="sec"><h3><span class="step">3</span>Datos de Tango</h3><div class="grid2">'+
+        field('N° de caso de Tango','<input class="inp" id="p-casoTango" value="'+esc(t.casoTango)+'" placeholder="Pedilo siempre"'+dis+'>',{key:'casoTango'})+
+        field('Técnico de Tango','<input class="inp" id="p-tecnico" value="'+esc(t.tecnico)+'" placeholder="Quién nos atiende"'+dis+'>',{key:'tecnico'})+
+        field('Primera respuesta de Tango','<input class="inp" id="p-primeraRespuesta" type="datetime-local" value="'+esc(t.primeraRespuesta)+'"'+dis+'>',{key:'primeraRespuesta',tip:'Se completa sola al traer el chat.'})+
+      '</div></section>'+
+      '<section class="sec"><h3><span class="step">4</span>Cierre</h3><div class="grid2">'+
+        field('Resuelto el','<input class="inp" id="p-resueltoEl" type="date" value="'+esc(t.resueltoEl)+'"'+dis+'>',{key:'resueltoEl'})+
+        field('Causa','<select class="inp" id="p-causa"'+dis+'>'+opts(CAUSAS,t.causa,id_,id_,'Elegí…')+'</select>',{key:'causa'})+
+        field('Solución aplicada','<textarea class="inp" id="p-solucion" placeholder="Qué hizo Tango o qué hicimos nosotros para que funcione. Sirve para la próxima vez."'+dis+'>'+esc(t.solucion)+'</textarea>',{full:1,key:'solucion',tip:'Obligatorios para marcar Resuelto: fecha, causa y solución.'})+
+      '</div></section>'+
+      (ro?'':'<div class="actions"><button type="submit" class="btn primary">'+(nuevo?'Guardar soporte':'Guardar cambios')+'</button>'+
+        '<span class="spacer"></span>'+(nuevo?'':'<span id="del-slot"><button type="button" class="btn danger sm" data-a="del">Borrar</button></span>')+'</div>')+
       '</form>'+
-      '<section class="sec"><h3>Mensaje para WhatsApp</h3>'+
-        '<p style="font-size:13px;color:var(--muted)">'+(nuevo||!t.casoTango||t.casoTango==='—'?'Texto para mandar el pedido al soporte de Tango.':'Texto para pedir novedades del caso.')+' Copialo y pegalo en el chat.</p>'+
+      '<section class="sec"><h3>Mensaje estándar para WhatsApp</h3>'+
+        '<p class="help">'+(t.casoTango&&t.casoTango!=='—'&&t.estado!=='porenviar'?'Para pedir novedades del caso.':'Para mandar el pedido a Tango con todos los datos.')+' Copialo y pegalo en el chat. Los *asteriscos* salen en negrita.</p>'+
         '<div class="wa-preview" id="wa-txt">'+esc(waText(t))+'</div>'+
-        '<div class="actions"><button type="button" class="btn wa sm" data-a="copy">Copiar mensaje</button></div>'+
+        '<div class="actions"><button type="button" class="btn wa sm" data-a="copy">Copiar mensaje</button>'+(t.estado==='porenviar'&&!nuevo&&!ro?'<button type="button" class="btn sm" data-a="sent">Ya lo mandé → Enviado</button>':'')+'</div>'+
       '</section>'+
-      (nuevo?'':'<section class="sec"><h3>Seguimiento</h3>'+
-        (ro?'':'<div class="addnote"><textarea class="inp" id="p-nota" placeholder="Qué respondió Tango, qué hicimos, próximos pasos…"></textarea><div class="actions"><button type="button" class="btn sm" data-a="note">Agregar al seguimiento</button></div></div>')+
-        (log.length?'<ul class="log">'+log.map(function(l){return '<li class="'+(l.tipo==='sys'?'sys':'')+'"><span class="when">'+fmtDT(l.t)+'</span><span class="txt">'+esc(l.txt)+'</span></li>'}).join('')+'</ul>':'<p style="color:var(--muted);font-size:13px">Sin anotaciones todavía.</p>')+
-      '</section>')+
+      '<section class="sec"><h3>Seguimiento</h3>'+
+        (ro||nuevo?'':'<div class="addnote"><textarea class="inp" id="p-nota" placeholder="Anotá qué pasó, o pegá acá mensajes copiados del chat: se ordenan solos con su fecha y hora."></textarea><div class="actions"><button type="button" class="btn sm" data-a="note">Agregar al seguimiento</button><button type="button" class="btn sm" data-a="wa-here">Traer más del chat</button></div></div>')+
+        (log.length?'<ul class="log">'+log.map(logItem).join('')+'</ul>':'<p class="help">'+(nuevo?'Guardá el soporte para empezar el seguimiento.':'Sin anotaciones todavía.')+'</p>')+
+      '</section>'+
       '</div></aside></div>';
     $('#panel-root').innerHTML=html;
     document.body.style.overflow='hidden';
-    var first=$('#p-asunto');if(first&&nuevo)first.focus();
+    if(nuevo&&!t.asunto){var a=$('#p-asunto');if(a)a.focus()}
     var frm=$('#frm');
-    frm.addEventListener('submit',function(ev){ev.preventDefault();submit(t)});
-    frm.addEventListener('input',function(){ // actualiza la vista previa del mensaje
-      var draft=Object.assign({},t,readForm());$('#wa-txt').textContent=waText(draft);
+    frm.addEventListener('submit',function(ev){ev.preventDefault();submit()});
+    frm.addEventListener('input',function(ev){
+      var lbl=ev.target.closest('.f');if(lbl)lbl.classList.remove('bad');
+      $('#wa-txt').textContent=waText(Object.assign({},draft,readForm()));
     });
-    $('#p-estado')&&$('#p-estado').addEventListener('change',function(){
-      if(this.value==='resuelto'&&!$('#p-resuelto').value)$('#p-resuelto').value=hoy();
+    var se=$('#p-estado');
+    if(se)se.addEventListener('change',function(){
+      $('#est-tip').textContent=est(this.value).d;
+      if(this.value==='resuelto'&&!$('#p-resueltoEl').value)$('#p-resueltoEl').value=hoy();
     });
   }
+  function logItem(l){
+    var cls=l.tipo==='sys'?'sys':(l.tipo==='wa'?'wa':'');
+    return '<li class="'+cls+'"><span class="when">'+fmtDT(l.t)+(l.autor?' · <b>'+esc(l.autor)+'</b>':'')+(l.tipo==='wa'?' · WhatsApp':'')+'</span><span class="txt">'+esc(l.txt)+'</span></li>';
+  }
+  var FIELDS=['pedidoEl','pedidoPor','sector','estado','asunto','tipo','modulo','prioridad','detalle','errorMsg','casoTango','tecnico','primeraRespuesta','resueltoEl','causa','solucion'];
   function readForm(){
-    var g=function(id){var el=document.getElementById(id);return el?el.value.trim():''};
-    return {asunto:g('p-asunto'),modulo:g('p-modulo'),prioridad:g('p-prioridad'),fecha:g('p-fecha')||hoy(),estado:g('p-estado'),
-      pedidoPor:g('p-pedido'),tecnico:g('p-tecnico'),casoTango:g('p-caso'),resueltoEl:g('p-resuelto'),detalle:g('p-detalle')};
+    var o={};FIELDS.forEach(function(k){var el=document.getElementById('p-'+k);if(el)o[k]=el.value.trim()});return o;
   }
-  function closePanel(){$('#panel-root').innerHTML='';openId=null;document.body.style.overflow=''}
+  function closePanel(keep){$('#panel-root').innerHTML='';openId=null;if(!keep){draft=null;document.body.style.overflow=''}}
 
-  function submit(t){
-    var f=readForm();
-    if(!f.asunto){toast('Escribí un asunto para el soporte.');$('#p-asunto').focus();return}
+  function submit(){
+    var t=draft,f=readForm();
+    var need=['pedidoEl','pedidoPor','sector','asunto','tipo','modulo','prioridad'];
+    if(f.estado==='resuelto')need=need.concat(['resueltoEl','causa','solucion']);
+    var falt=need.filter(function(k){return !f[k]});
+    document.querySelectorAll('.f.bad').forEach(function(x){x.classList.remove('bad')});
+    if(falt.length){
+      falt.forEach(function(k){var l=document.querySelector('.f[data-f="'+k+'"]');if(l)l.classList.add('bad')});
+      var first=document.getElementById('p-'+falt[0]);if(first)first.focus();
+      toast(f.estado==='resuelto'&&falt.some(function(k){return ['resueltoEl','causa','solucion'].indexOf(k)>=0})?'Para cerrarlo completá fecha, causa y solución.':'Completá los campos marcados con *.');
+      return;
+    }
     var nuevo=!!t._nuevo;
     var out=Object.assign({},t,f);delete out._nuevo;
     out.log=(t.log||[]).slice();
     var now=new Date().toISOString();
     if(nuevo){out.creado=now;out.log.push({t:now,tipo:'sys',txt:'Soporte cargado · '+est(out.estado).l})}
-    else if(t.estado!==out.estado){out.log.push({t:now,tipo:'sys',txt:'Estado: '+est(t.estado).l+' → '+est(out.estado).l})}
+    else if(t.estado!==out.estado)out.log.push({t:now,tipo:'sys',txt:'Estado: '+est(t.estado).l+' → '+est(out.estado).l});
     if(out.estado!=='resuelto'&&t.estado==='resuelto'&&f.resueltoEl===t.resueltoEl)out.resueltoEl='';
     save(out).then(function(){
       toast(nuevo?codigo(out)+' guardado':'Cambios guardados');
-      if(nuevo){filt.est='abiertos';openPanel(out)}else closePanel();
+      if(nuevo){filt.est='abiertos';openTicket(out)}else closePanel();
     },function(){});
   }
-
-  function nuevo(){
-    var max=items.reduce(function(m,t){return Math.max(m,t.num||0)},0);
-    openPanel({_nuevo:true,id:newId(),num:max+1,fecha:hoy(),modulo:MODULOS[0],prioridad:'media',estado:'enviado',asunto:'',detalle:'',pedidoPor:'',tecnico:'',casoTango:'',resueltoEl:'',log:[]});
+  function nuevo(pre){
+    var base={_nuevo:true,id:newId(),num:nextNum(),pedidoEl:localDT(new Date()),prioridad:'media',estado:'porenviar',
+      asunto:'',tipo:'',modulo:'',sector:'',pedidoPor:'',detalle:'',errorMsg:'',tecnico:'',casoTango:'',primeraRespuesta:'',resueltoEl:'',causa:'',solucion:'',log:[]};
+    openTicket(Object.assign(base,pre||{}));
   }
-  function findItem(id){for(var i=0;i<items.length;i++)if(items[i].id===id)return items[i];return null}
 
+  /* ---- Completar con Claude ---- */
+  var aiCtl=null;
+  function completarIA(btn){
+    if(!sample||!draft)return;
+    var cur=Object.assign({},draft,readForm());
+    var chat=(cur.log||[]).filter(function(l){return l.tipo==='wa'}).map(function(l){return '['+fmtDT(l.t)+'] '+l.autor+': '+l.txt}).join('\n');
+    if(chat.length>40000)chat=chat.slice(-40000);
+    var prompt='Sos asistente administrativo de la empresa Trento (Argentina). Leé esta conversación de WhatsApp con el soporte de Tango Gestión (software de gestión) y completá una ficha de soporte estándar.\n'+
+      'Respondé SOLO con un objeto JSON con estas claves (string vacío si no se sabe, no inventes):\n'+
+      '{"asunto": "qué pasa + dónde, máx 90 caracteres, sin palabras como urgente o ayuda",\n'+
+      '"tipo": uno de '+JSON.stringify(TIPOS)+',\n'+
+      '"modulo": uno de '+JSON.stringify(MODULOS)+',\n'+
+      '"prioridad": uno de ["urgente","alta","media","baja"] según: '+PRIOS.map(function(p){return p.k+' = '+p.d}).join(' ')+',\n'+
+      '"detalle": "2 a 4 oraciones: qué pasa, dónde, desde cuándo, a quién afecta",\n'+
+      '"errorMsg": "texto exacto del error si aparece",\n'+
+      '"casoTango": "número de caso o ticket que dio Tango",\n'+
+      '"estado": uno de ["enviado","analisis","nuestra","resuelto"] según el último mensaje (nuestra = Tango nos pidió algo y falta que respondamos),\n'+
+      '"solucion": "si se resolvió, qué se hizo",\n'+
+      '"causa": uno de '+JSON.stringify(CAUSAS)+' o "" si no está resuelto}\n\n'+
+      'Quien pide el soporte en el chat es '+(cur.pedidoPor||'la persona de Trento')+'.\n\nCONVERSACIÓN:\n'+chat;
+    btn.disabled=true;var old=btn.textContent;btn.textContent='Leyendo el chat…';
+    aiCtl=new AbortController();
+    sample.json(prompt,{signal:aiCtl.signal}).then(function(r){
+      if(!r||typeof r!=='object')throw {code:'invalid_json'};
+      var set=function(k,v,list){
+        var el=document.getElementById('p-'+k);if(!el||!v)return 0;v=String(v).trim();
+        if(list&&list.indexOf(v)<0)return 0;
+        if(el.tagName==='SELECT'){if(k==='prioridad'||k==='estado'||!el.value){el.value=v;return 1}return 0}
+        if(!el.value){el.value=v;return 1}return 0;
+      };
+      var n=0;
+      n+=set('asunto',r.asunto);n+=set('tipo',r.tipo,TIPOS);n+=set('modulo',r.modulo,MODULOS);
+      n+=set('prioridad',r.prioridad,PRIOS.map(function(p){return p.k}));
+      n+=set('detalle',r.detalle);n+=set('errorMsg',r.errorMsg);n+=set('casoTango',r.casoTango);
+      if(r.estado&&['enviado','analisis','nuestra','resuelto'].indexOf(r.estado)>=0){n+=set('estado',r.estado);$('#est-tip').textContent=est($('#p-estado').value).d}
+      n+=set('solucion',r.solucion);n+=set('causa',r.causa,CAUSAS);
+      if($('#p-estado').value==='resuelto'&&!$('#p-resueltoEl').value){var last=(cur.log||[]).filter(function(l){return l.tipo==='wa'}).map(function(l){return l.t}).sort().pop();$('#p-resueltoEl').value=last?isoDate(new Date(last)):hoy()}
+      $('#wa-txt').textContent=waText(Object.assign({},draft,readForm()));
+      toast(n?'Listo: completé '+n+' campo'+(n>1?'s':'')+'. Revisalos antes de guardar.':'No encontré datos nuevos en el chat.');
+    }).catch(function(e){
+      var c=e&&e.code;
+      if(c==='cancelled')return;
+      if(c==='not_granted'||c==='sampling_disabled'||c==='not_declared'||c==='capability_disabled'||c==='capability_removed'){sample=null;toast('Completar con Claude no está disponible acá. Llená los campos a mano.');var r=document.querySelector('.ai-row');if(r)r.hidden=true;return}
+      if(c==='rate_limited')toast('Muchos pedidos seguidos. Probá en un rato.');
+      else toast('No pude leer el chat esta vez. Probá de nuevo.');
+    }).then(function(){btn.disabled=false;btn.textContent=old});
+  }
+
+  /* ================= Traer de WhatsApp ================= */
+  function openImport(targetId){
+    closePanel(true);
+    imp={step:1,text:'',msgs:[],me:'',desde:'',sel:{},target:targetId||'',dest:targetId?'existente':'nuevo'};
+    renderImport();
+  }
+  function renderImport(){
+    var html='<div class="overlay" data-ov="1"><aside class="panel" role="dialog" aria-modal="true" aria-labelledby="w-title">'+
+      '<div class="panel-top wa-top"><h2 id="w-title">Traer de WhatsApp</h2><button type="button" class="x" data-a="close" aria-label="Cerrar">×</button></div><div class="panel-body">';
+    if(imp.step===1){
+      html+='<section class="sec"><h3><span class="step">1</span>Pegá los mensajes</h3>'+
+        '<p class="help"><b>Desde la PC</b> (WhatsApp Web o Escritorio): en el chat con Tango, seleccioná los mensajes, copiá y pegá acá.<br>'+
+        '<b>Desde el celular</b>: mantené apretado un mensaje, tocá los demás, tocá <i>Copiar</i> y pegá acá.<br>'+
+        '<b>Chat entero</b>: en el chat tocá ⋮ › Más › Exportar chat › Sin archivos, y subí el .txt. En iPhone llega como .zip: abrilo y subí el archivo _chat.txt.</p>'+
+        '<textarea class="inp" id="w-text" style="min-height:180px" placeholder="[28/9/26, 10:15] Milena: Hola, les escribo de Trento…&#10;[28/9/26, 10:32] Soporte Tango: Hola Milena, te tomo el caso 458812…">'+esc(imp.text)+'</textarea>'+
+        '<div class="actions"><button type="button" class="btn primary" data-a="w-parse">Leer mensajes</button>'+
+        '<label class="btn sm file-lbl">Subir chat exportado (.txt)<input type="file" id="w-file" accept=".txt,text/plain"></label></div>'+
+      '</section>';
+    }else{
+      var autores=[];imp.msgs.forEach(function(m){if(autores.indexOf(m.autor)<0)autores.push(m.autor)});
+      var vis=imp.msgs.map(function(m,i){return {m:m,i:i}}).filter(function(x){return !imp.desde||isoDate(x.m.t)>=imp.desde});
+      var chosen=imp.msgs.filter(function(m,i){return imp.sel[i]});
+      var det=detectar(chosen,imp.me);
+      var abiertos=items.filter(isOpen).sort(function(a,b){return b.num-a.num});
+      var others=items.filter(function(t){return !isOpen(t)}).sort(function(a,b){return b.num-a.num});
+      if(det.ref&&!imp.target){var hit=items.filter(function(t){return codigo(t)===det.ref})[0];if(hit){imp.target=hit.id;imp.dest='existente'}}
+      html+='<section class="sec"><h3><span class="step">2</span>Elegí los mensajes de este soporte</h3>'+
+        '<div class="grid2">'+
+          field('¿Quién sos vos en el chat?','<select class="inp" id="w-me">'+opts(autores,imp.me,id_,id_)+'</select>',{})+
+          field('Mostrar desde','<input class="inp" id="w-desde" type="date" value="'+esc(imp.desde)+'">',{tip:'Útil si subiste el chat entero.'})+
+        '</div>'+
+        '<div class="actions"><span class="help">'+chosen.length+' de '+imp.msgs.length+' mensajes elegidos</span><span class="spacer"></span><button type="button" class="btn sm" data-a="w-all">Marcar visibles</button><button type="button" class="btn sm" data-a="w-none">Ninguno</button></div>'+
+        '<div class="msgs" id="w-msgs">'+vis.map(function(x){
+          var m=x.m;return '<label class="msg '+(m.autor===imp.me?'me':'them')+'"><input type="checkbox" data-i="'+x.i+'"'+(imp.sel[x.i]?' checked':'')+'><span><span class="who">'+esc(m.autor)+'<span>'+fmtDT(m.t)+'</span></span><span class="body">'+esc(m.txt)+'</span></span></label>';
+        }).join('')+'</div>'+
+        (chosen.length?'<div class="detect">'+
+          (det.caso?'<span>Caso Tango <b>'+esc(det.caso)+'</b></span>':'')+
+          (det.tecnico?'<span>Técnico <b>'+esc(det.tecnico)+'</b></span>':'')+
+          (det.primera?'<span>Primera respuesta <b>'+fmtH((det.primera-det.inicio)/36e5)+'</b></span>':'')+
+          (det.ref?'<span>Menciona <b>'+det.ref+'</b></span>':'')+
+        '</div>':'')+
+      '</section>'+
+      '<section class="sec"><h3><span class="step">3</span>¿Dónde lo guardo?</h3>'+
+        '<div class="radio-row"><label><input type="radio" name="w-dest" value="nuevo"'+(imp.dest==='nuevo'?' checked':'')+'> Crear un soporte nuevo</label></div>'+
+        (items.length?'<div class="radio-row"><label><input type="radio" name="w-dest" value="existente"'+(imp.dest==='existente'?' checked':'')+'> Agregar al seguimiento de</label>'+
+          '<select class="inp" id="w-target" style="flex:1;min-width:200px">'+
+          '<option value="">Elegí un soporte…</option>'+
+          (abiertos.length?'<optgroup label="Abiertos">'+abiertos.map(function(t){return '<option value="'+esc(t.id)+'"'+(t.id===imp.target?' selected':'')+'>'+codigo(t)+' · '+esc(t.asunto)+'</option>'}).join('')+'</optgroup>':'')+
+          (others.length?'<optgroup label="Cerrados">'+others.map(function(t){return '<option value="'+esc(t.id)+'"'+(t.id===imp.target?' selected':'')+'>'+codigo(t)+' · '+esc(t.asunto)+'</option>'}).join('')+'</optgroup>':'')+
+          '</select></div>':'')+
+        '<div class="actions"><button type="button" class="btn primary" data-a="w-go"'+(chosen.length?'':' disabled')+'>'+(imp.dest==='nuevo'?'Crear soporte con estos mensajes':'Agregar mensajes')+'</button><button type="button" class="btn sm" data-a="w-back">Pegar otros mensajes</button></div>'+
+      '</section>';
+    }
+    html+='</div></aside></div>';
+    $('#panel-root').innerHTML=html;
+    document.body.style.overflow='hidden';
+    if(imp.step===1){
+      var f=$('#w-file');
+      f.addEventListener('change',function(){
+        var file=f.files&&f.files[0];if(!file)return;
+        var rd=new FileReader();rd.onload=function(){imp.text=String(rd.result||'');parseImport(true)};rd.readAsText(file);
+      });
+    }else{
+      $('#w-me').addEventListener('change',function(){imp.me=this.value;renderImport()});
+      $('#w-desde').addEventListener('change',function(){imp.desde=this.value;renderImport()});
+      document.querySelectorAll('input[name="w-dest"]').forEach(function(r){r.addEventListener('change',function(){imp.dest=this.value;renderImport()})});
+      var tg=$('#w-target');if(tg)tg.addEventListener('change',function(){imp.target=this.value;imp.dest='existente';renderImport()});
+      $('#w-msgs').addEventListener('change',function(ev){var i=ev.target.dataset.i;if(i!=null){imp.sel[i]=ev.target.checked;keepScroll()}});
+    }
+  }
+  function keepScroll(){var box=$('#w-msgs'),y=box?box.scrollTop:0,p=document.querySelector('.panel'),py=p?p.scrollTop:0;renderImport();var b2=$('#w-msgs');if(b2)b2.scrollTop=y;var p2=document.querySelector('.panel');if(p2)p2.scrollTop=py}
+  function parseImport(fromFile){
+    if(!fromFile){var ta=$('#w-text');imp.text=ta?ta.value:''}
+    var msgs=parseChat(imp.text);
+    if(!msgs.length){toast('No reconocí mensajes de WhatsApp. Copialos con fecha y hora, o subí el chat exportado.');return}
+    msgs.sort(function(a,b){return a.t-b.t});
+    imp.msgs=msgs;imp.step=2;
+    var cnt={};msgs.forEach(function(m){cnt[m.autor]=(cnt[m.autor]||0)+1});
+    var names=Object.keys(cnt);
+    var tangoRe=/tango|axoft|soporte|mesa de ayuda/i;
+    imp.me=names.filter(function(n){return !tangoRe.test(n)})[0]||names[0];
+    imp.sel={};
+    var start=Math.max(0,msgs.length-40); // si es un chat entero, preselecciona los últimos 40
+    if(msgs.length>40)imp.desde=isoDate(msgs[start].t);
+    for(var i=start;i<msgs.length;i++)imp.sel[i]=true;
+    renderImport();
+  }
+  function importGo(){
+    var chosen=imp.msgs.filter(function(m,i){return imp.sel[i]});if(!chosen.length)return;
+    var det=detectar(chosen,imp.me);
+    var entries=chosen.map(function(m){return {t:m.t.toISOString(),tipo:'wa',autor:m.autor,txt:m.txt}});
+    if(imp.dest==='existente'){
+      var t=findItem(imp.target);if(!t){toast('Elegí a qué soporte agregar los mensajes.');return}
+      var key=function(l){return l.t+'|'+l.autor+'|'+l.txt};
+      var have={};(t.log||[]).forEach(function(l){have[key(l)]=1});
+      var add=entries.filter(function(l){return !have[key(l)]});
+      var upd=Object.assign({},t);upd.log=(t.log||[]).concat(add);
+      if(!upd.casoTango&&det.caso)upd.casoTango=det.caso;
+      if(!upd.tecnico&&det.tecnico)upd.tecnico=det.tecnico;
+      if(!upd.primeraRespuesta&&det.primera&&upd.pedidoEl&&det.primera>=new Date(upd.pedidoEl))upd.primeraRespuesta=localDT(det.primera);
+      if(!add.length){toast('Esos mensajes ya estaban en '+codigo(t)+'.');openTicket(t);return}
+      save(upd).then(function(){toast(add.length+' mensaje'+(add.length>1?'s':'')+' agregado'+(add.length>1?'s':'')+' a '+codigo(upd));imp=null;openTicket(upd)},function(){});
+      return;
+    }
+    var mine=chosen.filter(function(m){return m.autor===imp.me});
+    var detalle=mine.map(function(m){return m.txt}).filter(function(x){return x.indexOf('[')!==0}).slice(0,3).join('\n');
+    imp=null;
+    nuevo({pedidoEl:det.inicio?localDT(det.inicio):localDT(new Date()),pedidoPor:mine.length?mine[0].autor:'',
+      tecnico:det.tecnico||'',casoTango:det.caso||'',primeraRespuesta:det.primera?localDT(det.primera):'',
+      estado:det.tecnico?(det.caso?'analisis':'enviado'):'enviado',detalle:detalle.slice(0,800),log:entries});
+    toast(sample?'Revisá la ficha o usá “Completar con Claude”.':'Completá los campos que faltan y guardá.');
+  }
+
+  /* ================= Guía ================= */
+  function openGuide(){
+    closePanel(true);
+    var rows=function(g,list){return '<tr class="grp"><td colspan="3">'+g+'</td></tr>'+list.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td class="ej">'+r[2]+'</td></tr>'}).join('')};
+    var html='<div class="overlay" data-ov="1"><aside class="panel guide" role="dialog" aria-modal="true" aria-labelledby="g-title">'+
+      '<div class="panel-top"><h2 id="g-title">Guía: cómo cargamos los soportes</h2><button type="button" class="x" data-a="close" aria-label="Cerrar">×</button></div><div class="panel-body">'+
+      '<section class="sec"><h3>La rutina</h3><ol>'+
+        '<li><b>Antes de escribirle a Tango</b>, cargá el soporte con “+ Nuevo soporte” (queda en <i>Por enviar</i>). Así tiene su número S-0000.</li>'+
+        '<li><b>Copiá el mensaje estándar</b> de la ficha y mandalo por WhatsApp. Tocá “Ya lo mandé” para pasarlo a <i>Enviado</i>.</li>'+
+        '<li><b>Cada vez que Tango responda</b>, usá “Traer de WhatsApp” para sumar los mensajes al seguimiento. Actualizá el estado.</li>'+
+        '<li><b>Cuando funcione</b>, marcá <i>Resuelto</i> con fecha, causa y solución. Eso arma el historial para la próxima vez.</li>'+
+      '</ol></section>'+
+      '<section class="sec"><h3>Reglas para mantener el orden</h3><ul>'+
+        '<li>Un problema = un soporte. Si en el mismo chat aparece otro tema, cargá otro soporte.</li>'+
+        '<li>Pedí siempre el <b>N° de caso</b> a Tango y anotalo apenas te lo den.</li>'+
+        '<li>Pedí que respondan citando nuestra referencia <b>S-0000</b>: al traer el chat, el tablero reconoce el soporte solo.</li>'+
+        '<li>Si Tango nos pide algo, pasalo a <i>Espera respuesta nuestra</i>. Esos se ven en rojo arriba.</li>'+
+        '<li>El asunto dice qué pasa y dónde, en una línea: “Rechazo de CAE al facturar en PV 0004”, no “Problema urgente con Tango”.</li>'+
+      '</ul></section>'+
+      '<section class="sec"><h3>Ficha estándar</h3><p class="help">Los campos con * son obligatorios para guardar. Los de cierre, para marcar Resuelto.</p><div class="tbl-wrap"><table class="dict"><thead><tr><th>Campo</th><th>Qué poner</th><th>Ejemplo</th></tr></thead><tbody>'+
+        rows('1 · Quién lo pide',[['Fecha y hora *','Cuando mandamos el primer mensaje a Tango.','28/09/26 09:40'],['Pedido por *','Quién necesita la solución.','Milena'],['Sector *','Lista fija: '+SECTORES.join(', ')+'.','Facturación'],['Estado','Ver abajo.','Por enviar']])+
+        rows('2 · Qué pasa',[['Asunto *','Qué pasa + dónde, una línea.','Rechazo de CAE en PV 0004'],['Tipo *',TIPOS.join(' · '),'Error del sistema'],['Módulo *',MODULOS.join(' · '),'Facturación electrónica / ARCA'],['Prioridad *','Ver criterios abajo.','Urgente'],['Detalle','Qué hacías, en qué pantalla, desde cuándo, a quién afecta.','Desde hoy 9 h, todas las facturas A'],['Mensaje de error','Texto exacto, copiado.','Error 10016: …']])+
+        rows('3 · Datos de Tango',[['N° de caso','El que da Tango.','458812'],['Técnico','Quién nos atiende.','Soporte Tango – Juan'],['Primera respuesta','Se calcula al traer el chat.','28/09/26 10:32']])+
+        rows('4 · Cierre',[['Resuelto el','Día en que quedó funcionando.','29/09/26'],['Causa',CAUSAS.join(' · '),'Configuración de Tango'],['Solución','Qué se hizo, para repetirlo.','Actualizaron el certificado del PV']])+
+      '</tbody></table></div></section>'+
+      '<section class="sec"><h3>Prioridad</h3><div class="kv">'+PRIOS.map(function(p){return '<b>'+p.l+'</b><span>'+esc(p.d)+'</span>'}).join('')+'</div></section>'+
+      '<section class="sec"><h3>Estados</h3><div class="kv">'+ESTADOS.map(function(e){return '<span class="pill '+e.c+'">'+e.l+'</span><span>'+esc(e.d)+'</span>'}).join('')+'</div></section>'+
+      '<section class="sec"><h3>Cómo traer los mensajes de WhatsApp</h3><ul>'+
+        '<li><b>PC (WhatsApp Web o Escritorio):</b> seleccioná los mensajes con el mouse, copiá y pegá en “Traer de WhatsApp”.</li>'+
+        '<li><b>Celular:</b> mantené apretado un mensaje, tocá los demás, tocá <i>Copiar</i> y pegá.</li>'+
+        '<li><b>Chat entero:</b> ⋮ › Más › Exportar chat › Sin archivos, y subí el .txt. En iPhone viene en .zip: abrilo y subí _chat.txt.</li>'+
+        '<li>El tablero lee fecha, hora y autor de cada mensaje, detecta el N° de caso, el técnico, la referencia S-0000 y cuánto tardó Tango en responder.</li>'+
+        (sample?'<li>Con “Completar con Claude” se llenan asunto, tipo, módulo, prioridad y detalle leyendo el chat. Revisá siempre antes de guardar.</li>':'')+
+      '</ul></section>'+
+      '</div></aside></div>';
+    $('#panel-root').innerHTML=html;
+    document.body.style.overflow='hidden';
+  }
+
+  /* ================= Utilidades ================= */
   function copy(txt){
     var done=function(){toast('Mensaje copiado. Pegalo en WhatsApp.')};
     var fallback=function(){var el=$('#wa-txt');var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);toast('Texto seleccionado: copialo con Ctrl+C')};
     try{navigator.clipboard.writeText(txt).then(done,fallback)}catch(e){fallback()}
   }
-
   function csv(){
-    var cols=['N°','Fecha pedido','Módulo','Asunto','Detalle','Prioridad','Estado','Pedido por','Técnico Tango','Caso Tango','Resuelto el','Días','Seguimiento'];
+    var cols=['N°','Fecha y hora pedido','Pedido por','Sector','Tipo','Módulo','Asunto','Detalle','Mensaje de error','Prioridad','Estado','Caso Tango','Técnico Tango','Primera respuesta','Horas hasta 1ª respuesta','Resuelto el','Días','Causa','Solución','Seguimiento'];
     var q=function(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"'};
     var lines=[cols.map(q).join(';')];
     items.slice().sort(function(a,b){return (a.num||0)-(b.num||0)}).forEach(function(t){
-      var cerr=ABIERTOS.indexOf(t.estado)<0;
-      lines.push([codigo(t),fmtD(t.fecha),t.modulo,t.asunto,t.detalle,prio(t.prioridad).l,est(t.estado).l,t.pedidoPor,t.tecnico,t.casoTango,fmtD(t.resueltoEl),dias(t.fecha,cerr?(t.resueltoEl||t.fecha):null),(t.log||[]).map(function(l){return fmtDT(l.t)+' '+l.txt}).join(' | ')].map(q).join(';'));
+      var h=horasResp(t);
+      lines.push([codigo(t),t.pedidoEl?fmtDT(t.pedidoEl):fmtD(fecha(t)),t.pedidoPor,t.sector,t.tipo,t.modulo,t.asunto,t.detalle,t.errorMsg,prio(t.prioridad).l,est(t.estado).l,t.casoTango,t.tecnico,t.primeraRespuesta?fmtDT(t.primeraRespuesta):'',h==null?'':h.toFixed(1).replace('.',','),t.resueltoEl?fmtD(t.resueltoEl):'',dias(fecha(t),isOpen(t)?null:(t.resueltoEl||fecha(t))),t.causa,t.solucion,
+        (t.log||[]).slice().sort(function(a,b){return new Date(a.t)-new Date(b.t)}).map(function(l){return fmtDT(l.t)+(l.autor?' '+l.autor+':':'')+' '+l.txt}).join(' | ')].map(q).join(';'));
     });
-    var data='﻿'+lines.join('\r\n');
-    downloads.save({filename:'soportes-tango-'+hoy()+'.csv',data:data}).then(function(){toast('CSV listo')},function(){});
+    downloads.save({filename:'soportes-tango-'+hoy()+'.csv',data:'\ufeff'+lines.join('\r\n')}).then(function(){toast('CSV listo')},function(){});
+  }
+  function addNote(){
+    var ta=$('#p-nota');var txt=ta.value.trim();if(!txt){ta.focus();return}
+    var cur=findItem(openId);if(!cur)return;
+    var parsed=parseChat(txt),add;
+    if(parsed.length){
+      var have={};(cur.log||[]).forEach(function(l){have[l.t+'|'+l.autor+'|'+l.txt]=1});
+      add=parsed.map(function(m){return {t:m.t.toISOString(),tipo:'wa',autor:m.autor,txt:m.txt}}).filter(function(l){return !have[l.t+'|'+l.autor+'|'+l.txt]});
+      if(!add.length){toast('Esos mensajes ya estaban en el seguimiento.');return}
+    }else add=[{t:new Date().toISOString(),tipo:'nota',txt:txt}];
+    var upd=Object.assign({},cur);upd.log=(cur.log||[]).concat(add);
+    if(parsed.length){
+      var det=detectar(parsed,cur.pedidoPor&&parsed.some(function(m){return m.autor===cur.pedidoPor})?cur.pedidoPor:'');
+      if(!upd.casoTango&&det.caso)upd.casoTango=det.caso;
+    }
+    save(upd).then(function(){toast(parsed.length?add.length+' mensaje'+(add.length>1?'s':'')+' del chat agregado'+(add.length>1?'s':''):'Anotación agregada');openTicket(findItem(openId)||upd)},function(){});
   }
 
-  /* ---------- eventos ---------- */
+  /* ================= Eventos ================= */
   document.addEventListener('click',function(ev){
-    var b=ev.target.closest('button,[data-a="close"]');
-    if(ev.target.id==='ov'){closePanel();return}
+    if(ev.target.dataset&&ev.target.dataset.ov){closePanel();return}
+    var b=ev.target.closest('button');
     if(!b)return;
     if(b.id==='btn-new'){nuevo();return}
+    if(b.id==='btn-wa'){openImport();return}
+    if(b.id==='btn-guide'){openGuide();return}
     if(b.id==='btn-csv'){csv();return}
     if(b.dataset.stat){filt.est=b.dataset.stat;render();return}
     if(b.dataset.est){filt.est=b.dataset.est;render();return}
     if(b.classList.contains('row')){
-      if(b.dataset.ej){toast('Es un ejemplo. Cargá tu primer soporte con “+ Nuevo soporte”.');return}
-      var t=findItem(b.dataset.id);if(t)openPanel(t);return;
+      if(b.dataset.ej){toast('Es un ejemplo. Cargá tu primer soporte o traelo de WhatsApp.');return}
+      var t=findItem(b.dataset.id);if(t)openTicket(t);return;
     }
     var a=b.dataset.a;
-    if(a==='close'){closePanel();return}
+    if(a==='close'){if(aiCtl)aiCtl.abort();closePanel();return}
+    if(a==='guide'){openGuide();return}
     if(a==='copy'){copy($('#wa-txt').textContent);return}
+    if(a==='ai'){completarIA(b);return}
+    if(a==='sent'){var s=$('#p-estado');s.value='enviado';s.dispatchEvent(new Event('change'));submit();return}
     if(a==='del'){$('#del-slot').innerHTML='<span class="confirm">¿Borrar este soporte? <button type="button" class="btn danger sm" data-a="del-yes">Sí, borrar</button><button type="button" class="btn sm" data-a="del-no">No</button></span>';return}
     if(a==='del-no'){$('#del-slot').innerHTML='<button type="button" class="btn danger sm" data-a="del">Borrar</button>';return}
     if(a==='del-yes'){var id=openId;closePanel();remove(id).then(function(){toast('Soporte borrado')});return}
-    if(a==='note'){
-      var ta=$('#p-nota');var txt=ta.value.trim();if(!txt){ta.focus();return}
-      var cur=findItem(openId);if(!cur)return;
-      var upd=Object.assign({},cur);upd.log=(cur.log||[]).concat([{t:new Date().toISOString(),tipo:'nota',txt:txt}]);
-      save(upd).then(function(){toast('Anotación agregada');openPanel(findItem(openId)||upd)},function(){});
-    }
+    if(a==='note'){addNote();return}
+    if(a==='wa-here'){openImport(openId);return}
+    if(a==='w-parse'){parseImport(false);return}
+    if(a==='w-back'){imp.step=1;renderImport();return}
+    if(a==='w-all'){imp.msgs.forEach(function(m,i){if(!imp.desde||isoDate(m.t)>=imp.desde)imp.sel[i]=true});keepScroll();return}
+    if(a==='w-none'){imp.sel={};keepScroll();return}
+    if(a==='w-go'){importGo();return}
   });
-  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&openId)closePanel()});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&$('#panel-root').innerHTML)closePanel()});
   $('#q').addEventListener('input',function(){filt.q=this.value;if(filt.q&&filt.est==='abiertos')filt.est='todos';render()});
   $('#f-mod').innerHTML='<option value="">Todos los módulos</option>'+MODULOS.map(function(m){return '<option>'+esc(m)+'</option>'}).join('');
   $('#f-mod').addEventListener('change',function(){filt.mod=this.value;render()});
+  $('#f-tipo').innerHTML='<option value="">Todos los tipos</option>'+TIPOS.map(function(m){return '<option>'+esc(m)+'</option>'}).join('');
+  $('#f-tipo').addEventListener('change',function(){filt.tipo=this.value;render()});
 
-  /* ---------- arranque ---------- */
+  /* ================= Arranque ================= */
   render();
   var started=false;
   function useLocal(){
@@ -492,9 +886,10 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
     render();
   }
   var c=window.claude;
-  if(!c||!c.use){useLocal();}
+  if(!c||!c.use){useLocal()}
   else{
     c.use('downloads').then(function(d){downloads=d;render()},function(){});
+    c.use('sample').then(function(s){sample=s||null},function(){});
     c.use('db').then(function(d){
       if(!d){useLocal();return}
       db=d;col=db.collection('soportes');started=true;mode='db';
@@ -502,13 +897,12 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
         items=snap.docs.map(function(s){var x=s.data()||{};x.id=s.id;return x});
         render();
       },function(e){
-        if(e&&(e.code==='revoked'||e.code==='not_granted'||e.code==='capability_disabled')){useLocalAfter()}
+        if(e&&(e.code==='revoked'||e.code==='not_granted'||e.code==='capability_disabled')){started=false;useLocal()}
       });
     },function(){useLocal()});
     c.use('user').then(function(u){
       if(u&&u.can){Promise.resolve(u.can('data.write')).then(function(ok){if(ok===false)readOnly()})}
     },function(){});
   }
-  function useLocalAfter(){started=false;useLocal()}
 })();
 </script>
