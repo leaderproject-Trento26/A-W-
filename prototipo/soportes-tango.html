@@ -520,8 +520,8 @@ details.more .grid2{margin-top:10px}
       (hasWa&&sample&&!ro?'<div class="ai-row"><span class="grow">Claude puede completar la ficha leyendo el chat.</span><button type="button" class="btn wa sm" data-a="ai">Completar con Claude</button></div>':'')+
       '<form class="sec" id="frm"><div class="grid2">'+
         field('Descripción del incidente',area('asunto',queSucede(t),'Describí qué intentabas hacer y qué ocurrió. Ej.: Al cargar un pedido, el sistema no actualiza su estado.'),{req:1,full:1,key:'asunto'})+
-        field('Pedido por','<input class="inp" id="p-pedidoPor" list="dl-contactos" autocomplete="off" value="'+esc(t.pedidoPor)+'" placeholder="Elegí o escribí nombre y apellido"'+(ro?' disabled':'')+'><datalist id="dl-contactos">'+CONTACTOS.map(function(c){return '<option value="'+esc(c.n)+'">'+esc(c.s||'')+'</option>'}).join('')+'</datalist>',{req:1,key:'pedidoPor'})+
-        field('Celular (para avisarle)',inp('celular',t.celular,'Se completa desde Contactos','tel'),{key:'celular'})+
+        field('Pedido por',pedidoPorHTML(t),{req:1,key:'pedidoPor'})+
+        field('Celular (para avisarle)',inp('celular',t.celular,'Se completa al elegir la persona','tel'),{key:'celular'})+
         field('Sector',sel('sector',opts(SECTORES,t.sector,id_,id_,'Elegí…')),{req:1,key:'sector'})+
         field('Tipo',sel('tipo',opts(TIPOS,t.tipo,id_,id_,'Elegí…')),{req:1,key:'tipo'})+
         field('Sistema / proveedor',sel('proveedor',opts(PROVEEDORES,prov(t),id_,id_)),{key:'proveedor'})+'<div class="f" id="mod-wrap"'+(esTango(t)?'':' hidden')+'>'+field('Módulo de Tango (si aplica)',sel('modulo',opts(MODULOS,t.modulo,id_,id_,'—')),{key:'modulo'})+'</div>'+
@@ -556,7 +556,14 @@ details.more .grid2{margin-top:10px}
       if(cer)$('#cer-val').textContent=est(t.estado).abierto===false&&cerrado(t)?fmtDT(cerrado(t)):fmtDT(new Date())+' (al guardar)';
       waTab=cer?'cerrado':(this.value===t.estado?tabPara(t):'estado');renderMsg();
     });
-    var pp=$('#p-pedidoPor');if(pp)pp.addEventListener('input',function(){aplicarContacto(this.value,true);renderMsg()});
+    var ps=$('#p-pedidoSel'),pp=$('#p-pedidoPor');
+    if(ps)ps.addEventListener('change',function(){
+      var l=this.closest('.f');if(l)l.classList.remove('bad');
+      if(this.value==='__otro'){pp.hidden=false;pp.value='';$('#p-celular').value='';pp.focus()}
+      else{pp.hidden=true;pp.value=this.value;aplicarContacto(this.value,true)}
+      renderMsg();
+    });
+    if(pp)pp.addEventListener('input',function(){aplicarContacto(this.value,true);renderMsg()});
     var pv=$('#p-proveedor');if(pv)pv.addEventListener('change',function(){$('#mod-wrap').hidden=this.value!=='Tango Gestión'});
     var fi=$('#p-img');if(fi)fi.addEventListener('change',function(){addFiles(fi.files);fi.value=''});
     var dr=$('#drop');
@@ -565,6 +572,15 @@ details.more .grid2{margin-top:10px}
       dr.addEventListener('dragleave',function(){dr.classList.remove('over')});
       dr.addEventListener('drop',function(e){e.preventDefault();dr.classList.remove('over');addFiles(e.dataTransfer.files)});
     }
+  }
+  function pedidoPorHTML(t){
+    var cur=(t.pedidoPor||'').trim(),enLista=!!buscarContacto(cur),otro=!!cur&&!enLista;
+    if(!CONTACTOS.length)otro=true;
+    return '<select class="inp" id="p-pedidoSel"'+(ro?' disabled':'')+'>'+
+      '<option value="">Elegí a la persona…</option>'+
+      CONTACTOS.map(function(c){return '<option value="'+esc(c.n)+'"'+(enLista&&buscarContacto(cur)===c?' selected':'')+'>'+esc(c.n)+(c.s?' · '+esc(c.s):'')+'</option>'}).join('')+
+      '<option value="__otro"'+(otro?' selected':'')+'>Otra persona (escribir)…</option></select>'+
+      '<input class="inp" id="p-pedidoPor" value="'+esc(cur)+'" placeholder="Nombre y apellido"'+(otro?'':' hidden')+(ro?' disabled':'')+' style="margin-top:6px">';
   }
   function buscarContacto(n){n=String(n||'').trim().toLowerCase();if(!n)return null;for(var i=0;i<CONTACTOS.length;i++)if(CONTACTOS[i].n.trim().toLowerCase()===n)return CONTACTOS[i];return null}
   function aplicarContacto(n,pisar){
@@ -598,7 +614,7 @@ details.more .grid2{margin-top:10px}
   function closePanel(keep){$('#panel-root').innerHTML='';openId=null;if(!keep){draft=null;document.body.style.overflow=''}}
   function submit(){
     var t=draft,f=readForm(),falt=['asunto','pedidoPor','sector','tipo'].filter(function(k){return !f[k]});
-    if(falt.length){falt.forEach(function(k){var l=document.querySelector('.f[data-f="'+k+'"]');if(l)l.classList.add('bad')});document.getElementById('p-'+falt[0]).focus();toast('Completá los campos marcados con *.');return}
+    if(falt.length){falt.forEach(function(k){var l=document.querySelector('.f[data-f="'+k+'"]');if(l)l.classList.add('bad')});var fe=document.getElementById(falt[0]==='pedidoPor'&&$('#p-pedidoPor').hidden?'p-pedidoSel':'p-'+falt[0]);if(fe)fe.focus();toast('Completá los campos marcados con *.');return}
     var nuevo=!!t._nuevo,orig=findItem(t.id)||t,estNuevo=f.estado;delete f.estado;
     var out=Object.assign({},orig,f);delete out._nuevo;delete out.detalle;out.log=(orig.log||t.log||[]).slice();
     if(nuevo){
@@ -914,7 +930,7 @@ details.more .grid2{margin-top:10px}
     c.use('db').then(function(d){
       if(!d){useLocal();return}
       db=d;col=db.collection('soportes');imgCol=db.collection('imagenes');cfgRef=db.doc('config/estados');contRef=db.doc('config/contactos');started=true;mode='db';
-      contRef.onSnapshot(function(s){var x=s.exists&&s.data();CONTACTOS=(x&&Array.isArray(x.lista))?x.lista:[];var dl=$('#dl-contactos');if(dl)dl.innerHTML=CONTACTOS.map(function(c){return '<option value="'+esc(c.n)+'">'+esc(c.s||'')+'</option>'}).join('')},function(){});
+      contRef.onSnapshot(function(s){var x=s.exists&&s.data();CONTACTOS=(x&&Array.isArray(x.lista))?x.lista:[];},function(){});
       cfgRef.onSnapshot(function(s){var x=s.exists&&s.data();ESTADOS=(x&&Array.isArray(x.lista)&&x.lista.length)?x.lista:ESTADOS_DEF.slice();render()},function(){});
       col.limit(1000).onSnapshot(function(snap){items=snap.docs.map(function(s){var x=s.data()||{};x.id=s.id;return x});render();fixNums()},
         function(e){if(e&&(e.code==='revoked'||e.code==='not_granted'||e.code==='capability_disabled')){started=false;useLocal()}});
