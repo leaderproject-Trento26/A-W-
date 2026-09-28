@@ -205,6 +205,14 @@ details.more .grid2{margin-top:10px}
 .wa-link{color:var(--wa);font-weight:700;font-size:12.5px}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.85);display:grid;place-items:center;padding:16px;cursor:zoom-out}
 .lightbox img{max-width:100%;max-height:100%;border-radius:6px}
+.alerts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--red-tint);border:1px solid var(--red-line);border-radius:8px;padding:9px 12px;font-size:13px}
+.alerts b{color:var(--red-deep);font-weight:800}
+.al-chip{border:1px solid var(--red-line);background:var(--surface);color:var(--red);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:700}
+.al-chip[aria-pressed="true"]{background:var(--red);color:#fff;border-color:var(--red)}
+.al-chip.nuevo{color:var(--info);border-color:var(--line)}
+.row-al{font-size:12px;font-weight:700;color:var(--red);margin-top:2px}
+.al-box{background:var(--red-tint);border:1px solid var(--red-line);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--red-deep);display:grid;gap:4px}
+.linkbtn{background:none;border:0;padding:0;color:var(--red);font-weight:700;text-decoration:underline;text-underline-offset:2px;font-size:12.5px}
 .toast{display:flex;gap:12px;align-items:center}
 .toast button{background:var(--ground);color:var(--ink);border:0;border-radius:6px;padding:5px 10px;font-weight:700;font-size:12.5px}
 </style>
@@ -226,6 +234,7 @@ details.more .grid2{margin-top:10px}
 <main class="wrap">
   <p class="notice" id="notice" hidden></p>
   <section class="stats" id="stats" aria-label="Resumen"></section>
+  <section class="alerts" id="alerts" aria-label="Alertas" hidden></section>
   <section class="filters" aria-label="Filtros">
     <input class="inp search" id="q" type="search" placeholder="Buscar caso, incidente, quién lo pidió…" aria-label="Buscar">
     <select class="inp" id="f-sector" aria-label="Sector"></select>
@@ -267,6 +276,7 @@ details.more .grid2{margin-top:10px}
 
   var items=[],db=null,col=null,imgCol=null,cfgRef=null,mode='loading',downloads=null,sample=null,meName='';
   var filt={q:'',mod:'',sector:'',est:'abiertos'};
+  var lastSeen=lsGet('trento-soportes-visto',null);lsSet('trento-soportes-visto',new Date().toISOString());
   var openId=null,draft=null,imp=null,estDraft=null,waTab=null,mineCreated={};
   var LS='trento-soportes-tango-v1',LS_EST='trento-soportes-estados-v1',LS_IMG='trento-soportes-img-';
 
@@ -371,6 +381,7 @@ details.more .grid2{margin-top:10px}
   function withEstado(t,k){
     var out=Object.assign({},t);if(t.estado===k)return out;
     out.estado=k;out.log=(t.log||[]).concat([{t:new Date().toISOString(),tipo:'sys',txt:'Estado: '+est(t.estado).l+' → '+est(k).l}]);
+    out.avisar=true;if(k==='enviado')out.derivadoEl=new Date().toISOString();
     if(est(k).abierto===false){if(est(t.estado).abierto!==false||!out.cerradoEl)out.cerradoEl=localDT(new Date())}
     else{out.cerradoEl='';out.resueltoEl=''}
     return out;
@@ -382,8 +393,10 @@ details.more .grid2{margin-top:10px}
     return items.filter(function(t){
       if(filt.mod&&t.modulo!==filt.mod)return false;
       if(filt.sector&&t.sector!==filt.sector)return false;
+      if(filt.est==='alertas'&&!alertas(t).length)return false;
+      if(filt.est.indexOf('al:')===0&&!alertas(t).some(function(a){return 'al:'+a.k===filt.est}))return false;
       if(filt.est==='abiertos'&&!isOpen(t))return false;
-      if(filt.est!=='abiertos'&&filt.est!=='todos'&&t.estado!==filt.est)return false;
+      if(filt.est!=='abiertos'&&filt.est!=='todos'&&filt.est!=='alertas'&&filt.est.indexOf('al:')!==0&&t.estado!==filt.est)return false;
       if(q){var h=[codigo(t),queSucede(t),t.errorMsg,t.modulo,t.tipo,t.sector,t.pedidoPor,t.solucion].join(' ').toLowerCase();if(h.indexOf(q)<0)return false}
       return true;
     }).sort(function(a,b){
@@ -400,8 +413,16 @@ details.more .grid2{margin-top:10px}
       '<div class="stat"><span class="num">'+ab.length+'</span><span class="lbl">abiertos</span></div>'+
       '<div class="stat'+(urg.length?' alert':'')+'"><span class="num">'+urg.length+'</span><span class="lbl">urgentes abiertos</span></div>'+
       '<div class="stat"><span class="num">'+(prom==null?'—':prom.toFixed(1).replace('.',','))+'</span><span class="lbl">días promedio para cerrar</span></div>';
+    var grupos={},orden=['avisar','sinrevisar','urgente','proveedor','solicitante'],nombres={avisar:'falta avisar al solicitante',sinrevisar:'sin revisar (+'+LIMITES.sinRevisar+' h)',urgente:'urgentes abiertos (+'+LIMITES.urgente+' h)',proveedor:'el proveedor no responde (+'+LIMITES.proveedor+' h)',solicitante:'el solicitante no responde (+'+LIMITES.solicitante+' h)'};
+    items.forEach(function(t){alertas(t).forEach(function(a){grupos[a.k]=(grupos[a.k]||0)+1})});
+    var nuevos=items.filter(function(t){return lastSeen&&t.creado&&t.creado>lastSeen}).length;
+    var al=$('#alerts'),hay=orden.some(function(k){return grupos[k]})||nuevos;
+    al.hidden=!hay||mode==='loading';
+    if(hay)al.innerHTML='<b>Alertas</b>'+(nuevos?'<button type="button" class="al-chip nuevo" data-est="todos">'+nuevos+' nuevo'+(nuevos>1?'s':'')+' desde tu última visita</button>':'')+
+      orden.filter(function(k){return grupos[k]}).map(function(k){return '<button type="button" class="al-chip" data-est="al:'+k+'" aria-pressed="'+(filt.est==='al:'+k)+'">'+grupos[k]+' '+nombres[k]+'</button>'}).join('');
     var cnt=function(f){return items.filter(f).length};
-    var defs=[{k:'abiertos',l:'Abiertos',n:ab.length}].concat(ESTADOS.map(function(e){return {k:e.k,l:e.l,n:cnt(function(t){return t.estado===e.k})}})).concat([{k:'todos',l:'Todos',n:items.length}]);
+    var nal=items.filter(function(t){return alertas(t).length}).length;
+    var defs=[{k:'abiertos',l:'Abiertos',n:ab.length}].concat(nal?[{k:'alertas',l:'Con alerta',n:nal}]:[]).concat(ESTADOS.map(function(e){return {k:e.k,l:e.l,n:cnt(function(t){return t.estado===e.k})}})).concat([{k:'todos',l:'Todos',n:items.length}]);
     $('#chips').innerHTML=defs.map(function(d){return '<button type="button" class="chip" data-est="'+esc(d.k)+'" aria-pressed="'+(filt.est===d.k)+'">'+esc(d.l)+'<span class="c">'+d.n+'</span></button>'}).join('');
     $('#btn-csv').hidden=!(downloads&&items.length);
     var rows=$('#rows'),foot=$('#foot');
@@ -418,27 +439,57 @@ details.more .grid2{margin-top:10px}
     var sel=(ej||ro)?'<span class="pill k-'+e.c+'">'+esc(e.l)+'</span>':'<span class="st-wrap k-'+e.c+'" style="border-radius:999px"><select class="st-sel k-'+e.c+'" data-st="'+esc(t.id)+'" aria-label="Estado de '+codigo(t)+'">'+estOpts(t.estado)+'</select></span>';
     return '<div class="row'+(ej?' example':'')+'" data-id="'+esc(t.id)+'"'+(ej?' data-ej="1"':'')+' tabindex="0" role="button">'+
       '<div class="c-id"><span class="id">'+codigo(t)+'</span><span class="date">'+(ej?'<span class="tag-ej">EJEMPLO</span>':fmtD(fecha(t)))+'</span></div>'+
-      '<div class="c-main"><div class="subj">'+esc(queSucede(t)||'(sin descripción)')+'</div><div class="meta">'+esc(meta)+'</div></div>'+
+      '<div class="c-main"><div class="subj">'+esc(queSucede(t)||'(sin descripción)')+'</div><div class="meta">'+esc(meta)+'</div>'+(ej?'':alertas(t).map(function(a){return '<div class="row-al">⚠ '+esc(a.l)+'</div>'}).join(''))+'</div>'+
       '<div class="c-st">'+sel+'</div>'+
       '<div class="c-pr"><span class="prio p-'+p.k+'">'+p.l+'</span></div>'+
       '<div class="c-days days">'+d+'<small>'+(cer?'tardó':'días')+'</small></div></div>';
   }
 
+  /* ---------- alertas de respuesta ---------- */
+  var LIMITES={sinRevisar:4,urgente:4,proveedor:24,solicitante:48}; // horas
+  function ultimoMov(t){var m=t.pedidoEl?new Date(t.pedidoEl).getTime():0;(t.log||[]).forEach(function(l){var x=new Date(l.t).getTime();if(x>m)m=x});return m?new Date(m).toISOString():''}
+  function horasDesde(v){if(!v)return 0;return (Date.now()-new Date(v).getTime())/36e5}
+  function hace(h){return h<24?Math.floor(h)+' h':Math.floor(h/24)+' d'}
+  function alertas(t){
+    if(!t||t._nuevo)return [];
+    var a=[],open=isOpen(t),mov=horasDesde(ultimoMov(t)),alta=horasDesde(t.pedidoEl);
+    if(t.avisar)a.push({k:'avisar',l:'Falta avisarle a '+((t.pedidoPor||'').split(/\s+/)[0]||'quien lo pidió'),tab:open?(t.estado===(ESTADOS[0]||{}).k?'recepcion':'estado'):'cerrado'});
+    if(open&&t.estado===(ESTADOS[0]||{}).k&&alta>LIMITES.sinRevisar)a.push({k:'sinrevisar',l:'Sin revisar hace '+hace(alta)});
+    if(open&&t.estado==='enviado'&&mov>LIMITES.proveedor)a.push({k:'proveedor',l:'El proveedor no responde hace '+hace(mov),tab:'tango'});
+    if(open&&t.estado==='nuestra'&&mov>LIMITES.solicitante)a.push({k:'solicitante',l:'El solicitante no responde hace '+hace(mov),tab:'recordatorio'});
+    if(open&&t.prioridad==='urgente'&&alta>LIMITES.urgente)a.push({k:'urgente',l:'Urgente abierto hace '+hace(alta)});
+    return a;
+  }
+  /* al copiar o abrir un mensaje queda registrado y se reinicia el contador */
+  function registrarEnvio(k){
+    var t=openId&&findItem(openId);if(!t)return;
+    var m=null;MENSAJES.forEach(function(x){if(x.k===k)m=x});if(!m)return;
+    var u=Object.assign({},t);
+    u.log=(t.log||[]).concat([{t:new Date().toISOString(),tipo:'sys',txt:(m.para==='prov'?'Mensaje al proveedor':'Aviso al solicitante')+' · '+m.l}]);
+    if(m.para==='sol')u.avisar=false;
+    save(u).catch(function(){});
+  }
+
   /* ---------- mensajes de WhatsApp ---------- */
   function saludo(t){var n=(t.pedidoPor||'').trim().split(/\s+/)[0];return 'Hola'+(n?' '+n:'')+'!'}
   function ultimaNota(t){var n=(t.log||[]).filter(function(l){return l.tipo==='nota'}).sort(function(a,b){return new Date(b.t)-new Date(a.t)})[0];return n?n.txt:''}
+  function fechaDeriv(t){return t.derivadoEl||ultimoMov(t)}
   var MENSAJES=[
-    {k:'recepcion',l:'Recepción',f:function(t){
-      return saludo(t)+' Recibimos tu pedido de soporte.\n*Caso:* '+codigo(t)+'\n*Incidente:* '+resumen(t)+'\n*Sistema:* '+prov(t)+(esTango(t)&&t.modulo?' · '+t.modulo:'')+' · *Prioridad:* '+prio(t.prioridad).l+'\nLo estoy gestionando con '+provNombre(t)+'. Te aviso por acá cuando haya novedades. Si nos escribís por este tema, mencioná el caso '+codigo(t)+'.';}},
-    {k:'estado',l:'Cambio de estado',f:function(t){
+    {k:'recepcion',l:'Recepción',para:'sol',f:function(t){
+      return saludo(t)+' Recibí tu pedido de soporte.\nQueda registrado con el *Caso: '+codigo(t)+'*\n*Problemática:* '+resumen(t)+'\n*Tipo:* '+(t.tipo||'—')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n\nLo gestiono con '+provNombre(t)+' y te aviso por acá cuando haya novedades.';}},
+    {k:'estado',l:'Cambio de estado',para:'sol',f:function(t){
       var n=ultimaNota(t);
-      return saludo(t)+' Novedades de tu caso *'+codigo(t)+'* ('+resumen(t)+').\n*Estado actual:* '+est(t.estado).l+(n?'\n*Detalle:* '+n:'')+(t.estado==='nuestra'?'\nNecesitamos tu ayuda para avanzar: respondé este mensaje, por favor.':'\nTe sigo avisando por acá.');}},
-    {k:'cerrado',l:'Cerrado',f:function(t){
-      return saludo(t)+' Tu caso *'+codigo(t)+'* quedó *'+est(t.estado).l.toLowerCase()+'* el '+fmtDT(cerrado(t)||new Date())+'.\n*Incidente:* '+resumen(t)+(t.solucion?'\n*Solución:* '+t.solucion:'')+'\nSi vuelve a pasar, escribinos mencionando el caso '+codigo(t)+'. ¡Gracias!';}},
-    {k:'tango',l:'Consulta al proveedor',f:function(t){
-      return 'Hola, les escribo de Trento. *Ref. '+codigo(t)+'*\n*Sistema:* '+prov(t)+(esTango(t)&&t.modulo?' · '+t.modulo:'')+'\n*Incidente:* '+(queSucede(t)||'—')+(t.errorMsg?'\n*Error:* '+t.errorMsg:'')+((t.imgs&&t.imgs.length)?'\n(Les mando captura a continuación)':'')+'\n*Prioridad:* '+prio(t.prioridad).l+'\nPor favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';}}
+      return saludo(t)+' Te escribo por tu *Caso: '+codigo(t)+'*\n*Problemática:* '+resumen(t)+'\n*Estado actual:* '+est(t.estado).l+(n?'\n*Novedad:* '+n:'')+'\n\n'+(t.estado==='nuestra'?'Para avanzar necesito que me respondas este mensaje.':'Te sigo avisando por acá.');}},
+    {k:'recordatorio',l:'Recordatorio',para:'sol',f:function(t){
+      var n=ultimaNota(t);
+      return saludo(t)+' Te recuerdo que tu *Caso: '+codigo(t)+'* ('+resumen(t)+') está esperando tu respuesta para poder avanzar.'+(n?'\n*Lo que necesito:* '+n:'')+'\n\n¿Me respondés cuando puedas? ¡Gracias!';}},
+    {k:'cerrado',l:'Cerrado',para:'sol',f:function(t){
+      return saludo(t)+' Tu *Caso: '+codigo(t)+'* quedó *'+est(t.estado).l.toLowerCase()+'* el '+fmtDT(cerrado(t)||new Date())+'.\n*Problemática:* '+resumen(t)+(t.solucion?'\n*Solución:* '+t.solucion:'')+'\n\nSi vuelve a pasar, escribime mencionando el caso '+codigo(t)+'. ¡Gracias!';}},
+    {k:'tango',l:'Proveedor',para:'prov',f:function(t){
+      if(t.estado==='enviado'&&!t._nuevo)return 'Hola, les escribo de Trento por la *Ref. '+codigo(t)+'*, que les derivé el '+fmtDT(fechaDeriv(t))+'.\n*Problemática:* '+resumen(t)+'\n\n¿Tienen novedades? ¡Gracias!';
+      return 'Hola, les escribo de Trento. *Ref. '+codigo(t)+'*\n*Sistema:* '+prov(t)+(esTango(t)&&t.modulo?' · '+t.modulo:'')+'\n*Tipo:* '+(t.tipo||'—')+'\n*Problemática:* '+(queSucede(t)||'—')+(t.errorMsg?'\n*Error:* '+t.errorMsg:'')+((t.imgs&&t.imgs.length)?'\n(Les mando captura a continuación)':'')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n\nPor favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';}}
   ];
-  function tabPara(t){if(t._nuevo)return 'recepcion';if(!isOpen(t))return 'cerrado';if(t.estado===(ESTADOS[0]||{}).k)return 'recepcion';return 'estado'}
+  function tabPara(t){if(t._nuevo)return 'recepcion';if(!isOpen(t))return 'cerrado';var al=alertas(t)[0];if(al&&al.tab)return al.tab;if(t.estado===(ESTADOS[0]||{}).k)return 'recepcion';return 'estado'}
   function msg(k,t){for(var i=0;i<MENSAJES.length;i++)if(MENSAJES[i].k===k)return MENSAJES[i].f(t);return ''}
   function waLink(cel,text){var d=String(cel||'').replace(/\D/g,'');if(d.length<8)return '';if(d.indexOf('54')!==0){d=d.replace(/^0/,'');d='549'+d.replace(/^(\d{2,4})15/,'$1')}return 'https://wa.me/'+d+'?text='+encodeURIComponent(text)}
   function renderMsg(){
@@ -447,7 +498,7 @@ details.more .grid2{margin-top:10px}
     document.querySelectorAll('.tab[data-tab]').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===waTab)});
     var dest=waTab==='tango'?'':t.celular,link=dest?waLink(dest,txt):'';
     var l=$('#wa-open');l.hidden=!link;if(link)l.href=link;
-    $('#wa-help').textContent=waTab==='tango'?'Para mandarle al soporte de '+provNombre(t)+'.':(t.pedidoPor?'Para avisarle a '+t.pedidoPor+(t.celular?' ('+t.celular+')':'')+'.':'Para avisarle a quien lo pidió.');
+    $('#wa-help').textContent=waTab==='tango'?'Para mandarle al soporte de '+provNombre(t)+(t.estado==='enviado'?' (reclamo de novedades).':'.'):(t.pedidoPor?'Para avisarle a '+t.pedidoPor+(t.celular?' ('+t.celular+')':'')+'.':'Para avisarle a quien lo pidió.');
   }
 
   /* ---------- ficha ---------- */
@@ -465,6 +516,7 @@ details.more .grid2{margin-top:10px}
     var html='<div class="overlay" data-ov="1"><aside class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title">'+
       '<div class="panel-top"><h2 id="p-title">'+(nuevo?'Nuevo soporte · ':'')+'Caso '+codigo(t)+'</h2><button type="button" class="x" data-a="close" aria-label="Cerrar">×</button></div>'+
       '<div class="panel-body">'+
+      (alertas(t).length&&!ro?'<div class="al-box">'+alertas(t).map(function(a){return '<div>⚠ '+esc(a.l)+(a.tab?' <button type="button" class="linkbtn" data-tab="'+a.tab+'" data-go="1">Ver mensaje</button>':'')+'</div>'}).join('')+'</div>':'')+
       (hasWa&&sample&&!ro?'<div class="ai-row"><span class="grow">Claude puede completar la ficha leyendo el chat.</span><button type="button" class="btn wa sm" data-a="ai">Completar con Claude</button></div>':'')+
       '<form class="sec" id="frm"><div class="grid2">'+
         field('Descripción del incidente',area('asunto',queSucede(t),'Describí qué intentabas hacer y qué ocurrió. Ej.: Al cargar un pedido, el sistema no actualiza su estado.'),{req:1,full:1,key:'asunto'})+
@@ -553,7 +605,7 @@ details.more .grid2{margin-top:10px}
       out.num=nextNum();out.estado=estNuevo;out.creado=new Date().toISOString();out.pedidoEl=localDT(new Date());
       if(est(estNuevo).abierto===false)out.cerradoEl=out.pedidoEl;
       out.log.push({t:out.creado,tipo:'sys',txt:'Cargado por '+out.pedidoPor+' · '+est(estNuevo).l});
-      mineCreated[out.id]=1;
+      mineCreated[out.id]=1;out.avisar=true;
     }else out=withEstado(out,estNuevo);
     (orig.imgs||[]).forEach(function(id){if(out.imgs.indexOf(id)<0)delImg(id)});
     aprenderContacto(out);
@@ -782,9 +834,10 @@ details.more .grid2{margin-top:10px}
     var u=withEstado(t,s.value);
     save(u).then(function(){
       var txt=avisoTexto(u),link=waLink(u.celular,txt);
-      toast(codigo(u)+' → '+est(u.estado).l,link?'Avisar por WhatsApp':'Copiar aviso',function(){var w=null;if(link){try{w=window.open(link,'_blank')}catch(e){}}if(!w)copy(txt)});
+      toast(codigo(u)+' → '+est(u.estado).l,link?'Avisar por WhatsApp':'Copiar aviso',function(){var w=null;if(link){try{w=window.open(link,'_blank')}catch(e){}}if(!w)copy(txt);var cur=findItem(u.id);if(cur){var v=Object.assign({},cur);v.avisar=false;v.log=(cur.log||[]).concat([{t:new Date().toISOString(),tipo:'sys',txt:'Aviso al solicitante · '+(isOpen(u)?'Cambio de estado':'Cerrado')}]);save(v).catch(function(){})}});
     },function(){render()});
   });
+  document.addEventListener('click',function(ev){var l=ev.target.closest&&ev.target.closest('#wa-open');if(l&&!ro&&draft&&!draft._nuevo)registrarEnvio(waTab)},true);
   document.addEventListener('paste',function(ev){
     if(!draft||!$('#drop'))return;
     var fs=[];Array.prototype.forEach.call((ev.clipboardData&&ev.clipboardData.items)||[],function(it){if(it.kind==='file'&&/^image\//.test(it.type)){var f=it.getAsFile();if(f)fs.push(f)}});
@@ -813,13 +866,13 @@ details.more .grid2{margin-top:10px}
     if(b.dataset.a==='c-save'){contactosGo();return}
     if(b.id==='btn-csv'){csv();return}
     if(b.dataset.est){filt.est=b.dataset.est;render();return}
-    if(b.dataset.tab){waTab=b.dataset.tab;renderMsg();return}
+    if(b.dataset.tab){waTab=b.dataset.tab;renderMsg();if(b.dataset.go){var ww=$('#wa-txt');if(ww)ww.scrollIntoView({behavior:'smooth',block:'center'})}return}
     if(b.dataset.rmimg){var i=draft.imgs.indexOf(b.dataset.rmimg);if(i>=0){var rid=draft.imgs.splice(i,1)[0];var saved=findItem(draft.id);if(!saved||(saved.imgs||[]).indexOf(rid)<0)delImg(rid)}renderImgs();renderMsg();return}
     if(b.dataset.up){var j=+b.dataset.up;var x=estDraft[j];estDraft[j]=estDraft[j-1];estDraft[j-1]=x;renderEstados();return}
     if(b.dataset.rm){estDraft.splice(+b.dataset.rm,1);renderEstados();return}
     var a=b.dataset.a;
     if(a==='close'){if(aiCtl)aiCtl.abort();if(draft&&draft._nuevo)(draft.imgs||[]).forEach(delImg);closePanel();return}
-    if(a==='copy'){copy($('#wa-txt').textContent);return}
+    if(a==='copy'){copy($('#wa-txt').textContent);if(!ro&&draft&&!draft._nuevo)registrarEnvio(waTab);return}
     if(a==='ai'){completarIA(b);return}
     if(a==='del'){$('#del-slot').innerHTML='<span class="confirm">¿Borrar? <button type="button" class="btn danger sm" data-a="del-yes">Sí</button><button type="button" class="btn sm" data-a="del-no">No</button></span>';return}
     if(a==='del-no'){$('#del-slot').innerHTML='<button type="button" class="btn danger sm" data-a="del">Borrar</button>';return}
@@ -845,6 +898,7 @@ details.more .grid2{margin-top:10px}
   $('#f-sector').innerHTML='<option value="">Todos los sectores</option>'+SECTORES.map(function(m){return '<option>'+esc(m)+'</option>'}).join('');
   $('#f-sector').addEventListener('change',function(){filt.sector=this.value;render()});
 
+  setInterval(function(){if(!$('#panel-root').innerHTML)render()},300000);
   /* ---------- arranque ---------- */
   render();
   var started=false;
