@@ -22,7 +22,8 @@
 - Pestañas en uso: Pedido, Factura TPS, Compra, GN pedido, Crystal Reports, Datos documentos, Tipos documento.
 - Tipos de documento **activos** (no bloqueados): Reclamación, Expedición parcial, Pedido de producción,
   Pedido de contrato, Encargo del almacén. Los otros 10 están bloqueados.
-- Detalle y avance: `docs/aw/PLAN-REVISION.md` y `docs/aw/HALLAZGOS.md`.
+- Detalle y avance: `docs/aw/PLAN-REVISION.md` (hoja de ruta), `docs/aw/HALLAZGOS.md` y
+  `docs/aw/relevamiento/` (una ficha por área).
 
 ## Decisión importante: MCP futuro
 El usuario **desarrollará más adelante un servidor MCP para conectar Claude a la base de datos de A+W**.
@@ -34,6 +35,18 @@ Todo lo que se revise ahora (exports, capturas, diccionario de datos) debe servi
 - No exponer al principio las tablas de precios y descuentos (`PR_*`, `RB_*`), porque son sensibles.
 - Los documentos viejos se mueven cada año a una **base de datos de archivo** aparte.
 - Requisitos y preguntas: `docs/aw/PLAN-REVISION.md` (Fase 6).
+
+## Objetivo y contexto de la usuaria
+- **Lidera la mejora** de operación y adopción de A+W en Trento.
+- El orden acordado es: 1) entender el sistema con ayuda de Claude, 2) relevar cada área con
+  `docs/aw/relevamiento/PLANTILLA.md`, 3) proponer mejoras, 4) conectar (base de datos y luego MCP).
+  La hoja de ruta está en `docs/aw/PLAN-REVISION.md`.
+- **Áreas en A+W:** Ventas, Producción y Logística.
+- **Administración trabaja en Tango**, fuera de A+W. La usuaria dará ese contexto más adelante;
+  guardarlo en `docs/aw/` cuando llegue.
+- Tiene permiso para **leer la base de datos**, pero todavía no se conectó. Lo validamos cuando lleguemos a esa etapa.
+- Forma de conexión: **Claude le indica en cada momento qué hace falta** (captura, export, Computer use o
+  Claude Code local).
 
 ## Forma de trabajo con el usuario
 - Responder en español, paso a paso y sin suponer que conoce A+W.
