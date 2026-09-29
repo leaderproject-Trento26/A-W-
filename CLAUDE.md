@@ -12,8 +12,9 @@
   - `BW_AUFTR_KOPF/POS/STKL/HIST` pedidos.
   - `PR_*` precios, `RB_*` descuentos, `KA_*` tablas de apoyo.
   Detalle en `docs/aw/MODELO-DATOS.md`.
-- Los documentos se controlan por **estatus numéricos**. Hay 2 esquemas posibles
-  (A "VITRUM" 1 a 170, B 1 a 900); **falta confirmar cuál usa Trento**.
+- **Base de datos de Trento: `TRENTO_BA`** (empresa `TRENTO`).
+- Los documentos se controlan por **estatus numéricos**. Trento usa numeración de tipo B (cientos) con
+  estatus de planta BDE: 430 lote organizado, 460 cortado, 485 templado, **540 listo para envío**, 990 cancelación.
 - Se recibieron 30 manuales, resumidos en `docs/aw/MANUALES.md`. Los originales no están en el repo.
 - Menú lateral: **Datos básicos**, **Documentos**, **Producción** (hay más íconos ocultos).
 - Carpetas de Datos básicos: General, Productos, Precios, Almacén, Partner del mercado, Expedición,

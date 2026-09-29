@@ -11,6 +11,32 @@ Registro de todo lo que vamos descubriendo. Cada hallazgo indica su **fuente** (
 - Integración contable externa: hay transmisión a contabilidad y retorno de saldos.
   Un flujo de estatus menciona **Tango**; está pendiente confirmar si Trento lo usa.
 
+## Pantalla "GN pedido" (captura 2)
+Ruta: Documentos → Pedido → GN pedido. La captura no se guarda en el repo porque muestra nombres
+reales de clientes.
+
+- **Empresa:** `TRENTO` · **Base de datos:** `TRENTO_BA`. Es el nombre de la base en SQL Server.
+- La GN "SEPTIEMBRE" tiene 309 pedidos. Los números de pedido son de 8 dígitos (ej. `12006783`).
+- Columnas de la grilla (vista "Registro"): Números, Nr. encargo, CP Proveedor, Fecha entrega,
+  Nr. pedido, Cliente/proveed., Nombre, Matchcode, **Estatus**, Fecha 1 regist.
+- **Estatus reales de Trento** (confirman un esquema de tipo B, de 1 a 900 o más, personalizado):
+
+| Estatus | Texto en pantalla |
+|---|---|
+| 430 | LOTE ORGANIZADO |
+| 460 | BDE - CORTADO |
+| 485 | BDE - TEMPLADO |
+| 540 | Pedido listo para envio |
+| 990 | Autorización de cancela… (texto cortado; probablemente pedido anulado) |
+
+  **BDE** (*Betriebsdatenerfassung*) es la captura de datos de planta: los pedidos cambian de estatus
+  al escanearlos en cada máquina. Es decir, Trento **sí tiene seguimiento de producción por código de barras**.
+- **Sesiones del menú Documentos → Pedido:** GN pedido, Introd. pedidos, Expedición parcial,
+  Edición pedido, Control de ofertas, Transmisión contabilidad, Import./export. Pagos, Diario,
+  Administración de pagos a cuenta, Pedidos pago anticip., Transmisión encargo,
+  Transmisión archivo-estadíst., Búsqueda, Importación, Recibos bancarios, Recalcular,
+  Gestión de obras, **Factura TPS**, Consulta rápida, Comprobantes de garantía.
+
 ## Documentación recibida
 Se recibieron 30 manuales; el resumen está en [`MANUALES.md`](MANUALES.md).
 Las tablas, los estatus y las consultas para el MCP están en [`MODELO-DATOS.md`](MODELO-DATOS.md).
@@ -59,7 +85,8 @@ Ruta: Datos básicos → Documentos → Tipos documento. Fuente: `capturas/01-da
 
 ## Preguntas abiertas
 - ¿Qué es **Factura TPS**? Ningún manual lo menciona; podría ser un formulario propio de Trento.
-- ¿Qué **esquema de estatus** usa Trento: A (1 a 170, "VITRUM") o B (1 a 900)?
+- ✅ **Esquema de estatus:** tipo B, personalizado (430, 460, 485, 540, 990…). Falta la lista completa,
+  que está en Datos básicos → Documentos → Gestión de estatus.
 - ¿Trento usa **Tango** u otra contabilidad?
 - ¿Tienen el **Gerente de producción**, ALCIM, XOPTON o Barcoding?
 - ¿Usan la **gestión de caballetes** y la lista de acuse de recibo?

@@ -94,6 +94,20 @@ Los "Tipos de documento" (Reclamación, Expedición parcial…) que vimos en la 
 
 Para encontrarlas: la documentación de la instalación, o la consulta de descubrimiento que está más abajo.
 
+## ✅ Estatus reales de Trento (captura de GN pedido)
+- La base de datos se llama **`TRENTO_BA`**.
+- Trento usa una numeración **de tipo B** (cientos), personalizada con estatus de planta (**BDE**):
+
+| Estatus | Significado |
+|---|---|
+| 430 | Lote organizado |
+| 460 | BDE – Cortado |
+| 485 | BDE – Templado |
+| 540 | **Pedido listo para envío**: la clave para Trento Entregas |
+| 990 | Autorización de cancelación (probablemente anulado) |
+
+La lista completa se obtiene de la gestión de estatus. El esquema A que sigue queda solo como referencia.
+
 ## Flujo de estatus del Pedido: ⚠️ hay dos esquemas en los manuales
 Los manuales traen **dos numeraciones distintas**. Cada empresa configura la suya, así que **hay que
 confirmar cuál usa Trento**: basta mirar el estatus de un pedido real, o la tabla `BW_AUFTR_HIST`.
