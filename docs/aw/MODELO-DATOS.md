@@ -143,8 +143,9 @@ Fuente: *Resumen de flujo de programa*. Coincide con los números que usan *Arch
 
 Estatus de la oferta: 1 creada · 2 modificada · 4 editada · 23 rechazada · 25 aceptada · 27 copiada a pedido · 120 archivada.
 
-### Esquema B: estándar genérico (1 a 900)
-Fuente: *Gestión de Documentos*.
+### Esquema B: 1 a 900, probablemente el de Trento
+Fuente: *Gestión de Documentos*. Incluye Tango, y su 540 coincide con el sistema real.
+Luego se agregaron los estatus BDE (430, 460, 485).
 
 | Estatus | Significado |
 |---|---|

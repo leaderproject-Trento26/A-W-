@@ -16,6 +16,9 @@
 - Los documentos se controlan por **estatus numéricos**. Trento usa numeración de tipo B (cientos) con
   estatus de planta BDE: 430 lote organizado, 460 cortado, 485 templado, **540 listo para envío**, 990 cancelación.
 - Se recibieron 30 manuales, resumidos en `docs/aw/MANUALES.md`. Los originales no están en el repo.
+  *Gestión de Documentos* (2019) parece escrito para Trento: tiene estatus de Tango y su 540 coincide con el real.
+- Las fichas de relevamiento ya traen **respuestas previas** sacadas de los manuales. Usan la leyenda
+  📘 manual / 📸 visto / ❓ a validar. La entrevista sirve para validarlas, no para preguntar de cero.
 - Menú lateral: **Datos básicos**, **Documentos**, **Producción** (hay más íconos ocultos).
 - Carpetas de Datos básicos: General, Productos, Precios, Almacén, Partner del mercado, Expedición,
   Producción, Documentos, Finanzas, Empresa, Textos, Formularios, CEKAL, Distintivo CE, B2B.

@@ -37,6 +37,9 @@ Total: **30 documentos** recibidos (29 Word y 1 PDF).
 - Es el esquema más probable para Trento, pero hay que confirmarlo. Tabla completa en [`MODELO-DATOS.md`](MODELO-DATOS.md).
 
 ### Gestión de documentos
+- ⭐ **Probablemente escrito para Trento.** Menciona los estatus 235 y 240 de transmisión a **Tango**,
+  que es la contabilidad de Trento, y su 540 "Listo para envío" coincide con el sistema real.
+  Por eso su flujo de estatus es la mejor referencia para Trento.
 - **5 documentos maestros:** Oferta (cotización), Pedido (venta), Abono (nota de crédito),
   Consulta (presupuesto de compra) y Encargo (compra).
 - Todo se controla con **estatus numéricos**. Cada tipo tiene su flujo; el del pedido va de 1 (creado)
