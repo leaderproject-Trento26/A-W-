@@ -1059,10 +1059,10 @@ details.more .grid2{margin-top:10px}
     c.use('db').then(function(d){
       if(!d){useLocal();return}
       db=d;col=db.collection('soportes');imgCol=db.collection('imagenes');cfgRef=db.doc('config/estados');contRef=db.doc('config/contactos');started=true;mode='db';
-      contRef.onSnapshot(function(s){var x=s.exists&&s.data();CONTACTOS=(x&&Array.isArray(x.lista))?x.lista:[];},function(){});
-      cfgRef.onSnapshot(function(s){var x=s.exists&&s.data();ESTADOS=(x&&Array.isArray(x.lista)&&x.lista.length)?x.lista:ESTADOS_DEF.slice();render()},function(){});
+      contRef.onSnapshot(function(s){var x=s.exists&&s.data();CONTACTOS=(x&&Array.isArray(x.lista))?JSON.parse(JSON.stringify(x.lista)):[];},function(){});
+      cfgRef.onSnapshot(function(s){var x=s.exists&&s.data();ESTADOS=(x&&Array.isArray(x.lista)&&x.lista.length)?JSON.parse(JSON.stringify(x.lista)):ESTADOS_DEF.slice();render()},function(){});
       var suscribir=function(){
-        col.limit(1000).onSnapshot(function(snap){items=snap.docs.map(function(s){var x=s.data()||{};x.id=s.id;return x});$('#notice').hidden=true;render();fixNums()},
+        col.limit(1000).onSnapshot(function(snap){items=snap.docs.map(function(s){var x=JSON.parse(JSON.stringify(s.data()||{}));x.id=s.id;return x});$('#notice').hidden=true;render();fixNums()},
           function(e){
             if(e&&(e.code==='revoked'||e.code==='not_granted'||e.code==='capability_disabled')){started=false;useLocal();return}
             var n=$('#notice');n.hidden=false;n.textContent='Se cortó la conexión con el tablero. Reconectando… Si no se actualiza, recargá la página.';
