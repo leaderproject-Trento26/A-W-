@@ -322,7 +322,7 @@ details.more .grid2{margin-top:10px}
   function provNombre(t){var p=prov(t);return p==='Otro'?'el proveedor':p}
   function esTango(t){return prov(t)==='Tango Gestión'}
   function queSucede(t){return [t.asunto,t.detalle].filter(Boolean).join('\n')}
-  function resumen(t){var s=(t.asunto||'').replace(/\s+/g,' ').trim();return s.length>70?s.slice(0,67)+'…':s}
+  function resumen(t){var s=(t.asunto||'').replace(/\s+/g,' ').trim();return s.length>70?s.slice(0,67)+'...':s}
   var toastFn=null;
   function toast(m,label,fn){
     $('#toast-msg').textContent=m;var b=$('#toast-btn');toastFn=fn||null;b.hidden=!fn;if(fn)b.textContent=label;
@@ -536,33 +536,33 @@ details.more .grid2{margin-top:10px}
       {n:e==='respuesta'?'Necesito tu respuesta':'En gestión',f:et.gestion||et.respuesta||(paso>=1?et[e]:'')},
       {n:e==='cancelado'?'Cancelado':'Solucionado',f:paso===2?(cerrado(t)||new Date()):''}
     ];
-    var cur={registrado:'✅',gestion:'🔵',respuesta:'🟠',solucionado:'✅',cancelado:'❌'}[e];
-    return '📍 *Estado de tu caso*\n\n'+pasos.map(function(p,i){
-      var ic=i<paso?'✅':i>paso?'⚪':cur,fe=i<=paso?fCorta(p.f):'';
-      return ic+' '+(i===paso?'*'+p.n+'*':p.n)+(fe?' · '+fe:'')+(i===paso?'\n\n👈 _acá estamos_':'');
+    var cur={registrado:'\u2713',gestion:'\u25CF',respuesta:'\u25CF',solucionado:'\u2713',cancelado:'\u2717'}[e];
+    return '*ESTADO DE TU CASO*\n\n'+pasos.map(function(p,i){
+      var ic=i<paso?'\u2713':i>paso?'\u25CB':cur,fe=i<=paso?fCorta(p.f):'';
+      return ic+' '+(i===paso?'*'+p.n+'*':p.n)+(fe?' · '+fe:'')+(i===paso?'\n\u25B2 _acá estamos_':'');
     }).join('\n\n')+'\n\n_'+EXPLICA[e]+'_';
   }
   var FIRMA='\n\nTrento';
   function fechaDeriv(t){return t.derivadoEl||ultimoMov(t)}
   var MENSAJES=[
     {k:'recepcion',l:'Recepción',para:'sol',f:function(t){
-      return saludo(t)+' 👋\nRecibí tu pedido de soporte.\nQueda registrado con el *Caso: '+codigo(t)+'*\n\n* *Problemática:* '+resumen(t)+'\n* *Tipo:* '+(t.tipo||'—')+'\n* *Prioridad:* '+prio(t.prioridad).l+'\n* *Fecha:* '+fmtDT(t.pedidoEl||new Date())+'\n\n\n'+linea(t)+FIRMA;}},
+      return saludo(t)+'\nRecibí tu pedido de soporte.\nQueda registrado con el *Caso: '+codigo(t)+'*\n\n* *Problemática:* '+resumen(t)+'\n* *Tipo:* '+(t.tipo||'—')+'\n* *Prioridad:* '+prio(t.prioridad).l+'\n* *Fecha:* '+fmtDT(t.pedidoEl||new Date())+'\n\n\n'+linea(t)+FIRMA;}},
     {k:'estado',l:'Avance',para:'sol',f:function(t){
       var n=ultimaNota(t),e=etapaDe(t.estado);
-      return saludo(t)+' 👋\nTe escribo con novedades de tu *Caso: '+codigo(t)+'*\n\n* *Problemática:* '+resumen(t)+(n?'\n* *Novedad:* '+n:'')+'\n\n\n'+linea(t)+(e==='respuesta'?'\n\nRespondeme por acá y seguimos con tu pedido.':'')+FIRMA;}},
+      return saludo(t)+'\nTe escribo con novedades de tu *Caso: '+codigo(t)+'*\n\n* *Problemática:* '+resumen(t)+(n?'\n* *Novedad:* '+n:'')+'\n\n\n'+linea(t)+(e==='respuesta'?'\n\nRespondeme por acá y seguimos con tu pedido.':'')+FIRMA;}},
     {k:'recordatorio',l:'Recordatorio',para:'sol',f:function(t){
       var n=ultimaNota(t);
-      return saludo(t)+' 👋\nTe recuerdo que tu *Caso: '+codigo(t)+'* está esperando tu respuesta para poder avanzar.\n\n* *Problemática:* '+resumen(t)+(n?'\n* *Lo que necesitamos:* '+n:'')+'\n\n¿Me respondés cuando puedas? ¡Gracias!'+FIRMA;}},
+      return saludo(t)+'\nTe recuerdo que tu *Caso: '+codigo(t)+'* está esperando tu respuesta para poder avanzar.\n\n* *Problemática:* '+resumen(t)+(n?'\n* *Lo que necesitamos:* '+n:'')+'\n\n¿Me respondés cuando puedas? ¡Gracias!'+FIRMA;}},
     {k:'cerrado',l:'Cierre',para:'sol',f:function(t){
       var canc=etapaDe(t.estado)==='cancelado';
-      return saludo(t)+' 👋\nTu *Caso: '+codigo(t)+'* quedó *'+(canc?'cancelado':'solucionado')+'*.\n\n* *Problemática:* '+resumen(t)+(t.solucion?'\n* *'+(canc?'Motivo':'Solución')+':* '+t.solucion:'')+'\n* *Fecha de cierre:* '+fmtDT(cerrado(t)||new Date())+'\n\n\n'+linea(t)+'\n\n'+(canc?'Si lo necesitás de nuevo, escribime mencionando el caso '+codigo(t)+'.':'¿Podés confirmarme que ya funciona? Si vuelve a pasar, escribime mencionando el caso '+codigo(t)+'.')+FIRMA;}},
+      return saludo(t)+'\nTu *Caso: '+codigo(t)+'* quedó *'+(canc?'cancelado':'solucionado')+'*.\n\n* *Problemática:* '+resumen(t)+(t.solucion?'\n* *'+(canc?'Motivo':'Solución')+':* '+t.solucion:'')+'\n* *Fecha de cierre:* '+fmtDT(cerrado(t)||new Date())+'\n\n\n'+linea(t)+'\n\n'+(canc?'Si lo necesitás de nuevo, escribime mencionando el caso '+codigo(t)+'.':'¿Podés confirmarme que ya funciona? Si vuelve a pasar, escribime mencionando el caso '+codigo(t)+'.')+FIRMA;}},
     {k:'tango',l:'Proveedor',para:'prov',f:function(t){
       if(t.estado==='enviado'&&!t._nuevo)return 'Hola, les escribo de Trento por la *Ref. '+codigo(t)+'*, que les derivé el '+fmtDT(fechaDeriv(t))+'.\n*Problemática:* '+resumen(t)+'\n\n¿Tienen novedades? ¡Gracias!';
       return 'Hola, les escribo de Trento. *Ref. '+codigo(t)+'*\n*Sistema:* '+prov(t)+'\n*Tipo:* '+(t.tipo||'—')+'\n*Problemática:* '+(queSucede(t)||'—')+(t.errorMsg?'\n*Error:* '+t.errorMsg:'')+((t.imgs&&t.imgs.length)?'\n(Les mando captura a continuación)':'')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n\nPor favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';}}
   ];
   function tabPara(t){if(t._nuevo)return 'recepcion';if(!isOpen(t))return 'cerrado';var al=alertas(t)[0];if(al&&al.tab)return al.tab;if(t.estado===(ESTADOS[0]||{}).k)return 'recepcion';return 'estado'}
   function msg(k,t){for(var i=0;i<MENSAJES.length;i++)if(MENSAJES[i].k===k)return MENSAJES[i].f(t);return ''}
-  function waLink(cel,text){var d=String(cel||'').replace(/\D/g,'');if(d.length<8)return '';if(d.indexOf('54')!==0){d=d.replace(/^0/,'');d='549'+d.replace(/^(\d{2,4})15/,'$1')}return 'https://wa.me/'+d+'?text='+encodeURIComponent(text)}
+  function waLink(cel,text){var d=String(cel||'').replace(/\D/g,'');if(d.length<8)return '';if(d.indexOf('54')!==0){d=d.replace(/^0/,'');d='549'+d.replace(/^(\d{2,4})15/,'$1')}return 'https://api.whatsapp.com/send?phone='+d+'&text='+encodeURIComponent(text)}
   function renderMsg(){
     var t=Object.assign({},draft,readForm()),txt=msg(waTab,t);
     var box=$('#wa-txt');if(!box)return;box.textContent=txt;
