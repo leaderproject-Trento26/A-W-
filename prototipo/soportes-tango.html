@@ -523,10 +523,10 @@ details.more .grid2{margin-top:10px}
       {n:e==='cancelado'?'Cancelado':'Solucionado',f:paso===2?(cerrado(t)||new Date()):''}
     ];
     var cur={registrado:'✅',gestion:'🔵',respuesta:'🟠',solucionado:'✅',cancelado:'❌'}[e];
-    return '📍 *Estado de tu caso*\n'+pasos.map(function(p,i){
+    return '📍 *Estado de tu caso*\n\n'+pasos.map(function(p,i){
       var ic=i<paso?'✅':i>paso?'⚪':cur,fe=i<=paso?fCorta(p.f):'';
-      return ic+' '+(i===paso?'*'+p.n+'*':p.n)+(fe?' · '+fe:'')+(i===paso?'  👈 _acá estamos_':'');
-    }).join('\n')+'\n_'+EXPLICA[e]+'_';
+      return ic+' '+(i===paso?'*'+p.n+'*':p.n)+(fe?' · '+fe:'')+(i===paso?'\n\n👈 _acá estamos_':'');
+    }).join('\n\n')+'\n\n_'+EXPLICA[e]+'_';
   }
   var FIRMA='\n\nTrento';
   function fechaDeriv(t){return t.derivadoEl||ultimoMov(t)}
@@ -554,7 +554,10 @@ details.more .grid2{margin-top:10px}
     var box=$('#wa-txt');if(!box)return;box.textContent=txt;
     document.querySelectorAll('.tab[data-tab]').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===waTab)});
     var dest=waTab==='tango'?'':t.celular,link=dest?waLink(dest,txt):'';
-    var l=$('#wa-open');l.hidden=!link;if(link)l.href=link;
+    var sinGuardar=!!(draft&&draft._nuevo),cp=document.querySelector('[data-a="copy"]');
+    if(cp){cp.disabled=sinGuardar;cp.title=sinGuardar?'Guardá el caso primero':''}
+    var l=$('#wa-open');l.hidden=!link||sinGuardar;if(link)l.href=link;
+    if(sinGuardar){$('#wa-help').textContent='Vista previa. Completá la ficha y tocá Guardar: recién ahí vas a poder mandar el aviso.';return}
     $('#wa-help').textContent=waTab==='tango'?'Para mandarle al soporte de '+provNombre(t)+(t.estado==='enviado'?' (reclamo de novedades).':'.'):(t.pedidoPor?'Para avisarle a '+t.pedidoPor+(t.celular?' ('+t.celular+')':'')+'.':'Para avisarle a quien lo pidió.');
   }
 
