@@ -530,32 +530,23 @@ details.more .grid2{margin-top:10px}
   var EXPLICA={registrado:'Ya está en nuestra lista para revisarlo.',gestion:'Estamos trabajando en tu pedido.',respuesta:'Necesitamos un dato tuyo para poder seguir.',solucionado:'Tu pedido quedó resuelto.',cancelado:'El pedido se cerró sin cambios.'};
   function fCorta(v){if(!v)return '';var d=new Date(v);if(isNaN(d))return '';return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
   function linea(t){
-    var e=etapaDe(t.estado),paso={registrado:0,gestion:1,respuesta:1,solucionado:2,cancelado:2}[e],et=t.etapas||{};
-    var pasos=[
-      {n:'Registrado',f:t.pedidoEl||new Date()},
-      {n:e==='respuesta'?'Necesito tu respuesta':'En gestión',f:et.gestion||et.respuesta||(paso>=1?et[e]:'')},
-      {n:e==='cancelado'?'Cancelado':'Solucionado',f:paso===2?(cerrado(t)||new Date()):''}
-    ];
-    var cur={registrado:'\u2713',gestion:'\u25CF',respuesta:'\u25CF',solucionado:'\u2713',cancelado:'\u2717'}[e];
-    return '*ESTADO DE TU CASO*\n\n'+pasos.map(function(p,i){
-      var ic=i<paso?'\u2713':i>paso?'\u25CB':cur,fe=i<=paso?fCorta(p.f):'';
-      return ic+' '+(i===paso?'*'+p.n+'*':p.n)+(fe?' · '+fe:'')+(i===paso?'\n\u25B2 _acá estamos_':'');
-    }).join('\n\n')+'\n\n_'+EXPLICA[e]+'_';
+    var e=etapaDe(t.estado),paso={registrado:1,gestion:2,respuesta:2,solucionado:3,cancelado:0}[e];
+    return '*Estado:* '+etapaNombre(e)+(paso?' (paso '+paso+' de 3)':'')+'\n'+EXPLICA[e];
   }
   var FIRMA='\n\nTrento';
   function fechaDeriv(t){return t.derivadoEl||ultimoMov(t)}
   var MENSAJES=[
     {k:'recepcion',l:'Recepción',para:'sol',f:function(t){
-      return saludo(t)+'\nRecibí tu pedido de soporte.\nQueda registrado con el *Caso: '+codigo(t)+'*\n\n* *Problemática:* '+resumen(t)+'\n* *Tipo:* '+(t.tipo||'—')+'\n* *Prioridad:* '+prio(t.prioridad).l+'\n* *Fecha:* '+fmtDT(t.pedidoEl||new Date())+'\n\n\n'+linea(t)+FIRMA;}},
+      return saludo(t)+'\nRecibí tu pedido de soporte.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+'\n*Tipo:* '+(t.tipo||'-')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n*Fecha:* '+fmtDT(t.pedidoEl||new Date())+'\n\n'+linea(t)+FIRMA;}},
     {k:'estado',l:'Avance',para:'sol',f:function(t){
       var n=ultimaNota(t),e=etapaDe(t.estado);
-      return saludo(t)+'\nTe escribo con novedades de tu *Caso: '+codigo(t)+'*\n\n* *Problemática:* '+resumen(t)+(n?'\n* *Novedad:* '+n:'')+'\n\n\n'+linea(t)+(e==='respuesta'?'\n\nRespondeme por acá y seguimos con tu pedido.':'')+FIRMA;}},
+      return saludo(t)+'\nTe escribo con novedades de tu caso.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+(n?'\n*Novedad:* '+n:'')+'\n\n'+linea(t)+(e==='respuesta'?'\nRespondeme por acá y seguimos.':'')+FIRMA;}},
     {k:'recordatorio',l:'Recordatorio',para:'sol',f:function(t){
       var n=ultimaNota(t);
-      return saludo(t)+'\nTe recuerdo que tu *Caso: '+codigo(t)+'* está esperando tu respuesta para poder avanzar.\n\n* *Problemática:* '+resumen(t)+(n?'\n* *Lo que necesitamos:* '+n:'')+'\n\n¿Me respondés cuando puedas? ¡Gracias!'+FIRMA;}},
+      return saludo(t)+'\nTu caso está esperando tu respuesta para poder avanzar.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+(n?'\n*Lo que necesitamos:* '+n:'')+'\n\n¿Me respondés cuando puedas? Gracias.'+FIRMA;}},
     {k:'cerrado',l:'Cierre',para:'sol',f:function(t){
       var canc=etapaDe(t.estado)==='cancelado';
-      return saludo(t)+'\nTu *Caso: '+codigo(t)+'* quedó *'+(canc?'cancelado':'solucionado')+'*.\n\n* *Problemática:* '+resumen(t)+(t.solucion?'\n* *'+(canc?'Motivo':'Solución')+':* '+t.solucion:'')+'\n* *Fecha de cierre:* '+fmtDT(cerrado(t)||new Date())+'\n\n\n'+linea(t)+'\n\n'+(canc?'Si lo necesitás de nuevo, escribime mencionando el caso '+codigo(t)+'.':'¿Podés confirmarme que ya funciona? Si vuelve a pasar, escribime mencionando el caso '+codigo(t)+'.')+FIRMA;}},
+      return saludo(t)+'\nTu caso quedó '+(canc?'cancelado':'solucionado')+'.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+(t.solucion?'\n*'+(canc?'Motivo':'Solución')+':* '+t.solucion:'')+'\n*Fecha de cierre:* '+fmtDT(cerrado(t)||new Date())+'\n\n'+(canc?'Si lo necesitás de nuevo, escribime mencionando el caso '+codigo(t)+'.':'¿Me confirmás que ya funciona? Si vuelve a pasar, escribime mencionando el caso '+codigo(t)+'.')+FIRMA;}},
     {k:'tango',l:'Proveedor',para:'prov',f:function(t){
       if(t.estado==='enviado'&&!t._nuevo)return 'Hola, les escribo de Trento por la *Ref. '+codigo(t)+'*, que les derivé el '+fmtDT(fechaDeriv(t))+'.\n*Problemática:* '+resumen(t)+'\n\n¿Tienen novedades? ¡Gracias!';
       return 'Hola, les escribo de Trento. *Ref. '+codigo(t)+'*\n*Sistema:* '+prov(t)+'\n*Tipo:* '+(t.tipo||'—')+'\n*Problemática:* '+(queSucede(t)||'—')+(t.errorMsg?'\n*Error:* '+t.errorMsg:'')+((t.imgs&&t.imgs.length)?'\n(Les mando captura a continuación)':'')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n\nPor favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';}}
