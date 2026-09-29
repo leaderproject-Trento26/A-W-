@@ -104,9 +104,20 @@ Ejemplo: `fase2-productos.xlsx`.
 
 | Fase | Estado |
 |------|--------|
+| 0. Manuales | ✅ 30 manuales leídos y resumidos ([`MANUALES.md`](MANUALES.md)) |
 | 1. Mapa del sistema | 🟡 En curso (1 captura recibida) |
-| 2. Datos maestros | 🟡 Tipos de documento recibido |
-| 3. Documentos | ⚪ Pendiente |
-| 4. Producción | ⚪ Pendiente |
+| 2. Datos maestros | 🟡 Tipos de documento recibido; estructura conocida por los manuales |
+| 3. Documentos | 🟡 Flujo y estatus conocidos por los manuales; **falta confirmar el esquema de Trento** |
+| 4. Producción | 🟡 Conocida por los manuales; falta confirmar qué módulos tienen |
 | 5. Informes | ⚪ Pendiente |
-| 6. Preparación MCP | ⚪ Pendiente |
+| 6. Preparación MCP | 🟡 Motor (SQL Server), esquema (`SYSADM`) y tablas principales conocidos ([`MODELO-DATOS.md`](MODELO-DATOS.md)) |
+
+## Próximos pasos prioritarios (actualizado tras leer los manuales)
+1. **Documentación de tablas de la instalación.** En la PC donde está A+W, abre
+   **Inicio → Programas → Albat + Wirsam → Documentation**. Es el diccionario oficial de tablas y
+   campos, la pieza más valiosa para el MCP. Mándame lo que encuentres (PDF, captura de la carpeta, etc.).
+2. **Esquema de estatus.** Abre un pedido reciente que ya se haya entregado y mándame una captura
+   de su **historia** (en el pedido: Funciones → Historia). Así sé qué numeración de estatus usa Trento.
+3. **Expedición real.** Mándame capturas de *Datos básicos → Expedición → Rutas*, *Vehículos* y *Chofer*,
+   y de *Producción → Expedición → Lista de rutas*.
+4. Fase 1: Ayuda → Acerca de, y la lista de módulos.
