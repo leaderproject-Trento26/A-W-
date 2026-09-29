@@ -218,6 +218,19 @@ details.more .grid2{margin-top:10px}
 .row-wa.pend{background:var(--wa);color:#fff}
 .row-wa.pend:hover{filter:brightness(.95)}
 .row-wa.sin{border-color:var(--line);color:var(--muted)}
+.det{gap:12px}
+.det-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.det-top .spacer{flex:1}
+.det-caso{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.det .desc p{font-size:15px;line-height:1.5}
+.dt{display:grid;gap:2px;min-width:0}
+.dt>span{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.dt b{font-weight:600;overflow-wrap:anywhere}
+.dt p{white-space:pre-wrap;overflow-wrap:anywhere}
+.dt p.err{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+.det-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:480px){.det-grid{grid-template-columns:1fr}}
+.muted{color:var(--muted);font-weight:400}
 .row-al{font-size:12px;font-weight:700;color:var(--red);margin-top:2px}
 .al-box{background:var(--red-tint);border:1px solid var(--red-line);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--red-deep);display:grid;gap:4px}
 .linkbtn{background:none;border:0;padding:0;color:var(--red);font-weight:700;text-decoration:underline;text-underline-offset:2px;font-size:12.5px}
@@ -578,7 +591,8 @@ details.more .grid2{margin-top:10px}
       '<div class="panel-body">'+
       (alertas(t).length&&!ro?'<div class="al-box">'+alertas(t).map(function(a){return '<div>⚠ '+esc(a.l)+(a.tab?' <button type="button" class="linkbtn" data-tab="'+a.tab+'" data-go="1">Ver mensaje</button>':'')+'</div>'}).join('')+'</div>':'')+
       (hasWa&&sample&&!ro?'<div class="ai-row"><span class="grow">Claude puede completar la ficha leyendo el chat.</span><button type="button" class="btn wa sm" data-a="ai">Completar con Claude</button></div>':'')+
-      '<form class="sec" id="frm"><div class="grid2">'+
+      (nuevo?'':detalleHTML(t))+
+      '<form class="sec" id="frm"'+(nuevo?'':' hidden')+'>'+(nuevo?'':'<h3>Editar caso</h3>')+'<div class="grid2">'+
         field('Descripción del incidente',area('asunto',queSucede(t),'Describí qué intentabas hacer y qué ocurrió. Ej.: Al cargar un pedido, el sistema no actualiza su estado.'),{req:1,full:1,key:'asunto'})+
         field('Usuario solicitante',pedidoPorHTML(t),{req:1,key:'pedidoPor'})+
         field('Celular (para avisarle)',inp('celular',t.celular,'Se completa al elegir el nombre','tel'),{key:'celular'})+
@@ -606,7 +620,7 @@ details.more .grid2{margin-top:10px}
       '</div></aside></div>';
     $('#panel-root').innerHTML=html;document.body.style.overflow='hidden';
     if(nuevo&&t.pedidoPor)aplicarContacto(t.pedidoPor,false);
-    renderImgs();renderMsg();
+    renderImgs();renderDetImgs(t);renderMsg();
     if(nuevo&&!t.asunto){var a=$('#p-asunto');if(a)a.focus()}
     var frm=$('#frm');
     frm.addEventListener('submit',function(ev){ev.preventDefault();submit()});
@@ -647,6 +661,33 @@ details.more .grid2{margin-top:10px}
     var cel=$('#p-celular'),sec=$('#p-sector');
     if(cel&&c.c&&(pisar||!cel.value))cel.value=c.c;
     if(sec&&c.s&&SECTORES.indexOf(c.s)>=0&&(pisar||!sec.value))sec.value=c.s;
+  }
+  function detalleHTML(t){
+    var e=est(t.estado),p=prio(t.prioridad),cer=cerrado(t);
+    var fila=function(l,v,full){return v?'<div class="dt'+(full?' full':'')+'"><span>'+l+'</span><b>'+v+'</b></div>':''};
+    var cel=t.celular?esc(t.celular):'<i class="muted">Sin celular</i>';
+    return '<section class="sec det" id="detalle">'+
+      '<div class="det-top"><span class="det-caso">Caso '+codigo(t)+'</span>'+
+        (ro?'<span class="pill k-'+e.c+'">'+esc(e.l)+'</span>':'<span class="st-wrap k-'+e.c+'" style="border-radius:999px"><select class="st-sel k-'+e.c+'" data-st="'+esc(t.id)+'" aria-label="Estado">'+estOpts(t.estado)+'</select></span>')+
+        '<span class="prio p-'+p.k+'">Prioridad '+p.l+'</span><span class="spacer"></span>'+
+        (ro?'':'<button type="button" class="btn sm" data-a="edit">Editar</button>')+'</div>'+
+      '<div class="dt full desc"><span>Descripción del incidente</span><p>'+esc(queSucede(t)||'—')+'</p></div>'+
+      (t.errorMsg?'<div class="dt full"><span>Mensaje de error</span><p class="err">'+esc(t.errorMsg)+'</p></div>':'')+
+      ((t.imgs&&t.imgs.length)?'<div class="dt full"><span>Capturas ('+t.imgs.length+')</span><div class="imgs" id="d-imgs"></div></div>':'')+
+      '<div class="det-grid">'+
+        fila('Usuario solicitante',esc(t.pedidoPor||'—'))+fila('Celular',cel)+
+        fila('Sector',esc(t.sector||'—'))+fila('Tipo',esc(t.tipo||'—'))+
+        fila('Sistema / proveedor',esc(prov(t)))+fila('Cargado el',fmtDT(t.pedidoEl))+
+        (cer?fila('Cerrado el',fmtDT(cer)):'')+
+        fila('Días',String(dias(fecha(t),cer?cer.slice(0,10):null))+(cer?' (total)':' abierto'))+
+      '</div>'+
+      (t.solucion&&!isOpen(t)?'<div class="dt full"><span>Solución</span><p>'+esc(t.solucion)+'</p></div>':'')+
+    '</section>';
+  }
+  function renderDetImgs(t){
+    var box=$('#d-imgs');if(!box)return;
+    box.innerHTML=(t.imgs||[]).map(function(id){return '<span class="thumb"><img alt="Captura" data-view="'+esc(id)+'"></span>'}).join('');
+    (t.imgs||[]).forEach(function(id){getImg(id).then(function(src){var im=box.querySelector('img[data-view="'+id+'"]');if(im&&src)im.src=src}).catch(function(){})});
   }
   function renderImgs(){
     var box=$('#imgs');if(!box)return;
@@ -910,6 +951,7 @@ details.more .grid2{margin-top:10px}
     var t=findItem(s.dataset.st);if(!t)return;
     var u=withEstado(t,s.value);
     save(u).then(function(){
+      if(openId===u.id){openTicket(findItem(u.id)||u);toast(codigo(u)+' → '+est(u.estado).l+'. Avisale con el mensaje de abajo.');var wt=$('#wa-txt');if(wt)wt.scrollIntoView({behavior:'smooth',block:'center'});return}
       var txt=avisoTexto(u),link=waLink(u.celular,txt);
       toast(codigo(u)+' → '+est(u.estado).l,link?'Avisar por WhatsApp':'Copiar aviso',function(){var w=null;if(link){try{w=window.open(link,'_blank')}catch(e){}}if(!w)copy(txt);var cur=findItem(u.id);if(cur){var v=Object.assign({},cur);v.avisar=false;v.log=(cur.log||[]).concat([{t:new Date().toISOString(),tipo:'sys',txt:'Aviso al solicitante · '+(isOpen(u)?'Cambio de estado':'Cerrado')}]);save(v).catch(function(){})}});
     },function(){render()});
@@ -963,6 +1005,7 @@ details.more .grid2{margin-top:10px}
     if(b.dataset.rm){estDraft.splice(+b.dataset.rm,1);renderEstados();return}
     var a=b.dataset.a;
     if(a==='close'){if(aiCtl)aiCtl.abort();if(draft&&draft._nuevo)(draft.imgs||[]).forEach(delImg);closePanel();return}
+    if(a==='edit'){$('#detalle').hidden=true;var fr=$('#frm');fr.hidden=false;var pa=$('#p-asunto');if(pa)pa.focus();return}
     if(a==='copy'){copy($('#wa-txt').textContent);if(!ro&&draft&&!draft._nuevo)registrarEnvio(waTab);return}
     if(a==='ai'){completarIA(b);return}
     if(a==='del'){$('#del-slot').innerHTML='<span class="confirm">¿Borrar? <button type="button" class="btn danger sm" data-a="del-yes">Sí</button><button type="button" class="btn sm" data-a="del-no">No</button></span>';return}
