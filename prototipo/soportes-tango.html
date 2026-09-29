@@ -592,7 +592,7 @@ details.more .grid2{margin-top:10px}
     if(!CONTACTOS.length)otro=true;
     return '<select class="inp" id="p-pedidoSel"'+(ro?' disabled':'')+'>'+
       '<option value="">Elegí tu nombre…</option>'+
-      CONTACTOS.map(function(c){return '<option value="'+esc(c.n)+'"'+(enLista&&buscarContacto(cur)===c?' selected':'')+'>'+esc(c.n)+(c.s?' · '+esc(c.s):'')+'</option>'}).join('')+
+      CONTACTOS.map(function(c){return '<option value="'+esc(c.n)+'"'+(enLista&&buscarContacto(cur)===c?' selected':'')+'>'+esc(c.n)+'</option>'}).join('')+
       '<option value="__otro"'+(otro?' selected':'')+'>Otra persona (escribir)…</option></select>'+
       '<input class="inp" id="p-pedidoPor" value="'+esc(cur)+'" placeholder="Nombre y apellido"'+(otro?'':' hidden')+(ro?' disabled':'')+' style="margin-top:6px">';
   }
