@@ -455,7 +455,7 @@ details.more .grid2{margin-top:10px}
   function alertas(t){
     if(!t||t._nuevo)return [];
     var a=[],open=isOpen(t),mov=horasDesde(ultimoMov(t)),alta=horasDesde(t.pedidoEl);
-    if(t.avisar)a.push({k:'avisar',l:'Falta avisarle a '+((t.pedidoPor||'').split(/\s+/)[0]||'quien lo pidió'),tab:open?(t.estado===(ESTADOS[0]||{}).k?'recepcion':'estado'):'cerrado'});
+    if(t.avisar)a.push({k:'avisar',l:'Falta avisarle a '+((t.pedidoPor||'').split(/\s+/)[0]||'quien lo pidió'),tab:open?((t.log||[]).some(function(l){return /^Aviso al solicitante/.test(l.txt||'')})?'estado':'recepcion'):'cerrado'});
     if(open&&t.estado===(ESTADOS[0]||{}).k&&alta>LIMITES.sinRevisar)a.push({k:'sinrevisar',l:'Sin revisar hace '+hace(alta)});
     if(open&&t.estado==='enviado'&&mov>LIMITES.proveedor)a.push({k:'proveedor',l:'El proveedor no responde hace '+hace(mov),tab:'tango'});
     if(open&&t.estado==='nuestra'&&mov>LIMITES.solicitante)a.push({k:'solicitante',l:'El solicitante no responde hace '+hace(mov),tab:'recordatorio'});
@@ -906,6 +906,16 @@ details.more .grid2{margin-top:10px}
     if(b.dataset.a==='c-bulk'){bulkContactos();return}
     if(b.dataset.a==='c-save'){contactosGo();return}
     if(b.id==='btn-csv'){csv();return}
+    if(b.classList.contains('al-chip')&&b.dataset.est.indexOf('al:')===0){
+      var ak=b.dataset.est.slice(3),conAl=items.filter(function(t){return alertas(t).some(function(a){return a.k===ak})});
+      if(conAl.length===1){ // un solo caso: lo abro directo en el mensaje que corresponde
+        var tt=conAl[0],al=alertas(tt).filter(function(a){return a.k===ak})[0];
+        openTicket(tt);if(al&&al.tab){waTab=al.tab;renderMsg();var wt=$('#wa-txt');if(wt)setTimeout(function(){wt.scrollIntoView({behavior:'smooth',block:'center'})},50)}
+        return;
+      }
+      filt.est=b.dataset.est;render();var ls=$('.list');if(ls)ls.scrollIntoView({behavior:'smooth',block:'start'});
+      toast('Mostrando '+conAl.length+' casos con esta alerta. Tocá uno para resolverla.');return;
+    }
     if(b.dataset.est){filt.est=b.dataset.est;render();return}
     if(b.dataset.tab){waTab=b.dataset.tab;renderMsg();if(b.dataset.go){var ww=$('#wa-txt');if(ww)ww.scrollIntoView({behavior:'smooth',block:'center'})}return}
     if(b.dataset.rmimg){var i=draft.imgs.indexOf(b.dataset.rmimg);if(i>=0){var rid=draft.imgs.splice(i,1)[0];var saved=findItem(draft.id);if(!saved||(saved.imgs||[]).indexOf(rid)<0)delImg(rid)}renderImgs();renderMsg();return}
