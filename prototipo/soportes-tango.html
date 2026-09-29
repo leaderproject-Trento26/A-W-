@@ -231,6 +231,7 @@ details.more .grid2{margin-top:10px}
 .det-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;border-top:1px solid var(--line);padding-top:10px}
 @media (max-width:480px){.det-grid{grid-template-columns:1fr}}
 .muted{color:var(--muted);font-weight:400}
+.ver{background:none;border:0;padding:0;margin-top:3px;color:var(--red);font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:2px;text-align:left;cursor:pointer}
 .row-al{font-size:12px;font-weight:700;color:var(--red);margin-top:2px}
 .al-box{background:var(--red-tint);border:1px solid var(--red-line);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--red-deep);display:grid;gap:4px}
 .linkbtn{background:none;border:0;padding:0;color:var(--red);font-weight:700;text-decoration:underline;text-underline-offset:2px;font-size:12.5px}
@@ -472,7 +473,7 @@ details.more .grid2{margin-top:10px}
     var meta=[t.sector,t.pedidoPor,prov(t)].filter(Boolean).join(' · ')+((t.imgs&&t.imgs.length)?' · 📎 '+t.imgs.length:'');
     var sel=(ej||ro)?'<span class="pill k-'+e.c+'">'+esc(e.l)+'</span>':'<span class="st-wrap k-'+e.c+'" style="border-radius:999px"><select class="st-sel k-'+e.c+'" data-st="'+esc(t.id)+'" aria-label="Estado de '+codigo(t)+'">'+estOpts(t.estado)+'</select></span>';
     return '<div class="row'+(ej?' example':'')+'" data-id="'+esc(t.id)+'"'+(ej?' data-ej="1"':'')+' tabindex="0" role="button">'+
-      '<div class="c-id"><span class="id">'+codigo(t)+'</span><span class="date">'+(ej?'<span class="tag-ej">EJEMPLO</span>':fmtD(fecha(t)))+'</span></div>'+
+      '<div class="c-id"><span class="id">'+codigo(t)+'</span><span class="date">'+(ej?'<span class="tag-ej">EJEMPLO</span>':fmtD(fecha(t)))+'</span>'+(ej?'':'<button type="button" class="ver" data-ver="'+esc(t.id)+'">Ver caso ›</button>')+'</div>'+
       '<div class="c-main"><div class="subj">'+esc(queSucede(t)||'(sin descripción)')+'</div><div class="meta">'+esc(meta)+'</div>'+(ej?'':alertas(t).map(function(a){return '<div class="row-al">⚠ '+esc(a.l)+'</div>'}).join(''))+'</div>'+
       '<div class="c-st">'+sel+'</div>'+
       '<div class="c-pr"><span class="prio p-'+p.k+'">'+p.l+'</span></div>'+
@@ -689,6 +690,14 @@ details.more .grid2{margin-top:10px}
     box.innerHTML=(t.imgs||[]).map(function(id){return '<span class="thumb"><img alt="Captura" data-view="'+esc(id)+'"></span>'}).join('');
     (t.imgs||[]).forEach(function(id){getImg(id).then(function(src){var im=box.querySelector('img[data-view="'+id+'"]');if(im&&src)im.src=src}).catch(function(){})});
   }
+  function abrirCaso(id){
+    var t=findItem(id);
+    if(!t){toast('No encontré ese caso. Recargá la página.');return}
+    try{openTicket(t);var pn=document.querySelector('.panel');if(pn)pn.scrollTop=0}
+    catch(e){mostrarError('No se pudo abrir el caso '+codigo(t)+': '+(e&&e.message||e))}
+  }
+  function mostrarError(m){var n=$('#notice');n.hidden=false;n.textContent=m+' — Mandale este texto a quien administra el tablero.';try{console.error(m)}catch(e){}}
+  window.addEventListener('error',function(ev){mostrarError('Error en la página: '+(ev.message||'desconocido'))});
   function renderImgs(){
     var box=$('#imgs');if(!box)return;
     box.innerHTML=draft.imgs.map(function(id){return '<span class="thumb" data-img="'+esc(id)+'"><img alt="Captura" data-view="'+esc(id)+'">'+(ro?'':'<button type="button" class="rm" data-rmimg="'+esc(id)+'" aria-label="Quitar imagen">✕</button>')+'</span>'}).join('')||(ro?'<span>Sin capturas</span>':'');
@@ -973,9 +982,11 @@ details.more .grid2{margin-top:10px}
     if(av){var ta=findItem(av.dataset.aviso);if(ta)registrarEnvio(av.dataset.k,ta);toast('Se abrió el chat de WhatsApp. Enviá el mensaje desde ahí.');return}
     var sc=ev.target.closest('[data-sincel]');
     if(sc){var ts=findItem(sc.dataset.sincel);if(ts){openTicket(ts);var ce=$('#p-celular');if(ce){ce.focus();ce.scrollIntoView({block:'center'})}toast('Cargá el celular y guardá: después vas a poder avisarle con un toque.')}return}
+    var vb=ev.target.closest('[data-ver]');
+    if(vb){abrirCaso(vb.dataset.ver);return}
     if(row&&!ev.target.closest('button')){
       if(row.dataset.ej){toast('Es un ejemplo. Cargá el primer caso con “+ Nuevo”.');return}
-      var t=findItem(row.dataset.id);if(t)openTicket(t);return;
+      abrirCaso(row.dataset.id);return;
     }
     var b=ev.target.closest('button');if(!b)return;
     if(b.id==='toast-btn'){if(toastFn)toastFn();$('#toast').hidden=true;return}
