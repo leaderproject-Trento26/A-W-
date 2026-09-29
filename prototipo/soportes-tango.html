@@ -383,6 +383,7 @@ details.more .grid2{margin-top:10px}
     var out=Object.assign({},t);if(t.estado===k)return out;
     out.estado=k;out.log=(t.log||[]).concat([{t:new Date().toISOString(),tipo:'sys',txt:'Estado: '+est(t.estado).l+' → '+est(k).l}]);
     out.avisar=true;if(k==='enviado')out.derivadoEl=new Date().toISOString();
+    out.etapas=Object.assign({},t.etapas||{});var eg=etapaDe(k);if(!out.etapas[eg])out.etapas[eg]=new Date().toISOString();
     if(est(k).abierto===false){if(est(t.estado).abierto!==false||!out.cerradoEl)out.cerradoEl=localDT(new Date())}
     else{out.cerradoEl='';out.resueltoEl=''}
     return out;
@@ -478,13 +479,21 @@ details.more .grid2{margin-top:10px}
   var ETAPA_DEF={porenviar:'registrado',analisis:'gestion',enviado:'gestion',nuestra:'respuesta',resuelto:'solucionado',cancelado:'cancelado'};
   function etapaDe(k){var e=est(k);return e.etapa||ETAPA_DEF[k]||(e.abierto===false?'solucionado':'gestion')}
   function etapaNombre(k){for(var i=0;i<ETAPAS.length;i++)if(ETAPAS[i].k===k)return ETAPAS[i].l;return k}
+  /* ciclo de vida que ve el solicitante: una etapa por renglón, con fecha y "acá estamos" */
+  var EXPLICA={registrado:'Ya está en mi lista para revisarlo.',gestion:'Estoy trabajando en tu pedido.',respuesta:'Necesito un dato tuyo para poder seguir.',solucionado:'Tu pedido quedó resuelto.',cancelado:'El pedido se cerró sin cambios.'};
+  function fCorta(v){if(!v)return '';var d=new Date(v);if(isNaN(d))return '';return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
   function linea(t){
-    var e=etapaDe(t.estado),paso={registrado:0,gestion:1,respuesta:1,solucionado:2,cancelado:2}[e];
-    var nombres=['Registrado',e==='respuesta'?'Necesito tu respuesta':'En gestión',e==='cancelado'?'Cancelado':'Solucionado'];
-    return nombres.map(function(n,i){
-      var ic=i<paso?'✅':i>paso?'⚪':(e==='respuesta'?'🟠':e==='cancelado'?'❌':(i===1?'🔵':'✅'));
-      return ic+' '+(i===paso?'*'+n+'*':n);
-    }).join('  ›  ');
+    var e=etapaDe(t.estado),paso={registrado:0,gestion:1,respuesta:1,solucionado:2,cancelado:2}[e],et=t.etapas||{};
+    var pasos=[
+      {n:'Registrado',f:t.pedidoEl||new Date()},
+      {n:e==='respuesta'?'Necesito tu respuesta':'En gestión',f:et.gestion||et.respuesta||(paso>=1?et[e]:'')},
+      {n:e==='cancelado'?'Cancelado':'Solucionado',f:paso===2?(cerrado(t)||new Date()):''}
+    ];
+    var cur={registrado:'✅',gestion:'🔵',respuesta:'🟠',solucionado:'✅',cancelado:'❌'}[e];
+    return '📍 *Estado de tu caso*\n'+pasos.map(function(p,i){
+      var ic=i<paso?'✅':i>paso?'⚪':cur,fe=i<=paso?fCorta(p.f):'';
+      return ic+' '+(i===paso?'*'+p.n+'*':p.n)+(fe?' · '+fe:'')+(i===paso?'  👈 _acá estamos_':'');
+    }).join('\n')+'\n_'+EXPLICA[e]+'_';
   }
   var FIRMA='\n_Mesa de Soporte · Trento_';
   function fechaDeriv(t){return t.derivadoEl||ultimoMov(t)}
@@ -493,7 +502,7 @@ details.more .grid2{margin-top:10px}
       return saludo(t)+' 👋 Recibí tu pedido de soporte.\nQueda registrado con el *Caso: '+codigo(t)+'*\n*Problemática:* '+resumen(t)+'\n*Tipo:* '+(t.tipo||'—')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n*Fecha:* '+fmtDT(t.pedidoEl||new Date())+'\n\n'+linea(t)+'\n\nLo gestiono y te aviso por acá cuando haya novedades. Si tenés más datos o capturas, respondé este mensaje.'+FIRMA;}},
     {k:'estado',l:'Avance',para:'sol',f:function(t){
       var n=ultimaNota(t),e=etapaDe(t.estado);
-      return saludo(t)+' Novedades de tu *Caso: '+codigo(t)+'*\n*Problemática:* '+resumen(t)+'\n\n'+linea(t)+(n?'\n\n*Novedad:* '+n:'')+'\n\n'+(e==='respuesta'?'Para avanzar necesito que me respondas este mensaje.':'Te sigo avisando por acá.')+FIRMA;}},
+      return saludo(t)+' Novedades de tu *Caso: '+codigo(t)+'*\n*Problemática:* '+resumen(t)+'\n\n'+linea(t)+(n?'\n\n*Novedad:* '+n:'')+'\n\n'+(e==='respuesta'?'Respondeme por acá y sigo con tu pedido.':'Te sigo avisando por acá.')+FIRMA;}},
     {k:'recordatorio',l:'Recordatorio',para:'sol',f:function(t){
       var n=ultimaNota(t);
       return saludo(t)+' Te recuerdo que tu *Caso: '+codigo(t)+'* ('+resumen(t)+') está esperando tu respuesta para poder avanzar.'+(n?'\n*Lo que necesito:* '+n:'')+'\n\n¿Me respondés cuando puedas? ¡Gracias!'+FIRMA;}},
