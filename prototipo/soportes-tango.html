@@ -520,9 +520,9 @@ details.more .grid2{margin-top:10px}
   }
 
   /* ---------- mensajes de WhatsApp ---------- */
-  function saludo(t){var n=(t.pedidoPor||'').trim().split(/\s+/)[0];return 'Hola'+(n?' '+n:'')+'!'}
+  function saludo(t){var n=(t.pedidoPor||'').trim().split(/\s+/)[0];return 'Hola'+(n?' '+n:'')+'.'}
   function ultimaNota(t){var n=(t.log||[]).filter(function(l){return l.tipo==='nota'}).sort(function(a,b){return new Date(b.t)-new Date(a.t)})[0];return n?n.txt:''}
-  var ETAPAS=[{k:'registrado',l:'Registrado'},{k:'gestion',l:'En gestión'},{k:'respuesta',l:'Necesito tu respuesta'},{k:'solucionado',l:'Solucionado'},{k:'cancelado',l:'Cancelado'}];
+  var ETAPAS=[{k:'registrado',l:'Registrado'},{k:'gestion',l:'En gestión'},{k:'respuesta',l:'Necesito tu respuesta'},{k:'solucionado',l:'Resuelto'},{k:'cancelado',l:'Cancelado'}];
   var ETAPA_DEF={porenviar:'registrado',analisis:'gestion',enviado:'gestion',nuestra:'respuesta',resuelto:'solucionado',cancelado:'cancelado'};
   function etapaDe(k){var e=est(k);return e.etapa||ETAPA_DEF[k]||(e.abierto===false?'solucionado':'gestion')}
   function etapaNombre(k){for(var i=0;i<ETAPAS.length;i++)if(ETAPAS[i].k===k)return ETAPAS[i].l;return k}
@@ -533,20 +533,19 @@ details.more .grid2{margin-top:10px}
     var e=etapaDe(t.estado),paso={registrado:1,gestion:2,respuesta:2,solucionado:3,cancelado:0}[e];
     return '*Estado:* '+etapaNombre(e)+(paso?' (paso '+paso+' de 3)':'')+'\n'+EXPLICA[e];
   }
-  var FIRMA='\n\nTrento';
+  var FIRMA='\n\nSoporte Interno · Trento';
   function fechaDeriv(t){return t.derivadoEl||ultimoMov(t)}
   var MENSAJES=[
     {k:'recepcion',l:'Recepción',para:'sol',f:function(t){
-      return saludo(t)+'\nRecibí tu pedido de soporte.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+'\n*Tipo:* '+(t.tipo||'-')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n*Fecha:* '+fmtDT(t.pedidoEl||new Date())+'\n\n'+linea(t)+FIRMA;}},
-    {k:'estado',l:'Avance',para:'sol',f:function(t){
-      var n=ultimaNota(t),e=etapaDe(t.estado);
-      return saludo(t)+'\nTe escribo con novedades de tu caso.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+(n?'\n*Novedad:* '+n:'')+'\n\n'+linea(t)+(e==='respuesta'?'\nRespondeme por acá y seguimos.':'')+FIRMA;}},
+      return saludo(t)+' Recibimos tu pedido.\n*Caso:* '+codigo(t)+'\n*Estado:* '+etapaNombre(etapaDe(t.estado))+'\nTe avisamos por acá cada cambio.'+FIRMA;}},
+    {k:'estado',l:'Cambio de estado',para:'sol',f:function(t){
+      var e=etapaDe(t.estado);
+      return saludo(t)+' Actualización de tu *Caso '+codigo(t)+'*.\n*Estado:* '+etapaNombre(e)+(e==='respuesta'?'\nNecesitamos tu respuesta para seguir.':'')+FIRMA;}},
     {k:'recordatorio',l:'Recordatorio',para:'sol',f:function(t){
-      var n=ultimaNota(t);
-      return saludo(t)+'\nTu caso está esperando tu respuesta para poder avanzar.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+(n?'\n*Lo que necesitamos:* '+n:'')+'\n\n¿Me respondés cuando puedas? Gracias.'+FIRMA;}},
+      return saludo(t)+' Tu *Caso '+codigo(t)+'* espera tu respuesta para seguir.'+FIRMA;}},
     {k:'cerrado',l:'Cierre',para:'sol',f:function(t){
       var canc=etapaDe(t.estado)==='cancelado';
-      return saludo(t)+'\nTu caso quedó '+(canc?'cancelado':'solucionado')+'.\n\n*Caso:* '+codigo(t)+'\n*Problemática:* '+resumen(t)+(t.solucion?'\n*'+(canc?'Motivo':'Solución')+':* '+t.solucion:'')+'\n*Fecha de cierre:* '+fmtDT(cerrado(t)||new Date())+'\n\n'+(canc?'Si lo necesitás de nuevo, escribime mencionando el caso '+codigo(t)+'.':'¿Me confirmás que ya funciona? Si vuelve a pasar, escribime mencionando el caso '+codigo(t)+'.')+FIRMA;}},
+      return saludo(t)+' Tu *Caso '+codigo(t)+'* quedó *'+(canc?'Cancelado':'Resuelto')+'*.'+(t.solucion?'\n*'+(canc?'Motivo':'Solución')+':* '+t.solucion:'')+FIRMA;}},
     {k:'tango',l:'Proveedor',para:'prov',f:function(t){
       if(t.estado==='enviado'&&!t._nuevo)return 'Hola, les escribo de Trento por la *Ref. '+codigo(t)+'*, que les derivé el '+fmtDT(fechaDeriv(t))+'.\n*Problemática:* '+resumen(t)+'\n\n¿Tienen novedades? ¡Gracias!';
       return 'Hola, les escribo de Trento. *Ref. '+codigo(t)+'*\n*Sistema:* '+prov(t)+'\n*Tipo:* '+(t.tipo||'—')+'\n*Problemática:* '+(queSucede(t)||'—')+(t.errorMsg?'\n*Error:* '+t.errorMsg:'')+((t.imgs&&t.imgs.length)?'\n(Les mando captura a continuación)':'')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n\nPor favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';}}
