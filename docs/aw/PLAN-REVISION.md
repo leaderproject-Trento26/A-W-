@@ -30,7 +30,7 @@ se puede asociar a su tabla, y el MCP sale casi solo.
 | **1. Relevamiento por área** | Aplicar la plantilla en Ventas, Producción y Logística | Una ficha por área en `relevamiento/` | ▶️ Siguiente |
 | **2. Prueba de conexión (solo lectura)** | Conectarse a `TRENTO_BA` y listar tablas | Confirmar el acceso y la lista real de tablas | ⚪ |
 | **3. Diagnóstico y mejoras** | Cruzar las fichas: brechas, retrabajos, datos que faltan | Informe de hallazgos y plan de mejoras priorizado | ⚪ |
-| **4. Integración con Tango** | Entender qué pasa entre A+W y Tango (facturación, contabilidad) | Mapa del flujo A+W ↔ Tango | ⚪ (espera contexto) |
+| **4. Integración con Tango** | Relevar Administración con la ficha `relevamiento/administracion-tango.md`: qué pasa entre A+W y Tango | Mapa del flujo A+W ↔ Tango | 🟡 Ficha y hoja lista; falta entrevista y contexto de Tango |
 | **5. MCP de solo lectura** | Construir el MCP con las preguntas que salieron del relevamiento | MCP funcionando en la red de Trento | ⚪ |
 | **6. Trento Entregas con datos reales** | Conectar el prototipo a los pedidos 540 (listos para envío) | App con datos reales | ⚪ (opcional) |
 
@@ -78,7 +78,12 @@ Tú prefieres que yo te diga en cada caso qué hace falta. Esta es la regla:
 - [ ] **Sesión 4:** ficha de **Ventas** (preparar, entrevistar y cargar).
 - [ ] **Sesión 5:** prueba de conexión a `TRENTO_BA` (listar tablas).
 - [ ] **Sesión 6:** diagnóstico cruzado y plan de mejoras.
-- [ ] Cuando esté disponible: contexto de **Tango** (Administración).
+- [ ] **Sesión extra:** entrevista con **Administración**, sobre la integración A+W ↔ Tango.
+  Hoja: `relevamiento/imprimir/entrevista-administracion-tango.pdf`.
+- [ ] Cuando esté disponible: contexto de **Tango** (versión, módulos, quién lo administra).
+
+Las **hojas para imprimir** de las 4 áreas están en `relevamiento/imprimir/`. Si un área no está disponible,
+se pasa a la siguiente.
 
 ## Pendientes sueltos (se resuelven durante el relevamiento)
 - Lista completa de estatus de Trento: **Datos básicos → Documentos → Gestión de estatus**.

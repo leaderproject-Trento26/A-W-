@@ -45,8 +45,13 @@ Todo lo que se revise ahora (exports, capturas, diccionario de datos) debe servi
   `docs/aw/relevamiento/PLANTILLA.md`, 3) proponer mejoras, 4) conectar (base de datos y luego MCP).
   La hoja de ruta está en `docs/aw/PLAN-REVISION.md`.
 - **Áreas en A+W:** Ventas, Producción y Logística.
-- **Administración trabaja en Tango**, fuera de A+W. La usuaria dará ese contexto más adelante;
-  guardarlo en `docs/aw/` cuando llegue.
+- **Administración trabaja en Tango**, fuera de A+W. Se releva como 4.ª área, centrada en la **integración
+  A+W ↔ Tango**: `docs/aw/relevamiento/administracion-tango.md`.
+  - Lo que se sabe: estatus 235/240 "Transmitir/Importado a Tango" antes de producción, y 800 contabilidad.
+  - Hay sesiones de pagos (Import./export. Pagos, Recibos bancarios, Pagos a cuenta) y "Factura TPS".
+  - La usuaria dará más contexto de Tango; guardarlo en esa ficha.
+- Hojas imprimibles de las 4 áreas: `docs/aw/relevamiento/imprimir/`. La usuaria trabaja en papel cuando
+  no tiene la computadora.
 - Tiene permiso para **leer la base de datos**, pero todavía no se conectó. Lo validamos cuando lleguemos a esa etapa.
 - Forma de conexión: **Claude le indica en cada momento qué hace falta** (captura, export, Computer use o
   Claude Code local).
