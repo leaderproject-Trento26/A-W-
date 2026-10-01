@@ -12,8 +12,11 @@ Página: https://claude.ai/artifact/9bQmPtcfSfxrLfPiNY6R2L
 - Campo "Acceso hasta" (opcional) en accesos y usuarios de Tango, con aviso de vencimiento.
 - Áreas: se agregó "Tecnología y Desarrollo".
 - Sistemas de gestión: AW y Tango. Se agregó la opción "RRHH" (sistema y categoría) por el momento.
+- Pestaña "Infraestructura" (solo administradores): proveedores, red y servidores, acceso remoto y relojes. Las contraseñas se cargan solo cifradas en la bóveda desde la página; nunca en este repositorio.
 
 ## Pendientes
+
+- [ ] URGENTE: cambiar la contraseña compartida de router y servidores, y la de AnyDesk (se compartieron en texto plano en el chat). Usar contraseñas distintas por equipo y cargarlas en la bóveda.
 
 - [ ] El usuario va a pasar más campos posibles para tener en cuenta.
 - [ ] Sección "Backups" (seguimiento del backup en la nube de Nexo).
