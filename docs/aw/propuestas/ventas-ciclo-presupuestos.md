@@ -29,6 +29,19 @@ y los indicadores. Eso sí conviene construirlo, leyendo los datos de A+W.
 
 📸 En el menú de Trento ya existe **"Control de ofertas"**: hay que ver qué muestra hoy.
 
+## Personas
+| Persona | Rol | Qué hace en el ciclo del presupuesto |
+|---|---|---|
+| **Javier** | Vendedor | Carga y mueve sus presupuestos |
+| **Miguel** | Vendedor | Carga y mueve sus presupuestos |
+| **Otto** | Líder o Jefe de Ventas (también vende) | Carga presupuestos, define reglas operativas, optimización y rentabilidad |
+| **Sebastián** | Gerente de Ventas | Autoriza descuentos de más del 20 %, recibe la lista de precios, usa el tablero |
+| **Luciana** | Seguimiento de presupuestos y carga de listas de precios | Sigue el ciclo de vida de cada presupuesto y carga los aumentos trimestrales |
+| **Milena** | Administradora de A+W y nexo entre Trento y A+W | Configura estatus, usuarios y permisos; lidera la adopción; construye el tablero con Claude |
+
+**Principio acordado 🗣️:** todo se maneja **por el sistema**. Luciana hace el seguimiento desde A+W y los
+vendedores pueden **ver** el estado de sus presupuestos. Los roles y permisos se ajustan después, por usuario.
+
 ## Responsables (matriz)
 Cada punto tiene tres tipos de responsabilidad:
 - **Opera:** lo hace en el día a día.
@@ -37,19 +50,32 @@ Cada punto tiene tres tipos de responsabilidad:
 
 | # | Qué | A+W | Opera (día a día) | Define / aprueba | Configura en A+W | Seguimiento |
 |---|---|---|---|---|---|---|
-| 1 | Registrar todo presupuesto como **Oferta** | ✅ | **Vendedores** ❓ quiénes | **Otto** (Jefe de Ventas): regla "todo presupuesto va a A+W" | No requiere | **Milena** (adopción) |
-| 2 | Estados: en revisión, presentado, aceptado, rechazado, vencido | ✅ | Vendedores | **Sebastián + Otto** acuerdan los estados | **Administrador de A+W** ❓ | Milena |
-| 3 | Ver cuándo y quién cambió cada estado (historia) | ✅ | Consultan **Otto** y **Sebastián** | No aplica | No requiere | Milena verifica que se registre |
-| 4 | Motivo obligatorio al rechazar | ✅ | Vendedores | **Otto** define la lista de motivos | Administrador de A+W ❓ | Milena |
-| 5 | Descuentos mayores al 20 % solo con autorización | 🟡 | El vendedor pasa la oferta a "pendiente de autorización" | **Sebastián** (Gerente de Ventas) aprueba | Administrador de A+W ❓ (estatus y permisos) | Milena |
-| 6 | Marcar "Vencido" automáticamente | 🟡 | Automático, o el vendedor | **Otto** define los días de validez | Administrador de A+W ❓. **Verificar con el proveedor** si la licencia incluye WorkFlow | Milena |
-| 7 | Canal de contacto (llamada, visita, web…) | 🟡 | Vendedores, al dar de alta al cliente | **Sebastián** define la lista de canales | Administrador de A+W ❓ (clasificador) | Milena |
+| 1 | Registrar todo presupuesto como **Oferta** | ✅ | **Javier, Miguel, Otto** | **Otto**: regla "todo presupuesto va a A+W" | No requiere | **Luciana** controla que estén todos cargados |
+| 2 | Estados: en revisión, presentado, aceptado, rechazado, vencido | ✅ | Javier, Miguel, Otto | **Sebastián + Otto** acuerdan los estados | **Milena** | **Luciana** |
+| 3 | Ver cuándo y quién cambió cada estado (historia) | ✅ | Consultan **Luciana**, **Otto** y **Sebastián** | No aplica | No requiere | Luciana |
+| 4 | Motivo obligatorio al rechazar | ✅ | Javier, Miguel, Otto | **Otto** define la lista de motivos | **Milena** | Luciana |
+| 5 | Descuentos mayores al 20 % solo con autorización | 🟡 | El vendedor pasa la oferta a "pendiente de autorización" | **Sebastián** aprueba | **Milena** (estatus y permisos) | Luciana avisa si una oferta queda trabada |
+| 6 | Marcar "Vencido" automáticamente | 🟡 | Automático, o Luciana a mano | **Otto** define los días de validez | **Milena**. **Verificar con el proveedor** si la licencia incluye WorkFlow | Luciana |
+| 7 | Canal de contacto (llamada, visita, web…) | 🟡 | Javier, Miguel y Otto, al dar de alta al cliente | **Sebastián** define la lista de canales | **Milena** (clasificador) | Luciana |
 | 8 | Lista de precios actualizada cada 3 meses | ✅ | **Luciana** carga | **Sebastián** la recibe; **Otto** la revisa | No requiere | Milena mide la demora |
-| 9 | **Tablero comercial** (embudo, conversión, tiempos, proyección) | ❌ A construir | Lo usa **Sebastián** | **Sebastián + Otto** definen los indicadores | **Milena + Claude** lo construyen con lectura de la base | Milena |
+| 9 | **Tablero comercial** (embudo, conversión, tiempos, proyección) | ❌ A construir | Lo usan **Sebastián**, **Otto** y **Luciana**; los vendedores ven lo suyo | **Sebastián + Otto** definen los indicadores | **Milena + Claude** lo construyen con lectura de la base | Milena |
 
-**Roles por confirmar:**
-- **Vendedores:** ¿quiénes cargan los presupuestos?
-- **Administrador de A+W:** ¿quién puede configurar estatus, permisos y WorkFlow? ¿Alguien de Trento, o el proveedor de A+W?
+## Roles y permisos en A+W (borrador, se revisa después)
+A+W asigna permisos **por grupo de usuario**, y cada usuario pertenece a un grupo 📘 (manual *Gestión de permisos*).
+Propuesta inicial:
+
+| Grupo | Usuarios | Puede | No puede |
+|---|---|---|---|
+| VENTAS | Javier, Miguel, Otto | Crear y modificar sus ofertas; pasarlas a revisión, presentado, aceptado, rechazado y pendiente de autorización | Sacar una oferta de "pendiente de autorización"; cambiar precios de lista |
+| GERENCIA VENTAS | Sebastián | Todo lo de VENTAS, más **autorizar descuentos** (mover desde "pendiente de autorización") | No aplica |
+| SEGUIMIENTO | Luciana | **Ver todas las ofertas** y su historia; marcar "vencido"; cargar listas de precios | Modificar el contenido de una oferta |
+| ADMIN | Milena | Configurar estatus, usuarios, permisos y WorkFlow | No aplica |
+
+En A+W esto se configura en **Derechos de empleado**, con "programas" como estos 📘:
+- `0071 – Documentos – Oferta – Oferta`: crear y modificar ofertas, precios y descuentos.
+- `0931 – Documentos – Oferta – GN – Status`: cambiar el estatus de las ofertas.
+
+❓ Antes de tocar permisos, **mirar qué grupos y derechos existen hoy**, para no dejar a nadie sin acceso.
 
 ## Estados propuestos (a configurar en A+W)
 Se mapean los estados que pidió Ventas a estatus de la oferta. **Los números son un ejemplo**: se definen con

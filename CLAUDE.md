@@ -59,8 +59,14 @@ Todo lo que se revise ahora (exports, capturas, diccionario de datos) debe servi
   - Lo que aporta se vuelca en la ficha del área con la marca 🗣️ (minuta).
   - Las preguntas de la entrevista se ajustan: se sacan las ya respondidas y se agregan las nuevas dudas.
 - Guía de conexión de lectura a la BD: `docs/aw/conexion/GUIA-CONEXION-BD.md` (SSMS, solo SELECT con NOLOCK).
-- Personas de Ventas: Sebastián (Gerente de Ventas, autoriza descuentos de más del 20 %), Otto (Jefe de Ventas),
-  Luciana (carga de listas de precios). La usuaria es Milena. Falta saber quién es el administrador de A+W.
+- **Personas:**
+  - Sebastián: Gerente de Ventas; autoriza descuentos de más del 20 %.
+  - Otto: líder o Jefe de Ventas, y también vende.
+  - Javier y Miguel: vendedores.
+  - Luciana: seguimiento de presupuestos y carga de listas de precios.
+  - **Milena** (la usuaria): **administradora de A+W** y nexo entre Trento y A+W.
+- Principio acordado: todo por el sistema. Luciana hace el seguimiento y los vendedores visualizan.
+  Roles y permisos (borrador) en `docs/aw/propuestas/ventas-ciclo-presupuestos.md`.
 - Tiene permiso para **leer la base de datos**, pero todavía no se conectó. Lo validamos cuando lleguemos a esa etapa.
 - Forma de conexión: **Claude le indica en cada momento qué hace falta** (captura, export, Computer use o
   Claude Code local).
