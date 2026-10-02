@@ -4,6 +4,24 @@
 > Para la entrevista usa las secciones 1 a 7 de la [PLANTILLA](PLANTILLA.md).
 > **Leyenda:** 📘 manual (así lo prevé A+W) · 📸 visto en Trento · ❓ a validar · 💡 conclusión.
 
+## 🗣️ Lo que dijeron en reunión ([minuta 1](minutas/2026-10-ventas-01.md))
+- **Roles:**
+  - **Gerente de Ventas:** autoriza descuentos mayores al 20 % y recibe la lista de precios.
+  - **Jefe de Ventas:** optimización de hojas y rentabilidad.
+  - **Carga de listas:** una persona que carga los precios.
+- **Presupuesto:** se responde en **24 a 48 h**.
+- **Lista de precios:** aumento **cada 3 meses**. Circuito: Gerente → Jefe → carga.
+- **Reglas de precio:**
+  - Distribución: lista fija.
+  - DVH: % por cliente.
+  - Especiales: descuento del 5 % al 20 %; más del 20 % lo autoriza el Gerente.
+  - Otros materiales: se acuerdan según el desperdicio.
+- **Dolor principal:** **no se ve el ciclo de vida de cada presupuesto**.
+  Estados deseados: en revisión, presentado, aceptado, rechazado, vencido.
+- **Quieren a futuro:** reportes para el Gerente (procesos, descuentos, clientes activos e inactivos, canal
+  de contacto) y un plan de **planificación y proyección**.
+- **Propuesta en curso:** [ciclo de vida de presupuestos](../propuestas/ventas-ciclo-presupuestos.md).
+
 ## Lo que ya sabemos
 - 📸 Unos **300 pedidos por mes** (la GN de septiembre tiene 309). Los pedidos se numeran con 8 dígitos (ej. 12006783).
 - 📸 Tipos de documento activos: Reclamación, Pedido de contrato y Expedición parcial.
@@ -124,8 +142,20 @@
 
 ---
 
+### 9. 🗣️ Preguntas nuevas tras la minuta 1
+- ¿Los presupuestos **se cargan hoy como Oferta en A+W**, o en Excel u otra herramienta? Es la pregunta clave.
+- ¿Qué muestra **Control de ofertas**? ¿Alguien lo usa?
+- ¿Cómo se registra hoy la **autorización** de un descuento mayor al 20 %? (mail, verbal, nada)
+- ¿El Jefe de Ventas optimiza las hojas **en A+W** (Optimización de ofertas) o en otro programa?
+- ¿Cuánto tarda en cargarse la lista nueva después de cada aumento trimestral?
+  ¿Se presupuestó alguna vez con precios viejos?
+- ¿Cuántos presupuestos se hacen por mes y qué porcentaje se convierte en pedido? Pedir un número aproximado.
+- ¿Cuántos días tiene de validez un presupuesto? Sirve para definir "Vencido".
+- ¿Dónde se registra el **canal** por el que llegó el cliente (llamada, visita, web)?
+
 ## Capturas a pedir
 - La pantalla de introducción de pedido (posiciones), anonimizada.
+- **Datos básicos → Documentos → Gestión de estatus**, filtrada en **Oferta**.
 - Control de ofertas.
 - Una reclamación, si hay.
 - La pantalla de la opción "Importación" y de "Factura TPS".

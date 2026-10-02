@@ -25,6 +25,7 @@
 - Pestañas en uso: Pedido, Factura TPS, Compra, GN pedido, Crystal Reports, Datos documentos, Tipos documento.
 - Tipos de documento **activos** (no bloqueados): Reclamación, Expedición parcial, Pedido de producción,
   Pedido de contrato, Encargo del almacén. Los otros 10 están bloqueados.
+- Propuestas de mejora en `docs/aw/propuestas/` (ej.: ciclo de vida de presupuestos en Ventas).
 - Detalle y avance: `docs/aw/PLAN-REVISION.md` (hoja de ruta), `docs/aw/HALLAZGOS.md` y
   `docs/aw/relevamiento/` (una ficha por área).
 
