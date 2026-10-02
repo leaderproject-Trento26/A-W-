@@ -347,6 +347,8 @@ details.more .grid2{margin-top:10px}
   function isOpen(t){return est(t.estado).abierto!==false}
   function prov(t){return t.proveedor||'Tango Gestión'}
   function provNombre(t){var p=prov(t);return p==='Otro'?'el proveedor':p}
+  function codLabel(p){return p==='A+W'?'Código A+W':p==='Tango Gestión'?'Código Tango':'Código del proveedor'}
+  function codPh(p){return p==='A+W'?'Ej.: AW-285390':'N° de caso que te dio el proveedor'}
   function esTango(t){return prov(t)==='Tango Gestión'}
   function queSucede(t){return [t.asunto,t.detalle].filter(Boolean).join('\n')}
   function resumen(t){var s=(t.asunto||'').replace(/\s+/g,' ').trim();return s.length>70?s.slice(0,67)+'...':s}
@@ -459,7 +461,7 @@ details.more .grid2{margin-top:10px}
       if(filt.est.indexOf('al:')===0&&!alertas(t).some(function(a){return 'al:'+a.k===filt.est}))return false;
       if(filt.est==='abiertos'&&!isOpen(t))return false;
       if(filt.est!=='abiertos'&&filt.est!=='todos'&&filt.est!=='alertas'&&filt.est.indexOf('al:')!==0&&t.estado!==filt.est)return false;
-      if(q){var h=[codigo(t),queSucede(t),t.errorMsg,t.modulo,t.tipo,t.sector,t.pedidoPor,t.solucion].join(' ').toLowerCase();if(h.indexOf(q)<0)return false}
+      if(q){var h=[codigo(t),t.codProv,queSucede(t),t.errorMsg,t.modulo,t.tipo,t.sector,t.pedidoPor,t.solucion].join(' ').toLowerCase();if(h.indexOf(q)<0)return false}
       return true;
     }).sort(function(a,b){
       var ao=isOpen(a)?0:1,bo=isOpen(b)?0:1;if(ao!==bo)return ao-bo;
@@ -498,7 +500,7 @@ details.more .grid2{margin-top:10px}
   function rowHTML(t,ej){
     var e=est(t.estado),p=prio(t.prioridad),cer=!isOpen(t);
     var d=dias(fecha(t),cer?(cerrado(t)||fecha(t)).slice(0,10):null);
-    var meta=[t.sector,t.pedidoPor,prov(t)].filter(Boolean).join(' · ')+((t.imgs&&t.imgs.length)?' · 📎 '+t.imgs.length:'');
+    var meta=[t.sector,t.pedidoPor,prov(t)+(t.codProv?' '+t.codProv:'')].filter(Boolean).join(' · ')+((t.imgs&&t.imgs.length)?' · 📎 '+t.imgs.length:'');
     var sel=(ej||ro)?'<span class="pill k-'+e.c+'">'+esc(e.l)+'</span>':'<span class="st-wrap k-'+e.c+'" style="border-radius:999px"><select class="st-sel k-'+e.c+'" data-st="'+esc(t.id)+'" aria-label="Estado de '+codigo(t)+'">'+estOpts(t.estado)+'</select></span>';
     return '<div class="row'+(ej?' example':'')+'" data-id="'+esc(t.id)+'"'+(ej?' data-ej="1"':'')+' tabindex="0" role="button">'+
       '<div class="c-id"><span class="id">'+codigo(t)+'</span><span class="date">'+(ej?'<span class="tag-ej">EJEMPLO</span>':fmtD(fecha(t)))+'</span>'+(ej?'':'<button type="button" class="ver" data-ver="'+esc(t.id)+'">Ver caso ›</button>')+'</div>'+
@@ -575,8 +577,8 @@ details.more .grid2{margin-top:10px}
       var canc=etapaDe(t.estado)==='cancelado';
       return saludo(t)+' Tu *Caso '+codigo(t)+'* quedó *'+(canc?'Cancelado':'Resuelto')+'*.'+(t.solucion?'\n*'+(canc?'Motivo':'Solución')+':* '+t.solucion:'')+FIRMA;}},
     {k:'tango',l:'Proveedor',para:'prov',f:function(t){
-      if(t.estado==='enviado'&&!t._nuevo)return 'Hola, les escribo de Trento por la *Ref. '+codigo(t)+'*, que les derivé el '+fmtDT(fechaDeriv(t))+'.\n*Problemática:* '+resumen(t)+'\n\n¿Tienen novedades? ¡Gracias!';
-      return 'Hola, les escribo de Trento. *Ref. '+codigo(t)+'*\n*Sistema:* '+prov(t)+'\n*Tipo:* '+(t.tipo||'—')+'\n*Problemática:* '+(queSucede(t)||'—')+(t.errorMsg?'\n*Error:* '+t.errorMsg:'')+((t.imgs&&t.imgs.length)?'\n(Les mando captura a continuación)':'')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n\nPor favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';}}
+      if(t.estado==='enviado'&&!t._nuevo)return 'Hola, les escribo de Trento por la *Ref. '+codigo(t)+'*'+(t.codProv?' (su caso *'+t.codProv+'*)':'')+', que les derivé el '+fmtDT(fechaDeriv(t))+'.\n*Problemática:* '+resumen(t)+'\n\n¿Tienen novedades? ¡Gracias!';
+      return 'Hola, les escribo de Trento. *Ref. '+codigo(t)+'*'+(t.codProv?'\n*'+codLabel(prov(t))+':* '+t.codProv:'')+'\n*Sistema:* '+prov(t)+'\n*Tipo:* '+(t.tipo||'—')+'\n*Problemática:* '+(queSucede(t)||'—')+(t.errorMsg?'\n*Error:* '+t.errorMsg:'')+((t.imgs&&t.imgs.length)?'\n(Les mando captura a continuación)':'')+'\n*Prioridad:* '+prio(t.prioridad).l+'\n\nPor favor, usen la referencia '+codigo(t)+' al responder. ¡Gracias!';}}
   ];
   function tabPara(t){if(t._nuevo)return 'recepcion';if(!isOpen(t))return 'cerrado';var al=alertas(t)[0];if(al&&al.tab)return al.tab;if(t.estado===(ESTADOS[0]||{}).k)return 'recepcion';return 'estado'}
   function msg(k,t){for(var i=0;i<MENSAJES.length;i++)if(MENSAJES[i].k===k)return MENSAJES[i].f(t);return ''}
@@ -618,6 +620,7 @@ details.more .grid2{margin-top:10px}
         field('Sector',sel('sector',opts(SECTORES,t.sector,id_,id_,'Elegí…')),{req:1,key:'sector'})+
         field('Tipo',sel('tipo',opts(TIPOS,t.tipo,id_,id_,'Elegí…')),{req:1,key:'tipo'})+
         field('Sistema / proveedor',sel('proveedor',opts(PROVEEDORES,prov(t),id_,id_)),{key:'proveedor'})+
+        '<label class="f" data-f="codProv"><span id="cod-lbl">'+codLabel(prov(t))+'</span>'+inp('codProv',t.codProv,codPh(prov(t)))+'</label>'+
         field('Prioridad',sel('prioridad',opts(PRIOS,t.prioridad,function(x){return x.k},function(x){return x.l+' · '+x.d})),{key:'prioridad'})+
         field('Mensaje de error',inp('errorMsg',t.errorMsg,'Texto exacto del error, si aparece'),{full:1,key:'errorMsg'})+
         '<div class="f full"><span>Capturas del error</span><div class="drop" id="drop"><div class="imgs" id="imgs"></div>'+
@@ -657,6 +660,7 @@ details.more .grid2{margin-top:10px}
       renderMsg();
     });
     if(pp)pp.addEventListener('input',function(){aplicarContacto(this.value,true);renderMsg()});
+    var pv=$('#p-proveedor');if(pv)pv.addEventListener('change',function(){$('#cod-lbl').textContent=codLabel(this.value);var ci=$('#p-codProv');if(ci)ci.placeholder=codPh(this.value)});
     var fi=$('#p-img');if(fi)fi.addEventListener('change',function(){addFiles(fi.files);fi.value=''});
     var dr=$('#drop');
     if(dr&&!ro){
@@ -696,7 +700,7 @@ details.more .grid2{margin-top:10px}
       '<div class="det-grid">'+
         fila('Usuario solicitante',esc(t.pedidoPor||'—'))+fila('Celular',cel)+
         fila('Sector',esc(t.sector||'—'))+fila('Tipo',esc(t.tipo||'—'))+
-        fila('Sistema / proveedor',esc(prov(t)))+fila('Cargado el',fmtDT(t.pedidoEl))+
+        fila('Sistema / proveedor',esc(prov(t)))+(t.codProv?fila(codLabel(prov(t)),esc(t.codProv)):'')+fila('Cargado el',fmtDT(t.pedidoEl))+
         (cer?fila('Cerrado el',fmtDT(cer)):'')+
         fila('Días',String(dias(fecha(t),cer?cer.slice(0,10):null))+(cer?' (total)':' abierto'))+
       '</div>'+
@@ -736,7 +740,7 @@ details.more .grid2{margin-top:10px}
     });
   }
   function logItem(l){return '<li class="'+(l.tipo==='sys'?'sys':l.tipo==='wa'?'wa':'')+'"><span class="when">'+fmtDT(l.t)+(l.autor?' · <b>'+esc(l.autor)+'</b>':'')+'</span><span class="txt">'+esc(l.txt)+'</span></li>'}
-  var FIELDS=['asunto','pedidoPor','celular','sector','tipo','proveedor','prioridad','errorMsg','estado','solucion'];
+  var FIELDS=['asunto','pedidoPor','celular','sector','tipo','proveedor','codProv','prioridad','errorMsg','estado','solucion'];
   function readForm(){var o={};FIELDS.forEach(function(k){var el=document.getElementById('p-'+k);if(el)o[k]=el.value.trim()});if(draft)o.imgs=draft.imgs.slice();return o}
   function closePanel(keep){$('#panel-root').innerHTML='';openId=null;if(!keep){draft=null;document.body.style.overflow=''}}
   function submit(){
@@ -1053,10 +1057,10 @@ details.more .grid2{margin-top:10px}
     try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}
   }
   function csv(){
-    var cols=['Caso','Cargado el','Usuario solicitante','Celular','Sector','Tipo','Sistema','Incidente','Mensaje de error','Capturas','Prioridad','Estado','Cerrado el','Días','Solución'];
+    var cols=['Caso','Cargado el','Usuario solicitante','Celular','Sector','Tipo','Sistema','Código proveedor','Incidente','Mensaje de error','Capturas','Prioridad','Estado','Cerrado el','Días','Solución'];
     var q=function(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"'},lines=[cols.map(q).join(';')];
     items.slice().sort(function(a,b){return a.num-b.num}).forEach(function(t){
-      lines.push([codigo(t),fmtDT(t.pedidoEl),t.pedidoPor,t.celular,t.sector,t.tipo,prov(t),queSucede(t),t.errorMsg,(t.imgs||[]).length,prio(t.prioridad).l,est(t.estado).l,cerrado(t)?fmtDT(cerrado(t)):'',dias(fecha(t),isOpen(t)?null:(cerrado(t)||fecha(t)).slice(0,10)),t.solucion].map(q).join(';'))});
+      lines.push([codigo(t),fmtDT(t.pedidoEl),t.pedidoPor,t.celular,t.sector,t.tipo,prov(t),t.codProv,queSucede(t),t.errorMsg,(t.imgs||[]).length,prio(t.prioridad).l,est(t.estado).l,cerrado(t)?fmtDT(cerrado(t)):'',dias(fecha(t),isOpen(t)?null:(cerrado(t)||fecha(t)).slice(0,10)),t.solucion].map(q).join(';'))});
     downloads.save({filename:'soportes-tango-'+hoy()+'.csv',data:'\ufeff'+lines.join('\r\n')}).then(function(){toast('CSV listo')},function(){});
   }
   function addNote(){
