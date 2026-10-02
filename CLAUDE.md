@@ -58,6 +58,9 @@ Todo lo que se revise ahora (exports, capturas, diccionario de datos) debe servi
   - Cada minuta se guarda en `docs/aw/relevamiento/minutas/`, anonimizada.
   - Lo que aporta se vuelca en la ficha del área con la marca 🗣️ (minuta).
   - Las preguntas de la entrevista se ajustan: se sacan las ya respondidas y se agregan las nuevas dudas.
+- Guía de conexión de lectura a la BD: `docs/aw/conexion/GUIA-CONEXION-BD.md` (SSMS, solo SELECT con NOLOCK).
+- Personas de Ventas: Sebastián (Gerente de Ventas, autoriza descuentos de más del 20 %), Otto (Jefe de Ventas),
+  Luciana (carga de listas de precios). La usuaria es Milena. Falta saber quién es el administrador de A+W.
 - Tiene permiso para **leer la base de datos**, pero todavía no se conectó. Lo validamos cuando lleguemos a esa etapa.
 - Forma de conexión: **Claude le indica en cada momento qué hace falta** (captura, export, Computer use o
   Claude Code local).

@@ -29,6 +29,28 @@ y los indicadores. Eso sí conviene construirlo, leyendo los datos de A+W.
 
 📸 En el menú de Trento ya existe **"Control de ofertas"**: hay que ver qué muestra hoy.
 
+## Responsables (matriz)
+Cada punto tiene tres tipos de responsabilidad:
+- **Opera:** lo hace en el día a día.
+- **Define o aprueba:** decide las reglas.
+- **Configura:** lo deja funcionando en A+W.
+
+| # | Qué | A+W | Opera (día a día) | Define / aprueba | Configura en A+W | Seguimiento |
+|---|---|---|---|---|---|---|
+| 1 | Registrar todo presupuesto como **Oferta** | ✅ | **Vendedores** ❓ quiénes | **Otto** (Jefe de Ventas): regla "todo presupuesto va a A+W" | No requiere | **Milena** (adopción) |
+| 2 | Estados: en revisión, presentado, aceptado, rechazado, vencido | ✅ | Vendedores | **Sebastián + Otto** acuerdan los estados | **Administrador de A+W** ❓ | Milena |
+| 3 | Ver cuándo y quién cambió cada estado (historia) | ✅ | Consultan **Otto** y **Sebastián** | No aplica | No requiere | Milena verifica que se registre |
+| 4 | Motivo obligatorio al rechazar | ✅ | Vendedores | **Otto** define la lista de motivos | Administrador de A+W ❓ | Milena |
+| 5 | Descuentos mayores al 20 % solo con autorización | 🟡 | El vendedor pasa la oferta a "pendiente de autorización" | **Sebastián** (Gerente de Ventas) aprueba | Administrador de A+W ❓ (estatus y permisos) | Milena |
+| 6 | Marcar "Vencido" automáticamente | 🟡 | Automático, o el vendedor | **Otto** define los días de validez | Administrador de A+W ❓. **Verificar con el proveedor** si la licencia incluye WorkFlow | Milena |
+| 7 | Canal de contacto (llamada, visita, web…) | 🟡 | Vendedores, al dar de alta al cliente | **Sebastián** define la lista de canales | Administrador de A+W ❓ (clasificador) | Milena |
+| 8 | Lista de precios actualizada cada 3 meses | ✅ | **Luciana** carga | **Sebastián** la recibe; **Otto** la revisa | No requiere | Milena mide la demora |
+| 9 | **Tablero comercial** (embudo, conversión, tiempos, proyección) | ❌ A construir | Lo usa **Sebastián** | **Sebastián + Otto** definen los indicadores | **Milena + Claude** lo construyen con lectura de la base | Milena |
+
+**Roles por confirmar:**
+- **Vendedores:** ¿quiénes cargan los presupuestos?
+- **Administrador de A+W:** ¿quién puede configurar estatus, permisos y WorkFlow? ¿Alguien de Trento, o el proveedor de A+W?
+
 ## Estados propuestos (a configurar en A+W)
 Se mapean los estados que pidió Ventas a estatus de la oferta. **Los números son un ejemplo**: se definen con
 quien administre A+W, respetando los que ya existan.

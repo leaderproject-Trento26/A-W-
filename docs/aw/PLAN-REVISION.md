@@ -55,6 +55,9 @@ se puede asociar a su tabla, y el MCP sale casi solo.
 **La plantilla:** [`relevamiento/PLANTILLA.md`](relevamiento/PLANTILLA.md).
 
 ## Etapa 2: Prueba de conexión
+**Guía paso a paso:** [`conexion/GUIA-CONEXION-BD.md`](conexion/GUIA-CONEXION-BD.md).
+La primera pregunta a responder es: ¿se cargan los presupuestos como Oferta en A+W?
+
 Cuando lleguemos a esta etapa, validamos juntas cómo conectarte. Lo más probable es usar
 **SQL Server Management Studio** con tu usuario de solo lectura.
 La primera consulta **solo lista tablas**, no lee datos (ver `MODELO-DATOS.md`).
